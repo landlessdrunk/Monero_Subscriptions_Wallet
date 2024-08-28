@@ -1,7 +1,3 @@
-"""
-The "Manage Subscriptions" window
-"""
-
 import customtkinter as ctk
 from src.interfaces.view import View
 import config as cfg
@@ -10,20 +6,19 @@ import json
 from PIL import Image
 from src.subscription import Subscription
 
+
 class SubscriptionsView(View):
     def build(self):
-        # If we have existing subscriptions
         if len(json.loads(cfg.subscriptions())) > 1:
-            self._app.geometry(styles.SUBSCRIPTIONS_VIEW_GEOMETRY)
-        # If we have no existing subscriptions
+            self._app.geometry(styles.SUBSCRIPTIONS_LARGE_VIEW_GEOMETRY)
         else:
-            self._app.geometry(styles.REVIEW_PROMPT_GEOMETRY)
+            self._app.geometry(styles.SUBSCRIPTIONS_SMALL_VIEW_GEOMETRY)
 
         # Back button and title
-        styles.back_and_title(self, ctk, cfg, title='Manage Subscriptions:', pad_bottom=20)
+        styles.back_and_title(self, ctk, cfg, title='Manage Subscriptions:', pad_bottom=10)
 
         # Plus Button
-        add_image = ctk.CTkImage(Image.open("plus_icon.png"), size=(24, 24))
+        add_image = ctk.CTkImage(Image.open(styles.plus_icon), size=(24, 24))
         add_button = self.add(ctk.CTkButton(self._app, image=add_image, text='', fg_color='transparent', width=35, height=30, corner_radius=7, command=self.add_subscription))
         add_button.grid(row=0, column=2, padx=10, pady=(10, 20), sticky="e")
 

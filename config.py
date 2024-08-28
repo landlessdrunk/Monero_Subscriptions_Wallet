@@ -9,6 +9,8 @@ Exchange rates scraped from XE.com
 
 import os
 import platform
+
+import monerorequest
 import requests
 from io import StringIO
 import csv
@@ -173,3 +175,69 @@ SELECTED_SUBSCRIPTION = ''
 CURRENT_CREATE_PAYMENT_REQUEST_CURRENCY = ''
 
 has_seen_welcome = False
+
+transactions = []
+
+tx1 = {"direction": "out",
+       "amount": "4.12",
+       "date": "2017-08-27",
+       "payment_id": "Mullvad VPN",  #monerorequest.make_random_payment_id(),  # Use this to get subscription name if available
+       "paid_to": "4sakjhgfhjkkhgfdsghjkgfdhjkhgfdhjkgfdsghjkhgfdhjkjhgfdghjkhgfdhjkhgfdghjgfdhjgfdhjgfd"
+       #"selected_currency_value_at_time"  # not sure how we would keep this data??? would be cool to have though.
+       }
+
+tx2 = {"direction": "in",
+       "amount": "0.121212121212",
+       "date": "2018-08-25",
+       "payment_id": "This Is A Reasonable Long Title That Gets Cut Off This Is A Reasonable Title This Is A Reasonable Title This Is A Reasonable Title", #monerorequest.make_random_payment_id(),  # Use this to get subscription name if available
+       "paid_to": "4sakjhgfhjkkhgfdsghjkgfdhjkhgfdhjkgfdsghjkhgfdhjkjhgfdghjkhgfadffffgfdhjgfdhjgfd"
+       #"selected_currency_value_at_time": # not sure how we would keep this data??? would be cool to have though.
+       }
+
+tx3 = {"direction": "in",
+       "amount": "0.12",
+       "date": "2019-08-21",
+       "payment_id": "My Phone Bill", #"#monerorequest.make_random_payment_id(),  # Use this to get subscription name if available
+       "paid_to": "4sakjhgfhjkkhgfdsghjkgfdhjkhgfdhjkgfdsghjkhgfdhjkjhgfdghjkhgfdhdfhjgfdhjgfdhjgfd"
+       #"selected_currency_value_at_time"  # not sure how we would keep this data??? would be cool to have though.
+       }
+
+tx4 = {"direction": "out",
+       "amount": "44",
+       "date": "2020-08-18",
+       "payment_id": "Other stuff", #"#monerorequest.make_random_payment_id(),  # Use this to get subscription name if available
+       "paid_to": "4sakjhgfhjkkhgfdsghjkgfdhjkhgfdhjkgfdsghjkhgfdhjkjhgfdghjkhgfdhdfhjgfdhjgfdhjgfd"
+       #"selected_currency_value_at_time"  # not sure how we would keep this data??? would be cool to have though.
+       }
+
+tx5 = {"direction": "out",
+       "amount": "0.121212121212",
+       "date": "2020-08-10",
+       "payment_id": "Calming Dog Beds Cat Cave Bed with - Hooded Cover, Anti-Anxiety SoftFEFEFEFEFEFEFEFFEFEFEFEFEFFEFEFEF", #"#monerorequest.make_random_payment_id(),  # Use this to get subscription name if available
+       "paid_to": "4sakjhgfhjkkhgfdsghjkgfdhjkhgfdhjkgfdsghjkhgfdhjkjhgfdghjkhgfdhdfhjgfdhjgfdhjgfd"
+       #"selected_currency_value_at_time"  # not sure how we would keep this data??? would be cool to have though.
+       }
+
+tx6 = {"direction": "in",
+       "amount": "15.1212",
+       "date": "2021-08-03",
+       "payment_id": "Calming Dog Beds Cat Cave Bed with - Hooded Cover, Anti-Anxiety Soft Plush Faux!", #"#monerorequest.make_random_payment_id(),  # Use this to get subscription name if available
+       "paid_to": "4sakjhgfhjkkhgfdsghjkgfdhjkhgfdhjkgfdsghjkhgfdhjkjhgfdghjkhgfdhdfhjgfdhjgfdhjgfd"
+       #"selected_currency_value_at_time"  # not sure how we would keep this data??? would be cool to have though.
+       }
+
+tx7 = {"direction": "in",
+       "amount": "4444.121212121212",
+       "date": "2022-05-21",
+       "payment_id": "Other stuff 4 sdfgjksdfgjksdfgjkdfsgjkhdfkjhdfgkjhdfgskjhdfgkjhdfsjkhdfkhjdfskjhdfskjhsdfkjhskjfhsdfgkj", #"#monerorequest.make_random_payment_id(),  # Use this to get subscription name if available
+       "paid_to": "4sakjhgfhjkkhgfdsghjkgfdhjkhgfdhjkgfdsghjkhgfdhjkjhgfdghjkhgfdhdfhjgfdhjgfdhjgfd"
+       #"selected_currency_value_at_time"  # not sure how we would keep this data??? would be cool to have though.
+       }
+
+transactions.append(tx1)
+transactions.append(tx2)
+transactions.append(tx3)
+transactions.append(tx4)
+transactions.append(tx5)
+transactions.append(tx6)
+transactions.append(tx7)

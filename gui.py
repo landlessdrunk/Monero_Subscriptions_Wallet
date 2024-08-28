@@ -6,11 +6,11 @@ from src.logging import config as logging_config
 from tkinter import PhotoImage
 
 import customtkinter as ctk
+
+import styles
 from src.rpc_server import RPCServer
 from config import rpc, is_first_launch
-from src.views import (MainView, ReceiveView, PayView, SubscriptionsView, SettingsView, SetCurrencyView,
-                       NodeSelectionView, AmountView, ReviewRequestView, ReviewSendView, ReviewDeleteRequestView,
-                       WelcomeView, CreatePaymentRequestView, CopyPaymentRequestView)
+from src.views import *
 import config as cfg
 from src.subscription import Subscription
 
@@ -44,7 +44,8 @@ class App(ctk.CTk):
             'review_delete': ReviewDeleteRequestView(self),
             'welcome': WelcomeView(self),
             'create_payment_request': CreatePaymentRequestView(self),
-            'copy_payment_request': CopyPaymentRequestView(self)
+            'copy_payment_request': CopyPaymentRequestView(self),
+            'history': HistoryView(self)
         }
 
     def spawn_appropriate_initial_window(self):
@@ -87,7 +88,7 @@ class App(ctk.CTk):
 
 app = App()
 app.title("Monero Subscriptions Wallet")
-app.iconphoto(True, PhotoImage(file='icon_orange.png'))
+app.iconphoto(True, PhotoImage(file=styles.icon))
 app.protocol("WM_DELETE_WINDOW", app.shutdown_steps)
 app.resizable(False, False)  # Make the window non-resizable
 app.mainloop()
