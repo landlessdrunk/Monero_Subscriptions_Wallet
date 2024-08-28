@@ -13,6 +13,10 @@ config = {
         }
     },
     'loggers': {
+        '__main__': {
+            'level': 'DEBUG',
+            'handlers': ['console']
+        },
         'src.rpc_server': {
             'level': 'DEBUG',
             'handlers': ['console'],
@@ -26,6 +30,10 @@ config = {
             'handlers': ['console']
         },
         'src.wallet': {
+            'level': 'DEBUG',
+            'handlers': ['console']
+        },
+        'src.subscription': {
             'level': 'DEBUG',
             'handlers': ['console']
         }

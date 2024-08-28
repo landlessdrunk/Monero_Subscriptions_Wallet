@@ -1,10 +1,10 @@
 import customtkinter as ctk
 import tkinter
-
+from tkcalendar import Calendar, DateEntry
 from datetime import datetime, timezone
 from src.exchange import Exchange
 from src.interfaces.view import View
-from config import default_currency
+from config import default_currency, stagenet
 import config as cfg
 import styles
 import clipboard
@@ -86,8 +86,7 @@ class CreatePaymentRequestView(View):
 
         starting_on = self.add(ctk.CTkLabel(content_frame, text="starting on", font=styles.BODY_FONT_SIZE))
         starting_on.grid(row=2, column=7, columnspan=1, padx=(x / 2), pady=y, sticky="ew")
-
-        self.start_date_input = self.add(ctk.CTkEntry(content_frame, placeholder_text="mm/dd/yyyy", corner_radius=15, border_color=bc))
+        self.start_date_input = self.add(Calendar(content_frame))
         self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Sellers Wallet Section
@@ -138,7 +137,7 @@ class CreatePaymentRequestView(View):
         print(payment_id, type(payment_id))
 
         # TODO: FIX THIS TO USE THE TIME ENTERED AND SHOW DEFAULT TIME AS PLACEHOLDER
-        start_date = self.start_date_input.get().strip() if self.start_date_input.get().strip() else datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        start_date = datetime.strptime(self.start_date_input.get_date(), '%x')
         print(start_date, type(start_date))
 
         days_per_billing_cycle = int(re.sub(r'\D', '', self.days_per_billing_cycle.get().strip()))
@@ -159,11 +158,12 @@ class CreatePaymentRequestView(View):
             currency=currency,
             amount=amount,
             payment_id=payment_id,
-            start_date=start_date,
+            start_date=datetime.strftime(start_date, '%Y-%m-%dT%H:%M:%S.%fZ'),
             days_per_billing_cycle=days_per_billing_cycle,
             number_of_payments=number_of_payments,
             change_indicator_url=change_indicator_url,
-            version=version
+            version=version,
+            allow_stagenet=stagenet()
         )
 
         clipboard.copy(payment_request)

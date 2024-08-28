@@ -5,16 +5,17 @@ name = "pypi"
 
 [packages]
 customtkinter = "*"
+tkcalendar = "*"
 requests = "*"
 monero_usd_price = "*"
 lxml = "*"
-monerorequest = "*"
 clipboard = "*"
 qrcode = "*"
 pillow = "*"
 factory_boy = "*"
 time-machine = "*"
 vcrpy = "*"
+monerorequest = "*"
 
 [dev-packages]
 

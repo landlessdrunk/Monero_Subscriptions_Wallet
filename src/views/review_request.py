@@ -71,5 +71,7 @@ class ReviewRequestView(View):
         self.open_main()
 
     def confirm_button(self):
-        cfg.config_file.add_subscription(Subscription(**Subscription.decode(self._app.views['pay'].payment_input.get())))
+        sub = Subscription(**Subscription.decode(self._app.views['pay'].payment_input.get()))
+        cfg.config_file.add_subscription(sub)
+        sub.schedule()
         self._app.switch_view('subscriptions')

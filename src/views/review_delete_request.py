@@ -37,5 +37,6 @@ class ReviewDeleteRequestView(View):
 
     def cancel_action(self):
         cfg.config_file.remove_subscription(cfg.SELECTED_SUBSCRIPTION)
+        cfg.SELECTED_SUBSCRIPTION.deschedule()
         cfg.SELECTED_SUBSCRIPTION = ''
         self._app.switch_view('subscriptions')

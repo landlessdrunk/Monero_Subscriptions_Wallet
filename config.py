@@ -33,7 +33,8 @@ config_options = {
         'local_rpc_url': 'http://127.0.0.1:18088/json_rpc',
         'node_url': NODE_URL,
         'daemon_url': f'{NODE_URL}/json_rpc',
-        'wallet_dir': 'wallets'
+        'wallet_dir': 'wallets',
+        'stagenet': False
     },
     'subscriptions': {
         'subscriptions': [],
@@ -99,6 +100,23 @@ class ConfigFile():
         subs = [sub for sub in json.loads(self.get('subscriptions', 'subscriptions')) if sub != subscription.json_friendly()]
         self.set('subscriptions', 'subscriptions', json.dumps(subs))
         self.write()
+        return True
+
+    def update_subscription(self, subscription):
+        update_subs = [
+            sub for sub in json.loads(self.get('subscriptions', 'subscriptions'))
+                if sub.get('payment_id') == subscription.payment_id and
+                   sub.get('sellers_wallet') == subscription.sellers_wallet
+        ]
+        same_subs = [
+            sub for sub in json.loads(self.get('subscriptions', 'subscriptions'))
+                if sub.get('payment_id') != subscription.payment_id or
+                   sub.get('sellers_wallet') != subscription.sellers_wallet
+        ]
+        updated_subs = []
+        for sub in update_subs:
+            updated_subs.append(subscription.json_friendly())
+        self.set('subscriptions', 'subscriptions', json.dumps(same_subs + updated_subs))
         return True
 
 config_file = ConfigFile('./config.ini')

@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import tkinter
 from src.interfaces.view import View
+from config import stagenet
 import config as cfg
 import styles
 import clipboard
@@ -16,7 +17,7 @@ def input_is_valid(input_string):
 
 
 def input_is_valid_monero_wallet(input_string):
-    return monerorequest.Check.wallet(wallet_address=input_string, allow_standard=True, allow_integrated_address=True, allow_subaddress=True)
+    return monerorequest.Check.wallet(wallet_address=input_string, allow_standard=True, allow_integrated_address=True, allow_subaddress=True, allow_stagenet=stagenet())
 
 
 def input_is_valid_monero_request(input_string):
@@ -29,7 +30,7 @@ def input_is_valid_monero_request(input_string):
         # Validate fields
         if not monerorequest.Check.name(decoded_request["custom_label"]):
             return False
-        if not monerorequest.Check.wallet(decoded_request["sellers_wallet"]):
+        if not monerorequest.Check.wallet(decoded_request["sellers_wallet"], allow_standard=True, allow_integrated_address=True, allow_subaddress=True, allow_stagenet=stagenet()):
             return False
         if not monerorequest.Check.amount(decoded_request["amount"]):
             return False

@@ -1,3 +1,8 @@
+import json
+import threading
+import logging
+import logging.config
+from src.logging import config as logging_config
 from tkinter import PhotoImage
 
 import customtkinter as ctk
@@ -7,7 +12,7 @@ from src.views import (MainView, ReceiveView, PayView, SubscriptionsView, Settin
                        NodeSelectionView, AmountView, ReviewRequestView, ReviewSendView, ReviewDeleteRequestView,
                        WelcomeView, CreatePaymentRequestView, CopyPaymentRequestView)
 import config as cfg
-from src.exchange import Exchange
+from src.subscription import Subscription
 
 ctk.set_default_color_theme("monero_theme.json")
 
@@ -16,9 +21,13 @@ ctk.set_default_color_theme("monero_theme.json")
 class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        logging.config.dictConfig(logging_config)
+        self.logger = logging.getLogger(self.__module__)
         self.define_all_views()
         self.spawn_appropriate_initial_window()
         self.start_rpc_server_if_appropriate()
+        self.schedule_payments()
+        self.scheduler_thread()
 
     def define_all_views(self):
         self.views = {
@@ -54,6 +63,21 @@ class App(ctk.CTk):
         self.current_view.destroy()
         self.current_view = self.views[view_name]
         self.current_view.build()
+
+    def schedule_payments(self):
+        raw_subs = json.loads(cfg.subscriptions())
+        for raw_sub in raw_subs:
+            sub = Subscription(**raw_sub)
+            sub.schedule()
+
+    def scheduler_thread(self):
+        breakpoint()
+        sched_thread = threading.Thread(target=self.run_scheduler)
+        sched_thread.daemon = True
+        sched_thread.start()
+
+    def run_scheduler(self):
+        Subscription.schedul.run()
 
     def shutdown_steps(self):
         self.destroy()

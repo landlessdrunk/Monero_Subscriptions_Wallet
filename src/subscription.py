@@ -2,6 +2,7 @@
 A class for each individual Subscription object
 """
 
+import time
 import logging
 import logging.config
 from datetime import datetime, timedelta
@@ -9,13 +10,14 @@ import monerorequest
 from sched import scheduler
 from src.clients.rpc import RPCClient
 from src.logging import config as logging_config
-from config import send_payments
+from config import send_payments, stagenet, config_file
 from src.exchange import Exchange
 
 class Subscription:
+    schedul = scheduler(timefunc=time.time)
     def __init__(self, custom_label, sellers_wallet, currency, amount,  payment_id, start_date, days_per_billing_cycle, number_of_payments, change_indicator_url=''):
         self.custom_label = custom_label if monerorequest.Check.name(custom_label) else ''
-        self.sellers_wallet = sellers_wallet if monerorequest.Check.wallet(wallet_address=sellers_wallet, allow_standard=True, allow_integrated_address=False, allow_subaddress=False) else ''
+        self.sellers_wallet = sellers_wallet if monerorequest.Check.wallet(wallet_address=sellers_wallet, allow_standard=True, allow_integrated_address=True, allow_subaddress=False, allow_stagenet=stagenet()) else ''
         self.currency = currency if monerorequest.Check.currency(currency) else ''
         self.amount = amount if monerorequest.Check.amount(amount) else ''
         self.payment_id = payment_id if monerorequest.Check.payment_id(payment_id) else monerorequest.make_random_payment_id()
@@ -64,8 +66,9 @@ class Subscription:
         next_time = self.start_date
 
         while next_time < datetime.now():
-            next_time = next_time + timedelta(days=self.days_per_billing_cycle)
-        return next_time
+            next_time = next_time + timedelta(minutes=self.days_per_billing_cycle)
+        self.logger.info('Next Payment Time %s', next_time)
+        return datetime.timestamp(next_time)
 
     @classmethod
     def decode(cls, code):
@@ -74,19 +77,27 @@ class Subscription:
         return subscription_data_as_json
 
     def make_payment(self):
+        result = False
+        self.logger.debug('Entered make_payment function')
         if self.payable():
             if send_payments():
                 client = RPCClient.get()
                 integrated_address = client.make_integrated_address(self.sellers_wallet, self.payment_id)['integrated_address']
                 transfer_result = client.transfer(integrated_address, self.amount)
+                self.logger.info('Sent %s XMR', self.amount)
                 Exchange.refresh_prices()
-                return transfer_result['amount'] == int(self.amount)
+                self.number_of_payments -= 1
+                self.logger.debug('Number of Payments Remaining %s', self.number_of_payments)
+                config_file.update_subscription(self)
+                config_file.write()
+                result = transfer_result['amount'] == int(self.amount)
             else:
                 self.logger.info('Sending Funds Disabled')
-                return False
         else:
             self.logger.error('Insuffient Funds Balance: %s', Exchange.XMR_AMOUNT)
-            return False
+
+        self.schedule()
+        return result
 
     def payable(self):
         Exchange.refresh_prices()
@@ -95,4 +106,9 @@ class Subscription:
         return Exchange.to_atomic_units('XMR', Exchange.XMR_AMOUNT) > xmr_to_send
 
     def schedule(self):
-        scheduler.enterabs(self.next_payment_time(), 1, self.make_payment)
+        self.schedul.enterabs(time=self.next_payment_time(), priority=1, action=self.make_payment)
+
+    def deschedule(self):
+        for event in self.schedul.queue:
+            if self.json_friendly() == event.action.__self__.json_friendly():
+                self.schedul.cancel(event)

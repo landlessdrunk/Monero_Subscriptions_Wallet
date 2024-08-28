@@ -99,7 +99,7 @@ class RPCClient(Notifier):
                 self.logger.debug(request_result['error'])
                 return False
             else:
-                return request_result['result']
+                return True
         except requests.exceptions.ConnectionError as e:
             self.logger.debug(str(e))
             return False

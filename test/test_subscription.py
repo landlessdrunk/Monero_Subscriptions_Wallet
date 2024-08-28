@@ -15,7 +15,7 @@ class TestSubscription(unittest.TestCase):
             datetime.strptime('2024-05-16 12:00:00', date_format) +
             timedelta(days=subscription.days_per_billing_cycle))
         subscription = SubscriptionFactory(start_date=datetime.strptime('2024-05-10 12:00:00', date_format).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z')
-        self.assertEqual(subscription.next_payment_time(), datetime.strptime('2024-05-17 12:00:00', date_format))
+        self.assertEqual(subscription.next_payment_time(), datetime.timestamp(datetime.strptime('2024-05-17 12:00:00', date_format)))
 
     def test_json_friendly(self):
         subscription = SubscriptionFactory()

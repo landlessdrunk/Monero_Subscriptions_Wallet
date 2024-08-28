@@ -3,8 +3,7 @@ import subprocess
 import time
 import logging
 import logging.config
-from config import node_url, rpc_bind_port, wallet_dir, rpc
-from src.environment import STAGENET
+from config import node_url, rpc_bind_port, wallet_dir, rpc, stagenet
 from src.clients.rpc import RPCClient
 from src.logging import config as logging_config
 from src.interfaces.notifier import Notifier
@@ -51,7 +50,7 @@ class RPCServer(Notifier):
         cmd = f'stdbuf -oL monero-wallet-rpc --password "" --wallet-dir {wallet_dir()}'
         cmd += f' --rpc-bind-port {rpc_bind_port()} --disable-rpc-login --confirm-external-bind'
         cmd += f' --daemon-address {self._daemon_address()}'
-        if STAGENET:
+        if stagenet():
             cmd += ' --stagenet'
 
         self.logger.debug(cmd)
