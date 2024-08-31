@@ -36,6 +36,10 @@ config = {
         'src.subscription': {
             'level': 'DEBUG',
             'handlers': ['console']
+        },
+        'src.view.history': {
+            'level': 'DEBUG',
+            'handlers': ['console']
         }
     }
 }

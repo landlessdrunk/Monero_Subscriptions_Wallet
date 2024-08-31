@@ -25,7 +25,8 @@ class RPCClient(Notifier):
         self._observers.append(observer)
 
     def detach(self, observer: Observer):
-        self._observers.remove(observer)
+        if observer in self._observers:
+            self._observers.remove(observer)
 
     def notify(self):
         for observer in self._observers:
@@ -130,7 +131,7 @@ class RPCClient(Notifier):
 
     def get_balance(self):
         try:
-            self._balance = self.post(self._get_balance())['result']['balance']
+            self._balance = self.post(self._get_balance()).get('result', {}).get('balance', '0')
             self.notify()
             return self._balance
         except requests.exceptions.ConnectionError as e:
@@ -179,6 +180,63 @@ class RPCClient(Notifier):
                     'address': destination,
                     'amount': amount
                  }]
+            }
+        }
+
+    def get_transfers(self):
+        try:
+            self._transfers = self.post(self._get_transfers())
+            return self._transfers['result']
+        except requests.exceptions.ConnectionError as e:
+            self.logger.debug(str(e))
+            return False
+
+    def _get_transfers(self):
+        return {
+            'jsonrpc': '2.0',
+            'id': '0',
+            'method': 'get_transfers',
+            'params': {
+                'in': True,
+                'out': True,
+                'pending': True,
+                'failed': False,
+                'all_accounts': True
+            }
+        }
+
+    def set_tx_notes(self, tx_ids: list, notes: list):
+        try:
+            self.post(self._set_tx_notes(tx_ids, notes))
+        except requests.exceptions.ConnectionError as e:
+            self.logger.debug(str(e))
+            return False
+
+    def _set_tx_notes(self, tx_ids: list[str], notes: list[str]):
+        return {
+            'jsonrpc': '2.0',
+            'id': '0',
+            'method': 'set_tx_notes',
+            'params': {
+                'notes': notes,
+                'txids': tx_ids
+            }
+        }
+
+    def get_tx_notes(self, tx_ids: list):
+        try:
+            return self.post(self._get_tx_notes(tx_ids)).get('result', {}).get('notes')
+        except requests.exceptions.ConnectionError as e:
+            self.logger.debug(str(e))
+            return False
+
+    def _get_tx_notes(self, tx_ids:list[str]):
+        return {
+            'jsonrpc': '2.0',
+            'id': '0',
+            'method': 'get_tx_notes',
+            'params': {
+                'txids': tx_ids
             }
         }
 

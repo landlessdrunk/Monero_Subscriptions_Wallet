@@ -117,4 +117,5 @@ class MainView(View):
         super().destroy()
         for observer in self._element_observers:
             self._rpc_server.detach(observer)
+            self._rpc_client.detach(observer)
         self._element_observers = []

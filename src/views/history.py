@@ -1,9 +1,12 @@
+import logging
 import customtkinter as ctk
 from src.interfaces.view import View
 import config as cfg
 import styles
 from datetime import datetime
-
+from src.logging import config as logging_config
+from src.clients.rpc import RPCClient
+from src.transaction import Transaction
 
 def center_string(s):
     # Trim the string to 50 characters if it's longer
@@ -13,7 +16,6 @@ def center_string(s):
     centered_string = trimmed_string.center(50)
 
     return centered_string
-
 
 class HistoryView(View):
     def build(self):
@@ -44,18 +46,24 @@ class HistoryView(View):
         self.transactions_frame._parent_frame.destroy()
         super().destroy()
 
-
 class TransactionsScrollableFrame(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        logging.config.dictConfig(logging_config)
+        self.logger = logging.getLogger(self.__module__)
         self.grid(row=1, column=0, columnspan=3, sticky='nsew')
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(1, weight=1)
-
-        if cfg.transactions:
-            for i, tx in enumerate(cfg.transactions):
-                self._add_tx(tx, i)
-
+        transactions = RPCClient().get_transfers()
+        if transactions:
+            for direction, txs in transactions.items():
+                txs.sort(reverse=True, key=lambda t: t['timestamp'])
+                for i, tx in enumerate(txs):
+                    try:
+                        transaction = Transaction(**tx, direction=direction)
+                        self._add_tx(transaction, i)
+                    except (TypeError, UnboundLocalError) as e:
+                        self.logger.debug(str(e))
         else:
             no_tx_text = ctk.CTkLabel(self, text="     No transactions yet.", )
             no_tx_text.pack(padx=10, pady=(50, 0))
@@ -65,7 +73,6 @@ class TransactionsScrollableFrame(ctk.CTkScrollableFrame):
 
     def _add_tx(self, tx, row):
         TransactionFrame(self, tx, row)
-
 
 class TransactionFrame(ctk.CTkFrame):
     def __init__(self, master, tx, row, **kwargs):
@@ -77,15 +84,14 @@ class TransactionFrame(ctk.CTkFrame):
         # Configure the main window grid for spacing and alignment
         self.columnconfigure(1, weight=1)
 
-        symbol = "+" if tx["direction"] == "in" else "-"
+        symbol = "+" if tx.direction == "in" else "-"
 
-        amount_text = f"{symbol} {tx["amount"]} XMR"
-        payment_name_text = tx["payment_id"][:49] + "…" if len(tx["payment_id"]) >= 50 else tx["payment_id"]
+        amount_text = f"{symbol} {tx.amount} XMR"
+        payment_name_text = tx.notes() or (tx.payment_id[:49] + "…" if len(tx.payment_id) >= 50 else tx.payment_id)
 
-        date_format_string = "%Y-%m-%d"
-        date_text = f"On {datetime.strptime(tx["date"], date_format_string).strftime('%b %d').lstrip('0')}"
+        date_text = f"On {tx.time()}"
 
-        text_color = styles.green if tx["direction"] == "in" else styles.red  # TODO: update colors
+        text_color = styles.green if tx.direction == "in" else styles.red  # TODO: update colors
 
         self.payment_name = ctk.CTkLabel(self, text=payment_name_text, font=styles.TX_NAME_FONT_SIZE, text_color=styles.monero_orange)  # TODO: UPDATE THIS
         self.payment_name.grid(row=0, column=0, padx=10, pady=0, sticky="w")
@@ -95,9 +101,6 @@ class TransactionFrame(ctk.CTkFrame):
 
         self.amount = ctk.CTkLabel(self, text=amount_text, font=styles.TX_AMOUNT_FONT_SIZE, text_color=text_color)
         self.amount.grid(row=0, column=2, padx=(0, 10), pady=0, sticky="e")
-
-
-
 
         # Center the widgets within each column
         #self.columnconfigure(0, weight=1)

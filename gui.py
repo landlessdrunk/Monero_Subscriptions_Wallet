@@ -72,7 +72,6 @@ class App(ctk.CTk):
             sub.schedule()
 
     def scheduler_thread(self):
-        breakpoint()
         sched_thread = threading.Thread(target=self.run_scheduler)
         sched_thread.daemon = True
         sched_thread.start()
