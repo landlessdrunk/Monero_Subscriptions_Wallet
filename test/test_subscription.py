@@ -2,10 +2,11 @@ import unittest
 import time_machine
 import vcr
 from unittest.mock import patch
-from datetime import datetime, timedelta
+from datetime import datetime
 from src.subscription import Subscription
+from src.exchange import Exchange
 from test.factories.subscription import SubscriptionFactory
-from test.utils.rpc_server_helper import rpc_server_test
+
 class TestSubscription(unittest.TestCase):
     @time_machine.travel('2024-05-16 12:00:00')
     def test_next_payment_time(self):
@@ -66,6 +67,15 @@ class TestSubscription(unittest.TestCase):
                 nop = subscription.number_of_payments
                 self.assertEqual(subscription.make_payment(), True)
                 self.assertEqual(subscription.number_of_payments, nop - 1)
+
+    def test_payable(self):
+        with vcr.use_cassette('test/fixtures/cassettes/payable.yaml'):
+            with patch('src.exchange.Exchange.refresh_prices', return_value=True):
+                Exchange.XMR_AMOUNT = 1000
+                subscription = SubscriptionFactory(number_of_payments=1)
+                self.assertEqual(subscription.payable(), True)
+                invalid_subscription = SubscriptionFactory(number_of_payments=-1)
+                self.assertEqual(invalid_subscription.payable(), False)
 
 if __name__ == '__main__':
     unittest.main()

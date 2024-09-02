@@ -110,6 +110,8 @@ class Subscription:
             xmr_to_send = Exchange.to_atomic_units(self.currency, float(self.amount))
             self.logger.info('Able to send funds %s XMR', xmr_to_send)
             return Exchange.to_atomic_units('XMR', Exchange.XMR_AMOUNT) > xmr_to_send
+        else:
+            return False
 
     def schedule(self):
         self.schedul.enterabs(time=self.next_payment_time(), priority=1, action=self.make_payment)

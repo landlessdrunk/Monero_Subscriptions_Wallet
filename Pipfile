@@ -15,7 +15,7 @@ pillow = "*"
 factory_boy = "*"
 time-machine = "*"
 vcrpy = "*"
-monerorequest = "*"
+monerorequest = {file = "../monerorequest"}
 
 [dev-packages]
 
