@@ -46,7 +46,7 @@ class testRPCClient(unittest.TestCase):
         with vcr.use_cassette('test/fixtures/cassettes/open_wallet.yaml'):
             client = RPCClient()
             result = client.open_wallet('test_wallet_2')
-        self.assertEqual(result, {})
+        self.assertEqual(result, True)
 
 '''
 To create a new test with the wallet rpc server started use

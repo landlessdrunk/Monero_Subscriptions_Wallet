@@ -58,7 +58,8 @@ class Subscription:
                                 start_date=monerorequest.convert_datetime_object_to_truncated_RFC3339_timestamp_format(self.start_date),
                                 days_per_billing_cycle=self.days_per_billing_cycle,
                                 number_of_payments=self.number_of_payments,
-                                change_indicator_url=self.change_indicator_url)
+                                change_indicator_url=self.change_indicator_url,
+                                allow_stagenet=stagenet())
 
         return monero_request
 
@@ -66,7 +67,7 @@ class Subscription:
         next_time = self.start_date
 
         while next_time < datetime.now():
-            next_time = next_time + timedelta(minutes=self.days_per_billing_cycle)
+            next_time = next_time + timedelta(days=self.days_per_billing_cycle)
         self.logger.info('Next Payment Time %s', next_time)
         return datetime.timestamp(next_time)
 
@@ -84,11 +85,13 @@ class Subscription:
                 client = RPCClient.get()
                 integrated_address = client.make_integrated_address(self.sellers_wallet, self.payment_id)['integrated_address']
                 transfer_result = client.transfer(integrated_address, self.amount)
-                breakpoint()
                 client.set_tx_notes([transfer_result['tx_hash']], [self.custom_label])
                 self.logger.info('Sent %s XMR', self.amount)
                 Exchange.refresh_prices()
-                self.number_of_payments -= 1
+                if self.number_of_payments == 1:
+                    self.number_of_payments = -1
+                elif self.number_of_payments > 1:
+                    self.number_of_payments -= 1
                 self.logger.debug('Number of Payments Remaining %s', self.number_of_payments)
                 config_file.update_subscription(self)
                 config_file.write()
@@ -102,10 +105,11 @@ class Subscription:
         return result
 
     def payable(self):
-        Exchange.refresh_prices()
-        xmr_to_send = Exchange.to_atomic_units(self.currency, float(self.amount))
-        self.logger.info('Able to send funds %s XMR', xmr_to_send)
-        return Exchange.to_atomic_units('XMR', Exchange.XMR_AMOUNT) > xmr_to_send
+        if self.number_of_payments > -1:
+            Exchange.refresh_prices()
+            xmr_to_send = Exchange.to_atomic_units(self.currency, float(self.amount))
+            self.logger.info('Able to send funds %s XMR', xmr_to_send)
+            return Exchange.to_atomic_units('XMR', Exchange.XMR_AMOUNT) > xmr_to_send
 
     def schedule(self):
         self.schedul.enterabs(time=self.next_payment_time(), priority=1, action=self.make_payment)

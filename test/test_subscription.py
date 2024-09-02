@@ -12,8 +12,7 @@ class TestSubscription(unittest.TestCase):
         date_format = '%Y-%m-%d %H:%M:%S'
         subscription = SubscriptionFactory(start_date=datetime.strptime('2024-05-9 12:00:00', date_format).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z')
         self.assertEqual(subscription.next_payment_time(),
-            datetime.strptime('2024-05-16 12:00:00', date_format) +
-            timedelta(days=subscription.days_per_billing_cycle))
+            datetime.timestamp(datetime.strptime('2024-05-16 12:00:00', date_format)) + (subscription.days_per_billing_cycle * 24 * 60 * 60))
         subscription = SubscriptionFactory(start_date=datetime.strptime('2024-05-10 12:00:00', date_format).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z')
         self.assertEqual(subscription.next_payment_time(), datetime.timestamp(datetime.strptime('2024-05-17 12:00:00', date_format)))
 
@@ -32,22 +31,24 @@ class TestSubscription(unittest.TestCase):
         })
 
     def test_encode(self):
-        subscription = SubscriptionFactory(
-            custom_label='test_label',
-            sellers_wallet='4At3X5rvVypTofgmueN9s9QtrzdRe5BueFrskAZi17BoYbhzysozzoMFB6zWnTKdGC6AxEAbEE5czFR3hbEEJbsm4hCeX2S',
-            currency='USD',
-            amount='10',
-            payment_id='abcdef1234567890',
-            start_date=datetime.strptime('2024-05-10 12:00:00', '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-            days_per_billing_cycle=7,
-            number_of_payments=10,
-            change_indicator_url=''
-        )
-        self.assertEqual(subscription.encode(), 'monero-request:1:H4sIAAAAAAACAy2OW0/DMAyF/0ueO5R2vbC+taNFAoHENsbYS5SLexFpMiUp0CL+OymaZMk+/qzj84PooEflUI5CjALEO6paIL0SPadOGzIa6dlCRmNA8cmr1/3d/8I6PRBJGSwnDqy7igAJOllyAUNYL2WvWsInLgHlWYDUODAPdEMudBpAOYvyEAfoqkgvvBllXEATRus4SbPbzZLMgpRgLPmivi9548KtT4n5PE6Xg27aYYTnjd28ODOLHSTlCLWxH8W5D7NSv7NunqyeZ/1Ul+n8pg6P4n6bFt9Vwaoq4XO9W3d+emB2iLstnKL98tJR44igzidHEY7iFU5WIT6EUY6xrxuM8Rn9/gFqTg5MRAEAAA==')
+        with patch('src.subscription.stagenet', return_value=False):
+            subscription = SubscriptionFactory(
+                custom_label='test_label',
+                sellers_wallet='4At3X5rvVypTofgmueN9s9QtrzdRe5BueFrskAZi17BoYbhzysozzoMFB6zWnTKdGC6AxEAbEE5czFR3hbEEJbsm4hCeX2S',
+                currency='USD',
+                amount='10',
+                payment_id='abcdef1234567890',
+                start_date=datetime.strptime('2024-05-10 12:00:00', '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                days_per_billing_cycle=7,
+                number_of_payments=10,
+                change_indicator_url=''
+            )
+            self.assertEqual(subscription.encode(), 'monero-request:1:H4sIAAAAAAACAy2OW0/DMAyF/0ueO5R2vbC+taNFAoHENsbYS5SLexFpMiUp0CL+OymaZMk+/qzj84PooEflUI5CjALEO6paIL0SPadOGzIa6dlCRmNA8cmr1/3d/8I6PRBJGSwnDqy7igAJOllyAUNYL2WvWsInLgHlWYDUODAPdEMudBpAOYvyEAfoqkgvvBllXEATRus4SbPbzZLMgpRgLPmivi9548KtT4n5PE6Xg27aYYTnjd28ODOLHSTlCLWxH8W5D7NSv7NunqyeZ/1Ul+n8pg6P4n6bFt9Vwaoq4XO9W3d+emB2iLstnKL98tJR44igzidHEY7iFU5WIT6EUY6xrxuM8Rn9/gFqTg5MRAEAAA==')
 
     def test_decode(self):
-        subscription = SubscriptionFactory()
-        sub_copy = Subscription(**Subscription.decode(subscription.encode()))
+        with patch('src.subscription.stagenet', return_value=False):
+            subscription = SubscriptionFactory()
+            sub_copy = Subscription(**Subscription.decode(subscription.encode()))
         self.assertEqual(subscription.custom_label, sub_copy.custom_label)
         self.assertEqual(subscription.sellers_wallet, sub_copy.sellers_wallet)
         self.assertEqual(subscription.currency, sub_copy.currency)
@@ -62,7 +63,9 @@ class TestSubscription(unittest.TestCase):
         with vcr.use_cassette('test/fixtures/cassettes/make_payment.yaml'):
             with patch('src.subscription.send_payments', return_value=True):
                 subscription = SubscriptionFactory(payment_id='c2c9f284c33a4903', sellers_wallet='59fhPNhFLEx3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEKpAMFKC')
+                nop = subscription.number_of_payments
                 self.assertEqual(subscription.make_payment(), True)
+                self.assertEqual(subscription.number_of_payments, nop - 1)
 
 if __name__ == '__main__':
     unittest.main()

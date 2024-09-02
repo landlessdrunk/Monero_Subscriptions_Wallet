@@ -87,7 +87,7 @@ class TransactionFrame(ctk.CTkFrame):
 
         symbol = "+" if tx.direction == "in" else "-"
 
-        amount_text = f"{symbol} {tx.amount} XMR"
+        amount_text = f"{symbol} {tx.amt()} XMR"
         payment_name_text = tx.notes() or (tx.payment_id[:49] + "…" if len(tx.payment_id) >= 50 else tx.payment_id)
 
         date_text = f"On {tx.time()}"
