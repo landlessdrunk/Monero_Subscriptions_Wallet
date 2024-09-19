@@ -167,7 +167,6 @@ monero_orange = '#ff6600'
 ui_overall_background = '#1D1D1D'
 
 CURRENT_PAYMENT_REQUEST = ''
-SEND_TO_WALLET = '4Test5rvVypTofgmueN9s9QtrzdRe5BueFrskAZi17BoYbhzysozzoMFB6zWnTKdGC6AxEAbEE5czFR3hbEEJbsm4h4Test'
 CURRENT_SEND_AMOUNT = ''
 CURRENT_SEND_CURRENCY = ''
 SELECTED_SUBSCRIPTION = ''

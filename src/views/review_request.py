@@ -13,11 +13,11 @@ class ReviewRequestView(View):
         decoded_request = monerorequest.decode_monero_payment_request(self._app.views['pay'].payment_input.get())
 
         if decoded_request["number_of_payments"] == 0:
-            payment_count = f'every {decoded_request["days_per_billing_cycle"]} days until canceled'
+            payment_count = f'every {decoded_request["schedule"]} days until canceled'
         elif decoded_request["number_of_payments"] == 1:
             payment_count = 'one-time'
         else:
-            payment_count = f'every {decoded_request["days_per_billing_cycle"]} days until {decoded_request["number_of_payments"]} payments have been made'
+            payment_count = f'every {decoded_request["schedule"]} days until {decoded_request["number_of_payments"]} payments have been made'
 
         self._app.geometry(styles.REVIEW_REQUEST_PROMPT_VIEW_GEOMETRY)
 
@@ -73,5 +73,5 @@ class ReviewRequestView(View):
     def confirm_button(self):
         sub = Subscription(**Subscription.decode(self._app.views['pay'].payment_input.get()))
         cfg.config_file.add_subscription(sub)
-        sub.schedule()
+        sub.queue()
         self._app.switch_view('subscriptions')

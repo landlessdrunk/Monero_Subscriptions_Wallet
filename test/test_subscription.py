@@ -6,16 +6,15 @@ from datetime import datetime
 from src.subscription import Subscription
 from src.exchange import Exchange
 from test.factories.subscription import SubscriptionFactory
-
+from test.utils.rpc_server_helper import rpc_server_test
 class TestSubscription(unittest.TestCase):
     @time_machine.travel('2024-05-16 12:00:00')
-    def test_next_payment_time(self):
+    def test_relative_payment_time(self):
         date_format = '%Y-%m-%d %H:%M:%S'
         subscription = SubscriptionFactory(start_date=datetime.strptime('2024-05-9 12:00:00', date_format).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z')
-        self.assertEqual(subscription.next_payment_time(),
-            datetime.timestamp(datetime.strptime('2024-05-16 12:00:00', date_format)) + (subscription.days_per_billing_cycle * 24 * 60 * 60))
-        subscription = SubscriptionFactory(start_date=datetime.strptime('2024-05-10 12:00:00', date_format).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z')
-        self.assertEqual(subscription.next_payment_time(), datetime.timestamp(datetime.strptime('2024-05-17 12:00:00', date_format)))
+        self.assertEqual(subscription.relative_payment_time(), 15*24*60*60 + 12*60*60)
+        subscription = SubscriptionFactory(start_date=datetime.strptime('2024-06-10 12:00:00', date_format).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z')
+        self.assertEqual(subscription.relative_payment_time(), 25*24*60*60)
 
     def test_json_friendly(self):
         subscription = SubscriptionFactory()
@@ -26,7 +25,7 @@ class TestSubscription(unittest.TestCase):
             'amount': subscription.amount,
             'payment_id': subscription.payment_id,
             'start_date': subscription.start_date.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',
-            'days_per_billing_cycle': subscription.days_per_billing_cycle,
+            'schedule': subscription.schedule,
             'number_of_payments': subscription.number_of_payments,
             'change_indicator_url': subscription.change_indicator_url
         })
@@ -40,11 +39,11 @@ class TestSubscription(unittest.TestCase):
                 amount='10',
                 payment_id='abcdef1234567890',
                 start_date=datetime.strptime('2024-05-10 12:00:00', '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-                days_per_billing_cycle=7,
+                schedule='0 0 0 * MON',
                 number_of_payments=10,
                 change_indicator_url=''
             )
-            self.assertEqual(subscription.encode(), 'monero-request:1:H4sIAAAAAAACAy2OW0/DMAyF/0ueO5R2vbC+taNFAoHENsbYS5SLexFpMiUp0CL+OymaZMk+/qzj84PooEflUI5CjALEO6paIL0SPadOGzIa6dlCRmNA8cmr1/3d/8I6PRBJGSwnDqy7igAJOllyAUNYL2WvWsInLgHlWYDUODAPdEMudBpAOYvyEAfoqkgvvBllXEATRus4SbPbzZLMgpRgLPmivi9548KtT4n5PE6Xg27aYYTnjd28ODOLHSTlCLWxH8W5D7NSv7NunqyeZ/1Ul+n8pg6P4n6bFt9Vwaoq4XO9W3d+emB2iLstnKL98tJR44igzidHEY7iFU5WIT6EUY6xrxuM8Rn9/gFqTg5MRAEAAA==')
+            self.assertEqual(subscription.encode(), 'monero-request:2:H4sIAAAAAAACAy1OXU+DQBD8K+Qem9bcUaDCG61gotHEtmrty+XglkKEu+Y+VDD9796ZJpvszsxOZn4RG6QVBmWIYDRHdcvECWgneFczIxW1qneaV6xSIOrRodfd3T+hjRxozyrwLwa0uYI5EnaoQFHZ0DMbBxBGo4zgOboi2nHnYFXNoSHhMoqT1W3q43XdArc9OBUHOCDBLJh5GvoelKbfzG3fNcrN8hCrr7fxvJfNabDwnOr0xaiJbyFeWyiV/syPHVmt5UfVTqOW0ySfynUyvYv9I7/fJPlPkVdFEddTuV227nqo9BC1GziEOx9pmDKUM+O7hDiMFjheELwnYYaxmxuM8RFd/gDIow3zQAEAAA==')
 
     def test_decode(self):
         with patch('src.subscription.stagenet', return_value=False):
@@ -56,7 +55,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(subscription.amount, sub_copy.amount)
         self.assertEqual(subscription.payment_id, sub_copy.payment_id)
         self.assertEqual(subscription.start_date, sub_copy.start_date)
-        self.assertEqual(subscription.days_per_billing_cycle, sub_copy.days_per_billing_cycle)
+        self.assertEqual(subscription.schedule, sub_copy.schedule)
         self.assertEqual(subscription.number_of_payments, sub_copy.number_of_payments)
         self.assertEqual(subscription.change_indicator_url, sub_copy.change_indicator_url)
 
@@ -71,7 +70,7 @@ class TestSubscription(unittest.TestCase):
     def test_payable(self):
         with vcr.use_cassette('test/fixtures/cassettes/payable.yaml'):
             with patch('src.exchange.Exchange.refresh_prices', return_value=True):
-                Exchange.XMR_AMOUNT = 1000
+                Exchange.XMR_TOTAL = 1000
                 subscription = SubscriptionFactory(number_of_payments=1)
                 self.assertEqual(subscription.payable(), True)
                 invalid_subscription = SubscriptionFactory(number_of_payments=-1)

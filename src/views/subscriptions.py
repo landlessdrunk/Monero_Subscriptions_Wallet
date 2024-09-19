@@ -3,6 +3,7 @@ from src.interfaces.view import View
 import config as cfg
 import styles
 import json
+from datetime import datetime, timedelta
 from PIL import Image
 from src.subscription import Subscription
 
@@ -85,7 +86,7 @@ class SubscriptionFrame(ctk.CTkFrame):
         self.subscription_price.grid(row=1, column=1, pady=0,  sticky="ns")
 
         # TODO: Make this accurate. Right now it just shows billing cycle
-        self.subscription_renews_in = ctk.CTkLabel(self, text=f'Renews In {sub.days_per_billing_cycle} Days', font=styles.BODY_FONT_SIZE)
+        self.subscription_renews_in = ctk.CTkLabel(self, text=f'Renews At {sub.next_payment_time().strftime('%c')}', font=styles.BODY_FONT_SIZE)
         self.subscription_renews_in.grid(row=2, column=1, pady=0, sticky="ns")
 
         self.subscription_cancel_button = ctk.CTkButton(self, text="Cancel", corner_radius=15, command=lambda: self.cancel_subscription(sub))

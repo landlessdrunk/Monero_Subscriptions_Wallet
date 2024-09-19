@@ -12,8 +12,6 @@ import webbrowser
 from src.wallet import Wallet
 
 DUMMY_WALLET = '4Test5rvVypTofgmueN9s9QtrzdRe5BueFrskAZi17BoYbhzysozzoMFB6zWnTKdGC6AxEAbEE5czFR3hbEEJbsm4h4Test'
-wallet = Wallet().address if rpc() == 'True' else DUMMY_WALLET
-
 
 def generate_monero_qr(wallet_address):
     # Create the QR code
@@ -47,7 +45,6 @@ def generate_monero_qr(wallet_address):
 
 
 class ReceiveView(View):
-
     def build(self):
         self._app.geometry(styles.RECEIVE_VIEW_GEOMETRY)
 
@@ -69,11 +66,11 @@ class ReceiveView(View):
         left_frame.grid(row=0, column=0, padx=(10, 5), pady=(0, 5), sticky="nsew")
         left_frame.columnconfigure([0], weight=1)
 
-        wallet_text = self.add(ctk.CTkLabel(left_frame, text=util.shortened_wallet(wallet=cfg.SEND_TO_WALLET)))
+        wallet_text = self.add(ctk.CTkLabel(left_frame, text=util.shortened_wallet(wallet=self.wallet_address)))
         wallet_text.grid(row=0, column=0, padx=(5, 10), pady=(0, 5))
 
         # QR Code
-        qr_image_name = generate_monero_qr(Wallet().address if rpc() == 'True' else DUMMY_WALLET)
+        qr_image_name = generate_monero_qr(self.wallet_address)
         qr_image_object = ctk.CTkImage(dark_image=Image.open(qr_image_name), size=(190, 190))
         qr_image = self.add(ctk.CTkLabel(left_frame, image=qr_image_object, text=''), )
         qr_image.grid(row=1, column=0, padx=10, pady=(0, 10))
@@ -139,7 +136,7 @@ class ReceiveView(View):
         self._app.switch_view('create_payment_request')
 
     def copy_wallet_address(self):
-        clipboard.copy(wallet)
+        clipboard.copy(self.wallet_address)
         self._app.switch_view('main')
 
     @staticmethod
@@ -156,3 +153,7 @@ class ReceiveView(View):
     @staticmethod
     def swap_for_monero():
         webbrowser.open("https://trocador.app/")
+
+    @property
+    def wallet_address(self):
+        return Wallet().address if rpc() == 'True' else DUMMY_WALLET

@@ -1,5 +1,7 @@
 import json
+import os
 import threading
+import locale
 import logging
 import logging.config
 from src.logging import config as logging_config
@@ -69,7 +71,7 @@ class App(ctk.CTk):
         raw_subs = json.loads(cfg.subscriptions())
         for raw_sub in raw_subs:
             sub = Subscription(**raw_sub)
-            sub.schedule()
+            sub.queue()
 
     def scheduler_thread(self):
         sched_thread = threading.Thread(target=self.run_scheduler)
@@ -84,6 +86,9 @@ class App(ctk.CTk):
         if rpc() == 'True':
             self.rpc_server.kill()
 
+#Need to make this work with Windows.
+#https://stackoverflow.com/questions/3425294/how-to-detect-the-os-default-language-in-python
+locale.setlocale(locale.LC_ALL, os.environ['LANG'])
 
 app = App()
 app.title("Monero Subscriptions Wallet")

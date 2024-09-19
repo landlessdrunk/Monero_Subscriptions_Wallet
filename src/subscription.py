@@ -8,6 +8,7 @@ import logging.config
 from datetime import datetime, timedelta
 import monerorequest
 from sched import scheduler
+from crontab import CronTab
 from src.clients.rpc import RPCClient
 from src.logging import config as logging_config
 from config import send_payments, stagenet, config_file
@@ -15,7 +16,8 @@ from src.exchange import Exchange
 
 class Subscription:
     schedul = scheduler(timefunc=time.time)
-    def __init__(self, custom_label, sellers_wallet, currency, amount,  payment_id, start_date, days_per_billing_cycle, number_of_payments, change_indicator_url=''):
+
+    def __init__(self, custom_label, sellers_wallet, currency, amount,  payment_id, start_date, schedule, number_of_payments, change_indicator_url=''):
         self.custom_label = custom_label if monerorequest.Check.name(custom_label) else ''
         self.sellers_wallet = sellers_wallet if monerorequest.Check.wallet(wallet_address=sellers_wallet, allow_standard=True, allow_integrated_address=True, allow_subaddress=False, allow_stagenet=stagenet()) else ''
         self.currency = currency if monerorequest.Check.currency(currency) else ''
@@ -26,7 +28,7 @@ class Subscription:
         else:
             start_date = datetime.now()
         self.start_date = start_date
-        self.days_per_billing_cycle = days_per_billing_cycle if monerorequest.Check.days_per_billing_cycle(days_per_billing_cycle) else 30
+        self.schedule = schedule if monerorequest.Check.schedule(schedule) else '0 0 1 * *'
         self.number_of_payments = number_of_payments if monerorequest.Check.number_of_payments(number_of_payments) else 1
         self.change_indicator_url = change_indicator_url if monerorequest.Check.change_indicator_url(change_indicator_url) else ''
         logging.config.dictConfig(logging_config)
@@ -40,7 +42,7 @@ class Subscription:
             "amount": self.amount,
             "payment_id": self.payment_id,
             "start_date":  monerorequest.convert_datetime_object_to_truncated_RFC3339_timestamp_format(self.start_date),
-            "days_per_billing_cycle": self.days_per_billing_cycle,
+            "schedule": self.schedule,
             "number_of_payments": self.number_of_payments,
             "change_indicator_url": self.change_indicator_url
         }
@@ -56,20 +58,27 @@ class Subscription:
                                 amount=self.amount,
                                 payment_id=self.payment_id,
                                 start_date=monerorequest.convert_datetime_object_to_truncated_RFC3339_timestamp_format(self.start_date),
-                                days_per_billing_cycle=self.days_per_billing_cycle,
+                                schedule=self.schedule,
                                 number_of_payments=self.number_of_payments,
                                 change_indicator_url=self.change_indicator_url,
                                 allow_stagenet=stagenet())
 
         return monero_request
 
-    def next_payment_time(self):
-        next_time = self.start_date
+    def relative_payment_time(self):
+        if self.start_date < datetime.now():
+            relative_time = CronTab(self.schedule).next()
+        else:
+            delta = self.start_date - datetime.now()
+            relative_time = delta.total_seconds()
+        self.logger.info('Relative Payment Time %s', relative_time)
+        return round(relative_time)
 
-        while next_time < datetime.now():
-            next_time = next_time + timedelta(days=self.days_per_billing_cycle)
-        self.logger.info('Next Payment Time %s', next_time)
-        return datetime.timestamp(next_time)
+    def next_payment_time(self):
+        days = self.relative_payment_time() / 24 / 60 / 60
+        remainder_seconds = self.relative_payment_time() % 60
+        delta = timedelta(days=days, seconds=remainder_seconds)
+        return datetime.now() + delta
 
     @classmethod
     def decode(cls, code):
@@ -99,9 +108,9 @@ class Subscription:
             else:
                 self.logger.info('Sending Funds Disabled')
         else:
-            self.logger.error('Insuffient Funds Balance: %s', Exchange.XMR_AMOUNT)
+            self.logger.error('Insuffient Funds Balance: %s', Exchange.XMR_TOTAL)
 
-        self.schedule()
+        self.queue()
         return result
 
     def payable(self):
@@ -109,12 +118,12 @@ class Subscription:
             Exchange.refresh_prices()
             xmr_to_send = Exchange.to_atomic_units(self.currency, float(self.amount))
             self.logger.info('Able to send funds %s XMR', xmr_to_send)
-            return Exchange.to_atomic_units('XMR', Exchange.XMR_AMOUNT) > xmr_to_send
+            return Exchange.to_atomic_units('XMR', Exchange.XMR_TOTAL) > xmr_to_send
         else:
             return False
 
-    def schedule(self):
-        self.schedul.enterabs(time=self.next_payment_time(), priority=1, action=self.make_payment)
+    def queue(self):
+        self.schedul.enter(delay=self.relative_payment_time(), priority=1, action=self.make_payment)
 
     def deschedule(self):
         for event in self.schedul.queue:

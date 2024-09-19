@@ -12,13 +12,13 @@ class TestExchange(unittest.TestCase):
             Exchange.USD_AMOUNT = 10000
             self.assertEqual(Exchange.convert('XGB'), '20,000.00')
 
-        Exchange.XMR_AMOUNT = 2
+        Exchange.XMR_TOTAL = 2
 
         self.assertEqual(Exchange.convert('XMR'), '2.00')
 
     def test_to_xmr(self):
         Exchange.USD_AMOUNT = 150
-        Exchange.XMR_AMOUNT = 1
+        Exchange.XMR_TOTAL = 1
         Exchange.US_EXCHANGE = 150
         with patch('src.exchange.xe_scrape', return_value='.8'):
             self.assertEqual(Exchange.to_atomic_units('GBP', 5), 26666666666)

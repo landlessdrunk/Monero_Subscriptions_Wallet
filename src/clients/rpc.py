@@ -129,9 +129,9 @@ class RPCClient(Notifier):
             "method": "get_address",
         }
 
-    def get_balance(self):
+    def get_balance(self, which='balance'):
         try:
-            self._balance = self.post(self._get_balance()).get('result', {}).get('balance', '0')
+            self._balance = self.post(self._get_balance()).get('result', {}).get(which, '0')
             self.notify()
             return self._balance
         except requests.exceptions.ConnectionError as e:

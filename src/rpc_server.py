@@ -5,6 +5,7 @@ import logging
 import logging.config
 from config import node_url, rpc_bind_port, wallet_dir, rpc, stagenet
 from src.clients.rpc import RPCClient
+from src.exchange import Exchange
 from src.logging import config as logging_config
 from src.interfaces.notifier import Notifier
 from src.interfaces.observer import Observer
@@ -92,6 +93,8 @@ class RPCServer(Notifier):
                 if not rpc_client.open_wallet():
                     self.status_message = 'RPC Server: Failed to Open Wallet'
                 self.logger.debug(rpc_client.refresh())
+                Exchange.refresh_prices()
+                rpc_client.get_balance()
                 self.notify()
 
             if self.failed_to_start:

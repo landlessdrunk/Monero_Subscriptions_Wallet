@@ -38,7 +38,7 @@ def input_is_valid_monero_request(input_string):
             return False
         if not monerorequest.Check.start_date(decoded_request["start_date"]):
             return False
-        if not monerorequest.Check.days_per_billing_cycle(decoded_request["days_per_billing_cycle"]):
+        if not monerorequest.Check.schedule(decoded_request["schedule"]):
             return False
         if not monerorequest.Check.number_of_payments(decoded_request["number_of_payments"]):
             return False

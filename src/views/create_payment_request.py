@@ -82,29 +82,26 @@ class CreatePaymentRequestView(View):
         self.currency_input.grid(row=1, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Billing Frequency Section
-        day_options = []
-        for i in range(366):
-            if i > 0:
-                day_options.append(f"Bills every {i} days")
-        selected_number_of_days = ctk.StringVar(value=day_options[29])
-        self.days_per_billing_cycle = self.add(ctk.CTkOptionMenu(content_frame, values=day_options, corner_radius=15, command=selected_currency_callback, variable=selected_number_of_days))
-        self.days_per_billing_cycle.grid(row=2, column=0, columnspan=7, padx=(x, (x / 2)), pady=y, sticky="ew")
+        day_options = ['Daily', 'Weekly', 'Monthly']
+        selected_number_of_days = ctk.StringVar(value=day_options[2])
+        self.schedule = self.add(ctk.CTkOptionMenu(content_frame, values=day_options, corner_radius=15, command=selected_currency_callback, variable=selected_number_of_days))
+        self.schedule.grid(row=2, column=0, columnspan=7, padx=(x, (x / 2)), pady=y, sticky="ew")
 
         starting_on = self.add(ctk.CTkLabel(content_frame, text="starting on", font=styles.BODY_FONT_SIZE))
         starting_on.grid(row=2, column=7, columnspan=1, padx=(x / 2), pady=y, sticky="ew")
 
         # input field
-        self.start_date_input = self.add(ctk.CTkEntry(content_frame, placeholder_text="mm/dd/yyyy", corner_radius=15, border_color=bc))
-        self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
+        # self.start_date_input = self.add(ctk.CTkEntry(content_frame, placeholder_text="mm/dd/yyyy", corner_radius=15, border_color=bc))
+        # self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Calendar
-        #self.start_date_input = self.add(Calendar(content_frame))
-        #self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
+        # self.start_date_input = self.add(Calendar(content_frame))
+        # self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Click open calendar
-        #self.start_date_input = self.add(DateEntry(content_frame, width=12, background='darkblue', foreground='white', borderwidth=2))
-        #self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
-        #self.start_date_input.bind("<Button-1>", on_date_click)
+        self.start_date_input = self.add(DateEntry(content_frame, width=12, background='darkblue', foreground='white', borderwidth=2))
+        self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
+        self.start_date_input.bind("<Button-1>", on_date_click)
 
         # Sellers Wallet Section
         self.sellers_wallet_input = self.add(ctk.CTkEntry(content_frame, placeholder_text="Sellers Wallet", corner_radius=15, border_color=bc))  # font=(styles.font, 12),
@@ -155,11 +152,11 @@ class CreatePaymentRequestView(View):
         print(payment_id, type(payment_id))
 
         # TODO: FIX THIS TO USE THE TIME ENTERED AND SHOW DEFAULT TIME AS PLACEHOLDER
-        start_date = datetime.strptime(self.start_date_input.get_date(), '%x')
+        start_date = self.start_date_input.get_date().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
         print(start_date, type(start_date))
 
-        days_per_billing_cycle = int(re.sub(r'\D', '', self.days_per_billing_cycle.get().strip()))
-        print(days_per_billing_cycle, type(days_per_billing_cycle))
+        schedule = self.schedule_mapping(self.schedule.get().strip(), self.start_date_input.get_date())
+        print(schedule, type(schedule))
 
         number_of_payments = int(re.sub(r'\D', '', self.number_of_payments_input.get().strip())) if re.sub(r'\D', '', self.number_of_payments_input.get().strip()) else 0
         print(number_of_payments, type(number_of_payments))
@@ -167,7 +164,7 @@ class CreatePaymentRequestView(View):
         change_indicator_url = ''
         print(change_indicator_url, type(change_indicator_url))
 
-        version = '1'
+        version = '2'
         print(version, type(version))
 
         payment_request = monerorequest.make_monero_payment_request(
@@ -176,8 +173,8 @@ class CreatePaymentRequestView(View):
             currency=currency,
             amount=amount,
             payment_id=payment_id,
-            start_date=datetime.strftime(start_date, '%Y-%m-%dT%H:%M:%S.%fZ'),
-            days_per_billing_cycle=days_per_billing_cycle,
+            start_date=start_date,
+            schedule=schedule,
             number_of_payments=number_of_payments,
             change_indicator_url=change_indicator_url,
             version=version,
@@ -187,3 +184,21 @@ class CreatePaymentRequestView(View):
         clipboard.copy(payment_request)
         print(payment_request)
         self._app.switch_view('copy_payment_request')
+
+    def schedule_mapping(self, user_schedule, start_date):
+        match user_schedule:
+            case 'Monthly':
+                return f'0 0 {start_date.day} * *'
+            case 'Weekly':
+                weekdays = [
+                    'MON',
+                    'TUE',
+                    'WED',
+                    'THU',
+                    'FRI',
+                    'SAT',
+                    'SUN'
+                ]
+                return f'0 0 * * {weekdays[start_date.weekday()]}'
+            case 'Daily':
+                return '0 0 * * *'

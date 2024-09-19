@@ -1,5 +1,6 @@
 import csv
 from decimal import Decimal, ROUND_HALF_UP
+from datetime import datetime, timedelta
 from src.clients.goldback import scrape as goldback_scrape
 from src.clients.xe import scrape as xe_scrape
 from src.clients.rpc import RPCClient
@@ -35,8 +36,9 @@ class Exchange():
     }
 
     US_EXCHANGE = 0
-    XMR_AMOUNT = 0
+    XMR_TOTAL = 0
     USD_AMOUNT = 0
+    LAST_REFRESHED = None
 
     @classmethod
     def convert(cls, to_sym):
@@ -47,7 +49,7 @@ class Exchange():
                 sym_value = xe_scrape(to_sym)
             converted = Decimal(cls.USD_AMOUNT) * Decimal(sym_value)
         else:
-            converted = Decimal(cls.XMR_AMOUNT)
+            converted = Decimal(cls.XMR_TOTAL)
         return str(cls._round(converted, to_sym))
 
     @classmethod
@@ -92,6 +94,9 @@ class Exchange():
 
     @classmethod
     def refresh_prices(cls):
-        cls.US_EXCHANGE = median_price()
-        cls.XMR_AMOUNT = calculate_monero_from_atomic_units(RPCClient.get().get_balance())
-        cls.USD_AMOUNT = round(cls.US_EXCHANGE * cls.XMR_AMOUNT, 2)
+        if not cls.LAST_REFRESHED or cls.LAST_REFRESHED <= (datetime.now() - timedelta(seconds=5*60)):
+            cls.US_EXCHANGE = median_price()
+            cls.XMR_TOTAL = calculate_monero_from_atomic_units(RPCClient.get().get_balance())
+            cls.XMR_UNLOCKED = calculate_monero_from_atomic_units(RPCClient.get().get_balance('unlocked_balance'))
+            cls.USD_AMOUNT = round(cls.US_EXCHANGE * cls.XMR_TOTAL, 2)
+            cls.LAST_REFRESHED = datetime.now()

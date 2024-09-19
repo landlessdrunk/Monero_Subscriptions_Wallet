@@ -13,5 +13,5 @@ class SubscriptionFactory(factory.Factory):
     amount = '10'
     payment_id = monerorequest.make_random_payment_id()
     start_date = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
-    days_per_billing_cycle = 7
+    schedule = '0 0 1 * *'
     number_of_payments = 10
