@@ -5,6 +5,8 @@ jobs:
   Ruff-Linter:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
       - name: Listing current directory
         run: ls -la
       - name: Running ruff linter
