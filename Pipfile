@@ -17,6 +17,8 @@ time-machine = "*"
 vcrpy = "*"
 monerorequest = {file = "../monerorequest"}
 crontab = "*"
+pyinstaller = "*"
+ruff = "*"
 
 [dev-packages]
 
@@ -26,3 +28,4 @@ python_version = "3.11"
 [scripts]
 tests = 'python -m unittest discover test'
 gui = 'python gui.py'
+build = 'pyinstaller gui.spec'

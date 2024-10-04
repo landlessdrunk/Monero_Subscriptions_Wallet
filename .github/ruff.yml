@@ -1,0 +1,11 @@
+name: Run Ruff Linter
+run-name: Linting the project
+on: [push]
+jobs:
+  Ruff-Linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Running ruff linter
+        run: |
+          pip install ruff
+          ruff check .
