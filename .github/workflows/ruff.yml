@@ -5,6 +5,8 @@ jobs:
   Ruff-Linter:
     runs-on: ubuntu-latest
     steps:
+      - name: Listing current directory
+        run: ls -la
       - name: Running ruff linter
         run: |
           pip install ruff
