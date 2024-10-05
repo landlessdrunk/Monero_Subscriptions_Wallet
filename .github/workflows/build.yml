@@ -1,0 +1,21 @@
+name: Build Executables
+run-name: Building the Executables
+on: [push]
+jobs:
+  Python-Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Building the Executables
+        run: |
+          pip install pipenv
+          pipenv install
+          pipenv run build
+      - name: Creating the gzipped tarball
+        run: tar -czvf --exclude=./dist/gui/_internal release.tar.gz ./dist/gui
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files:
+            release.tar.gz
