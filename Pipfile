@@ -20,6 +20,7 @@ crontab = "*"
 pyinstaller = "*"
 ruff = "*"
 pywin32-ctypes = "*"
+pefile = "*"
 
 [dev-packages]
 
