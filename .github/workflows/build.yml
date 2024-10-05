@@ -23,11 +23,16 @@ jobs:
         with:
           files:
             release.tar.gz
+
   Release-Windows-Build:
     runs-on: windows-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+      - name: Install Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Building the Executables
         run: |
           pip install pipenv
@@ -43,6 +48,7 @@ jobs:
         with:
           files:
             release.tar.gz
+
   Release-Mac-Build:
     runs-on: macos-latest
     steps:
