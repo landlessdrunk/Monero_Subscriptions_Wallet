@@ -19,6 +19,7 @@ monerorequest = "*"
 crontab = "*"
 pyinstaller = "*"
 ruff = "*"
+pywin32-ctypes = "*"
 
 [dev-packages]
 
