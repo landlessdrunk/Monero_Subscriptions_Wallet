@@ -15,7 +15,7 @@ jobs:
       - name: Checking folder structure
         run: ls -la
       - name: Creating the gzipped tarball
-        run: tar --exclude=./dist/gui/_internal/* -czvf release.tar.gz ./dist/gui
+        run: tar --exclude=./dist/gui/_internal -czvf release.tar.gz ./dist/gui
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
