@@ -7,7 +7,9 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Running ruff linter
+      - name: Check Python Version
+        run: python3 --version
+      - name: Running tests
         run: |
           pip install pipenv
           pipenv install
