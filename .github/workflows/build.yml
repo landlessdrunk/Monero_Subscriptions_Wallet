@@ -12,6 +12,8 @@ jobs:
           pip install pipenv
           pipenv install
           pipenv run build
+      - name: Checking folder structure
+        run: ls -la
       - name: Creating the gzipped tarball
         run: tar -czvf --exclude=./dist/gui/_internal/* release.tar.gz ./dist/gui
       - name: Create Release
