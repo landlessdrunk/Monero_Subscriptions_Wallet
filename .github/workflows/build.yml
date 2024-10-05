@@ -39,9 +39,9 @@ jobs:
           pipenv install
           pipenv run build
       - name: Checking Folders
-        run: dir
+        run: dir dist/gui
       - name: Creating the gzipped tarball
-        run: tar -cf release.tar.gz -z --exclude=.\_internal -C .\dist\gui .\
+        run: tar -cf release.tar.gz -z --exclude=./_internal -C ./dist/gui ./
       - name: Create Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
