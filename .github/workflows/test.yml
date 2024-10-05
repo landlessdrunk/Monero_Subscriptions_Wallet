@@ -1,13 +1,14 @@
-name: Run Ruff Linter
-run-name: Linting the project
+name: Run Tests
+run-name: Testing the Project
 on: [push]
 jobs:
-  Ruff-Linter:
+  Python-Tests:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Running ruff linter
         run: |
-          pip install ruff
-          ruff check .
+          pip install pipenv
+          pipenv install
+          pipenv run tests
