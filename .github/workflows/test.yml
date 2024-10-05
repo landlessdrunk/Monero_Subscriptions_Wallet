@@ -7,12 +7,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Try to update ubuntu packages
-        run: |
-          sudo apt update
-          sudo apt upgrade
-      - name: Check Python Version
-        run: python3 --version
       - name: Running tests
         run: |
           pip install pipenv

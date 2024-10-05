@@ -15,7 +15,7 @@ pillow = "*"
 factory_boy = "*"
 time-machine = "*"
 vcrpy = "*"
-monerorequest = {file = "../monerorequest"}
+monerorequest = "*"
 crontab = "*"
 pyinstaller = "*"
 ruff = "*"
