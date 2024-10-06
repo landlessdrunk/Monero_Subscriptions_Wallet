@@ -1,7 +1,7 @@
 import tkinter as tk
 import config as cfg
 from PIL import Image
-
+from os import path
 import styles
 
 
@@ -72,16 +72,16 @@ SCREEN_WIDTH, SCREEN_HEIGHT = get_screen_size()
 # =====================
 # Images/Icons
 # =====================
-icon_orange_png = "./assets/icon_orange.png"
-icon_black_png = "./assets/icon_black.png"
-icon_orange_ico = "./assets/icon_orange.ico"
-settings_gears_icon = "./assets/settings_icon_gears.png"
-settings_sliders_icon = "./assets/settings_icon_sliders.png"
-history_icon = "./assets/history_icon.png"
-back_icon = "./assets/back_icon.png"
-plus_icon = "./assets/plus_icon.png"
-wallet_qr_code = "./assets/wallet_qr_code.png"
-qr_code_overlay = "./assets/overlay.png"
+icon_orange_png = path.abspath(path.join(path.dirname(__file__), "./assets/icon_orange.png"))
+icon_black_png = path.abspath(path.join(path.dirname(__file__), "./assets/icon_black.png"))
+icon_orange_ico = path.abspath(path.join(path.dirname(__file__), "./assets/icon_orange.ico"))
+settings_gears_icon = path.abspath(path.join(path.dirname(__file__), "./assets/settings_icon_gears.png"))
+settings_sliders_icon = path.abspath(path.join(path.dirname(__file__), "./assets/settings_icon_sliders.png"))
+history_icon = path.abspath(path.join(path.dirname(__file__), "./assets/history_icon.png"))
+back_icon = path.abspath(path.join(path.dirname(__file__), "./assets/back_icon.png"))
+plus_icon = path.abspath(path.join(path.dirname(__file__), "./assets/plus_icon.png"))
+wallet_qr_code = path.abspath(path.join(path.dirname(__file__), "./assets/wallet_qr_code.png"))
+qr_code_overlay = path.abspath(path.join(path.dirname(__file__), "./assets/overlay.png"))
 
 icon = icon_black_png
 settings_icon = settings_sliders_icon

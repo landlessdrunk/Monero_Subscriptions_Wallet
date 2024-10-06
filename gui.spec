@@ -1,11 +1,63 @@
 # -*- mode: python ; coding: utf-8 -*-
+import platform
 
+def get_platform(os=platform.system()):
+    os = os.lower()
+    if os == 'darwin':
+        return 'Mac'
+    if os == 'windows':
+        return 'Windows'
+    else:
+        return 'Linux'
+
+import urllib.request
+import tarfile
+import zipfile
+monero_url = 'https://downloads.getmonero.org/cli/linux64'
+filename = 'monero.tar.bz2'
+if get_platform() == 'Mac':
+    monero_url = 'https://downloads.getmonero.org/cli/mac64'
+    filename = 'monero.zip'
+elif get_platform() == 'Windows':
+    monero_url = 'https://downloads.getmonero.org/cli/win64'
+
+urllib.request.urlretrieve(monero_url, filename)
+
+if get_platform() == 'Mac' or get_platform() == 'Linux':
+    with tarfile.open(filename, 'r:bz2') as f:
+        extract_name = None
+        folder_name = None
+        for fn in f.getnames():
+            if '/' not in fn:
+                folder_name = fn
+            if 'monero-wallet-rpc' in fn:
+                extract_name = fn
+        f.extract(extract_name)
+
+    os.rename(extract_name, 'monero-wallet-rpc')
+    os.remove(filename)
+    os.rmdir(folder_name)
+
+if get_platform() == 'Windows':
+    with zipfile.ZipFile(filename, 'r') as z:
+        extract_name = None
+        folder_name = None
+        for fn in z.namelist():
+            if '/' not in fn:
+                folder_name = fn
+            if 'monero-wallet-rpc' in fn:
+                extract_name = fn
+        z.extract(extract_name)
+
+    os.rename(extract_name, 'monero-wallet-rpc')
+    os.remove(filename)
+    os.rmdir(folder_name)
 
 a = Analysis(
     ['gui.py'],
     pathex=['./'],
     binaries=[],
-    datas=[],
+    datas=[('./monero_theme.json', '.'), ('./assets/*', 'assets/'), ('./monero-wallet-rpc', '.')],
     hiddenimports=['TKinter', 'PIL._tkinter_finder', 'babel.numbers'],
     hookspath=[],
     hooksconfig={},
@@ -31,7 +83,7 @@ exe = EXE(
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
-    entitlements_file=None,
+    entitlements_file=None
 )
 coll = COLLECT(
     exe,

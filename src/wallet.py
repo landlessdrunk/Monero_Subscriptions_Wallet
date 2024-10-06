@@ -1,4 +1,4 @@
-import os
+from os import path, getcwd
 import platform
 import logging
 import logging.config
@@ -19,7 +19,7 @@ class Wallet():
     def _get_path(self):
         path = ''
         if not platform.system() == 'Windows':
-            path = os.getcwd()
+            path = getcwd()
         return path
 
     def get_current_block_height(self):
@@ -51,7 +51,8 @@ class Wallet():
 
 
     def exists(self):
-        return os.path.isfile(f'{wallet_dir()}/{self.name}.keys') or os.path.isfile(f'{wallet_dir()}/{self.name}')
+        return path.isfile(f'{path.abspath(path.join(path.dirname(__file__), wallet_dir()))}/{self.name}.keys') or \
+               path.isfile(f'{path.abspath(path.join(path.dirname(__file__), wallet_dir()))}/{self.name}')
 
     def create(self):
         RPCClient.get().create_wallet(self.name)

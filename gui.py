@@ -1,5 +1,5 @@
 import json
-import os
+from os import environ, path
 import threading
 import locale
 import logging
@@ -16,7 +16,7 @@ from src.views import *
 import config as cfg
 from src.subscription import Subscription
 
-ctk.set_default_color_theme("monero_theme.json")
+ctk.set_default_color_theme(path.abspath(path.join(path.dirname(__file__), "monero_theme.json")))
 
 # TODO: Get this from the config file first. If not present, use what is currently set below.
 
@@ -88,7 +88,7 @@ class App(ctk.CTk):
 
 #Need to make this work with Windows.
 #https://stackoverflow.com/questions/3425294/how-to-detect-the-os-default-language-in-python
-locale.setlocale(locale.LC_ALL, os.environ['LANG'])
+locale.setlocale(locale.LC_ALL, environ['LANG'])
 
 app = App()
 app.title("Monero Subscriptions Wallet")

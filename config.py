@@ -7,7 +7,7 @@ Using this for fiat currencies (other than the hard-coded ones): https://github.
 Exchange rates scraped from XE.com
 """
 
-import os
+from os import path, environ
 import platform
 
 import monerorequest
@@ -35,8 +35,9 @@ config_options = {
         'local_rpc_url': 'http://127.0.0.1:18088/json_rpc',
         'node_url': NODE_URL,
         'daemon_url': f'{NODE_URL}/json_rpc',
-        'wallet_dir': 'wallets',
-        'stagenet': False
+        'wallet_dir': path.abspath(path.join(path.dirname(__file__), './wallets')),
+        'stagenet': False,
+        'rpc_executable': path.abspath(path.join(path.dirname(__file__), './monero-rpc-wallet'))
     },
     'subscriptions': {
         'subscriptions': [],
@@ -72,7 +73,7 @@ class ConfigFile():
             self._config.write(conf)
 
     def exists(self):
-        return os.path.isfile(self._path)
+        return path.isfile(self._path)
 
     def set_defaults(self):
         for section, options in config_options.items():
@@ -131,14 +132,13 @@ def variable_value(section, option):
 
     # Get From Environment
     if value is None:
-        value = os.environ.get(option.upper())
+        value = environ.get(option.upper())
 
     # Get Default Value
     if value is None:
         value = config_options[section][option]
 
     return value
-
 
 # Set CLI Options as importable variables
 for section, options in config_options.items():
