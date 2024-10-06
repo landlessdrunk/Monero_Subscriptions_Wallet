@@ -37,7 +37,7 @@ config_options = {
         'daemon_url': f'{NODE_URL}/json_rpc',
         'wallet_dir': path.abspath(path.join(path.dirname(__file__), './wallets')),
         'stagenet': False,
-        'rpc_executable': path.abspath(path.join(path.dirname(__file__), './monero-rpc-wallet'))
+        'rpc_executable': path.abspath(path.join(path.dirname(__file__), './monero-wallet-rpc'))
     },
     'subscriptions': {
         'subscriptions': [],
