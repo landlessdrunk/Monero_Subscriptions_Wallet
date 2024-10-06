@@ -17,9 +17,9 @@ monero_url = 'https://downloads.getmonero.org/cli/linux64'
 filename = 'monero.tar.bz2'
 if get_platform() == 'Mac':
     monero_url = 'https://downloads.getmonero.org/cli/mac64'
-    filename = 'monero.zip'
 elif get_platform() == 'Windows':
     monero_url = 'https://downloads.getmonero.org/cli/win64'
+    filename = 'monero.zip'
 
 urllib.request.urlretrieve(monero_url, filename)
 
