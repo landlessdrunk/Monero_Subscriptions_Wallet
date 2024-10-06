@@ -21,6 +21,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: ${{github.ref}}-linux
           files:
             release.tar.gz
 
@@ -46,6 +47,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: ${{github.ref}}-windows
           files:
             release.tar.gz
 
@@ -67,5 +69,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: ${{github.ref}}-mac
           files:
             release.tar.gz
