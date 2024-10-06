@@ -21,6 +21,7 @@ pyinstaller = "*"
 ruff = "*"
 pywin32-ctypes = "*"
 pefile = "*"
+macholib = "*"
 
 [dev-packages]
 
