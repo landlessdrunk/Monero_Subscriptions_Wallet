@@ -41,17 +41,13 @@ if get_platform() == 'Mac' or get_platform() == 'Linux':
 if get_platform() == 'Windows':
     with zipfile.ZipFile(filename, 'r') as z:
         extract_name = None
-        folder_name = None
         for fn in z.namelist():
-            if '/' not in fn:
-                folder_name = fn
             if 'monero-wallet-rpc' in fn:
                 extract_name = fn
         z.extract(extract_name)
 
     os.rename(extract_name, 'monero-wallet-rpc')
     os.remove(filename)
-    os.rmdir(folder_name)
 
 a = Analysis(
     ['gui.py'],
