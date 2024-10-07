@@ -21,7 +21,10 @@ elif get_platform() == 'Windows':
     monero_url = 'https://downloads.getmonero.org/cli/win64'
     filename = 'monero.zip'
 
-urllib.request.urlretrieve(monero_url, filename)
+url_open = urllib.request.Request(monero_url, {}, {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'})
+with urllib.request.urlopen(url_open) as response:
+    with open(filename, 'wb') as fn:
+        fn.write(response.read())
 
 if get_platform() == 'Mac' or get_platform() == 'Linux':
     with tarfile.open(filename, 'r:bz2') as f:
