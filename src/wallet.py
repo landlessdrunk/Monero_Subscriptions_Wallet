@@ -51,8 +51,8 @@ class Wallet():
 
 
     def exists(self):
-        return path.isfile(f'{path.abspath(path.join(path.dirname(__file__), wallet_dir()))}/{self.name}.keys') or \
-               path.isfile(f'{path.abspath(path.join(path.dirname(__file__), wallet_dir()))}/{self.name}')
+        return path.isfile(f'{path.abspath(path.join(path.dirname(__file__), '../', wallet_dir()))}/{self.name}.keys') or \
+               path.isfile(f'{path.abspath(path.join(path.dirname(__file__), '../', wallet_dir()))}/{self.name}')
 
     def create(self):
         RPCClient.get().create_wallet(self.name)

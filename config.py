@@ -122,6 +122,15 @@ class ConfigFile():
         self.set('subscriptions', 'subscriptions', json.dumps(same_subs + updated_subs))
         return True
 
+    def export_subscriptions(self, filepath):
+        with open(filepath, 'w') as f:
+            f.write(json.dumps(json.loads(self.get('subscriptions', 'subscriptions')), indent=4))
+
+    def import_subscriptions(self, filepath):
+        with open(filepath, 'r') as f:
+            self.set('subscriptions', 'subscriptions', json.dumps(json.loads(f.read())))
+        self.write()
+
 config_file = ConfigFile('./config.ini')
 
 def variable_value(section, option):

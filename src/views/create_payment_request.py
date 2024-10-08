@@ -95,13 +95,13 @@ class CreatePaymentRequestView(View):
         # self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Calendar
-        # self.start_date_input = self.add(Calendar(content_frame))
-        # self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
+        self.start_date_input = self.add(Calendar(content_frame, background=styles.monero_orange, selectbackground='#4c4c4c'))
+        self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Click open calendar
-        self.start_date_input = self.add(DateEntry(content_frame, width=12, background='darkblue', foreground='white', borderwidth=2))
-        self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
-        self.start_date_input.bind("<Button-1>", on_date_click)
+        # self.start_date_input = self.add(DateEntry(content_frame, width=12, background='darkblue', foreground='white', borderwidth=2))
+        # self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
+        # self.start_date_input.bind("<Button-1>", on_date_click)
 
         # Sellers Wallet Section
         self.sellers_wallet_input = self.add(ctk.CTkEntry(content_frame, placeholder_text="Sellers Wallet", corner_radius=15, border_color=bc))  # font=(styles.font, 12),

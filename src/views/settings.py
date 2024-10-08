@@ -4,6 +4,7 @@ import styles
 from src.interfaces.view import View
 import config as cfg
 import src.views.set_currency as set_currency
+import tkinter
 
 class SettingsView(View):
     def __init__(self, app):
@@ -31,10 +32,10 @@ class SettingsView(View):
         set_currency_button = self.add(ctk.CTkButton(self._app, text="Set Currency", corner_radius=15, command=self.open_set_currency))
         set_currency_button.grid(row=2, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
 
-        import_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Import Subscriptions File", corner_radius=15, command=self.open_main))
+        import_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Import Subscriptions File", corner_radius=15, command=self.load_file_dialog))
         import_subscriptions_file.grid(row=3, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
 
-        export_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Export Subscriptions File", corner_radius=15, command=self.open_main))
+        export_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Export Subscriptions File", corner_radius=15, command=self.open_file_dialog))
         export_subscriptions_file.grid(row=4, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
 
         # wallet too
@@ -55,6 +56,14 @@ class SettingsView(View):
 
     def open_set_currency(self):
         self._app.switch_view('set_currency')
+
+    def open_file_dialog(self):
+        filepath = tkinter.filedialog.asksaveasfilename(initialfile='subscriptions.json', defaultextension='json')
+        cfg.config_file.export_subscriptions(filepath)
+
+    def load_file_dialog(self):
+        filepath = tkinter.filedialog.askopenfilename(filetypes=[('json', '*.json')])
+        cfg.config_file.import_subscriptions(filepath)
 
         #''' # Code for pop-up window
         # if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
