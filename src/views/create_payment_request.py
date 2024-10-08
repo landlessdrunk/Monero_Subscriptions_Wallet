@@ -95,7 +95,7 @@ class CreatePaymentRequestView(View):
         # self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Calendar
-        self.start_date_input = self.add(Calendar(content_frame, background=styles.monero_orange, selectbackground='#4c4c4c'))
+        self.start_date_input = self.add(Calendar(content_frame, background=styles.monero_orange, selectbackground='#4c4c4c', date_pattern='mm/dd/yyyy'))
         self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Click open calendar
@@ -152,10 +152,11 @@ class CreatePaymentRequestView(View):
         print(payment_id, type(payment_id))
 
         # TODO: FIX THIS TO USE THE TIME ENTERED AND SHOW DEFAULT TIME AS PLACEHOLDER
-        start_date = self.start_date_input.get_date().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
+        start_date = datetime.strptime(self.start_date_input.get_date(), '%m/%d/%Y')
+        # self.start_date_input.get_date().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
         print(start_date, type(start_date))
 
-        schedule = self.schedule_mapping(self.schedule.get().strip(), self.start_date_input.get_date())
+        schedule = self.schedule_mapping(self.schedule.get().strip(), start_date)
         print(schedule, type(schedule))
 
         number_of_payments = int(re.sub(r'\D', '', self.number_of_payments_input.get().strip())) if re.sub(r'\D', '', self.number_of_payments_input.get().strip()) else 0
@@ -173,7 +174,7 @@ class CreatePaymentRequestView(View):
             currency=currency,
             amount=amount,
             payment_id=payment_id,
-            start_date=start_date,
+            start_date=start_date.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',
             schedule=schedule,
             number_of_payments=number_of_payments,
             change_indicator_url=change_indicator_url,
