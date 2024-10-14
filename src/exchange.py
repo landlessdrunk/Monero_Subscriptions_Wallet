@@ -37,19 +37,19 @@ class Exchange():
 
     US_EXCHANGE = 0
     XMR_TOTAL = 0
-    USD_AMOUNT = 0
+    XMR_UNLOCKED = 0
     LAST_REFRESHED = None
 
     @classmethod
-    def convert(cls, to_sym):
+    def convert(cls, to_sym, amount):
         if to_sym != 'XMR':
             if to_sym == 'XGB':
                 sym_value = goldback_scrape()
             else:
                 sym_value = xe_scrape(to_sym)
-            converted = Decimal(cls.USD_AMOUNT) * Decimal(sym_value)
+            converted = Decimal(cls.convert_usd(amount)) * Decimal(sym_value)
         else:
-            converted = Decimal(cls.XMR_TOTAL)
+            converted = Decimal(amount)
         return str(cls._round(converted, to_sym))
 
     @classmethod
@@ -79,7 +79,7 @@ class Exchange():
     @classmethod
     def display(cls, to_sym):
         symbol = cls.SYMBOLS.get(to_sym, '')
-        return f'{symbol}{cls.convert(to_sym)} {to_sym.upper()}'
+        return f'{symbol}{cls.convert(to_sym, cls.XMR_UNLOCKED)} ({cls.convert(to_sym, cls.XMR_TOTAL)}) {to_sym.upper()}'
 
     @classmethod
     def options(cls):
@@ -93,10 +93,13 @@ class Exchange():
         return cls._options
 
     @classmethod
+    def convert_usd(cls, xmr_amount):
+        return round(cls.US_EXCHANGE * xmr_amount, 2)
+
+    @classmethod
     def refresh_prices(cls):
         if not cls.LAST_REFRESHED or cls.LAST_REFRESHED <= (datetime.now() - timedelta(seconds=5*60)):
             cls.US_EXCHANGE = median_price()
             cls.XMR_TOTAL = calculate_monero_from_atomic_units(RPCClient.get().get_balance())
             cls.XMR_UNLOCKED = calculate_monero_from_atomic_units(RPCClient.get().get_balance('unlocked_balance'))
-            cls.USD_AMOUNT = round(cls.US_EXCHANGE * cls.XMR_TOTAL, 2)
             cls.LAST_REFRESHED = datetime.now()

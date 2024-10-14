@@ -90,10 +90,6 @@ class CreatePaymentRequestView(View):
         starting_on = self.add(ctk.CTkLabel(content_frame, text="starting on", font=styles.BODY_FONT_SIZE))
         starting_on.grid(row=2, column=7, columnspan=1, padx=(x / 2), pady=y, sticky="ew")
 
-        # input field
-        # self.start_date_input = self.add(ctk.CTkEntry(content_frame, placeholder_text="mm/dd/yyyy", corner_radius=15, border_color=bc))
-        # self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
-
         # Calendar
         self.start_date_input = self.add(Calendar(content_frame, background=styles.monero_orange, selectbackground='#4c4c4c', date_pattern='mm/dd/yyyy'))
         self.start_date_input.grid(row=2, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
@@ -137,36 +133,22 @@ class CreatePaymentRequestView(View):
     def create_button(self):
         # Pull in all info and process
         custom_label = self.custom_label_input.get().strip()
-        print(custom_label, type(custom_label))
-
         sellers_wallet = self.sellers_wallet_input.get().strip()
-        print(sellers_wallet, type(sellers_wallet))
-
         currency = self.currency_input.get().strip()
-        print(currency, type(currency))
-
         amount = self.amount_input.get().strip()
-        print(amount, type(amount))
-
         payment_id = monerorequest.make_random_payment_id()
-        print(payment_id, type(payment_id))
 
         # TODO: FIX THIS TO USE THE TIME ENTERED AND SHOW DEFAULT TIME AS PLACEHOLDER
         start_date = datetime.strptime(self.start_date_input.get_date(), '%m/%d/%Y')
         # self.start_date_input.get_date().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
-        print(start_date, type(start_date))
 
         schedule = self.schedule_mapping(self.schedule.get().strip(), start_date)
-        print(schedule, type(schedule))
 
         number_of_payments = int(re.sub(r'\D', '', self.number_of_payments_input.get().strip())) if re.sub(r'\D', '', self.number_of_payments_input.get().strip()) else 0
-        print(number_of_payments, type(number_of_payments))
 
         change_indicator_url = ''
-        print(change_indicator_url, type(change_indicator_url))
 
         version = '2'
-        print(version, type(version))
 
         payment_request = monerorequest.make_monero_payment_request(
             custom_label=custom_label,
@@ -183,7 +165,6 @@ class CreatePaymentRequestView(View):
         )
 
         clipboard.copy(payment_request)
-        print(payment_request)
         self._app.switch_view('copy_payment_request')
 
     def schedule_mapping(self, user_schedule, start_date):

@@ -9,7 +9,7 @@ class BalanceObserver(Observer):
 
     def update(self, subject):
         if cfg.SHOW_DEFAULT_CURRENCY:
-            balance = Exchange.display(to_sym=default_currency())
+            balance_text = Exchange.display(to_sym=default_currency())
         else:
-            balance = Exchange.display(to_sym=secondary_currency())
-        self.label.configure(text=balance)
+            balance_text = Exchange.display(to_sym=secondary_currency())
+        self.label.configure(text=balance_text)

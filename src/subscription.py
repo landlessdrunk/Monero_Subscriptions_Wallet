@@ -108,7 +108,7 @@ class Subscription:
             else:
                 self.logger.info('Sending Funds Disabled')
         else:
-            self.logger.error('Insuffient Funds Balance: %s', Exchange.XMR_TOTAL)
+            self.logger.error('Insuffient Funds Balance: %s', Exchange.XMR_UNLOCKED)
 
         self.queue()
         return result
@@ -118,7 +118,7 @@ class Subscription:
             Exchange.refresh_prices()
             xmr_to_send = Exchange.to_atomic_units(self.currency, float(self.amount))
             self.logger.info('Able to send funds %s XMR', xmr_to_send)
-            return Exchange.to_atomic_units('XMR', Exchange.XMR_TOTAL) > xmr_to_send
+            return Exchange.to_atomic_units('XMR', Exchange.XMR_UNLOCKED) > xmr_to_send
         else:
             return False
 

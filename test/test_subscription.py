@@ -60,8 +60,14 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(subscription.change_indicator_url, sub_copy.change_indicator_url)
 
     def test_make_payment(self):
-        with vcr.use_cassette('test/fixtures/cassettes/make_payment.yaml'):
+        payment_vcr = vcr.VCR(
+            serializer='json',
+            record_mode='once',
+            match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'body'],
+        )
+        with payment_vcr.use_cassette('test/fixtures/cassettes/make_payment.yaml'):
             with patch('src.subscription.send_payments', return_value=True):
+                Exchange.XMR_UNLOCKED = 1000
                 subscription = SubscriptionFactory(payment_id='c2c9f284c33a4903', sellers_wallet='59fhPNhFLEx3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEKpAMFKC')
                 nop = subscription.number_of_payments
                 self.assertEqual(subscription.make_payment(), True)
@@ -70,7 +76,7 @@ class TestSubscription(unittest.TestCase):
     def test_payable(self):
         with vcr.use_cassette('test/fixtures/cassettes/payable.yaml'):
             with patch('src.exchange.Exchange.refresh_prices', return_value=True):
-                Exchange.XMR_TOTAL = 1000
+                Exchange.XMR_UNLOCKED = 1000
                 subscription = SubscriptionFactory(number_of_payments=1)
                 self.assertEqual(subscription.payable(), True)
                 invalid_subscription = SubscriptionFactory(number_of_payments=-1)
