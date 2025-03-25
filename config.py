@@ -10,15 +10,7 @@ Exchange rates scraped from XE.com
 from os import path, environ
 import platform
 
-import monerorequest
-import requests
-from io import StringIO
-import csv
-import monero_usd_price
-from lxml import html
-from decimal import Decimal, ROUND_HALF_UP
 from configparser import ConfigParser
-import re
 import json
 
 SHOULD_CENTER_WINDOW = True

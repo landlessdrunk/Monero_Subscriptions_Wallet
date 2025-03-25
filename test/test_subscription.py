@@ -6,7 +6,6 @@ from datetime import datetime
 from src.subscription import Subscription
 from src.exchange import Exchange
 from test.factories.subscription import SubscriptionFactory
-from test.utils.rpc_server_helper import rpc_server_test
 class TestSubscription(unittest.TestCase):
     @time_machine.travel('2024-05-16 12:00:00')
     def test_relative_payment_time(self):
@@ -43,6 +42,7 @@ class TestSubscription(unittest.TestCase):
                 number_of_payments=10,
                 change_indicator_url=''
             )
+            self.maxDiff = None
             self.assertEqual(subscription.encode(), 'monero-request:2:H4sIAAAAAAACAy1OXU+DQBD8K+Qem9bcUaDCG61gotHEtmrty+XglkKEu+Y+VDD9796ZJpvszsxOZn4RG6QVBmWIYDRHdcvECWgneFczIxW1qneaV6xSIOrRodfd3T+hjRxozyrwLwa0uYI5EnaoQFHZ0DMbBxBGo4zgOboi2nHnYFXNoSHhMoqT1W3q43XdArc9OBUHOCDBLJh5GvoelKbfzG3fNcrN8hCrr7fxvJfNabDwnOr0xaiJbyFeWyiV/syPHVmt5UfVTqOW0ySfynUyvYv9I7/fJPlPkVdFEddTuV227nqo9BC1GziEOx9pmDKUM+O7hDiMFjheELwnYYaxmxuM8RFd/gDIow3zQAEAAA==')
 
     def test_decode(self):

@@ -1,12 +1,7 @@
 import customtkinter as ctk
-import monero_usd_price
 from src.interfaces.view import View
-from src.subscription import Subscription
 import config as cfg
 import styles
-import clipboard
-import monerorequest
-from datetime import datetime
 
 
 class ReviewDeleteRequestView(View):

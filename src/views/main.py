@@ -4,7 +4,7 @@ from src.rpc_server import RPCServer
 from src.clients.rpc import RPCClient
 from src.observers.status_label_observer import StatusLabelObserver
 from src.observers.balance_observer import BalanceObserver
-from config import default_currency, secondary_currency, rpc
+from config import default_currency, secondary_currency
 import config as cfg
 import styles
 from src.wallet import Wallet

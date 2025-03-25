@@ -3,14 +3,14 @@ from src.interfaces.view import View
 from src.subscription import Subscription
 import config as cfg
 import styles
-import monerorequest
+from monerorequest import decode_monero_payment_request
 from datetime import datetime
 
 
 class ReviewRequestView(View):
     def build(self):
         # TODO: wrap this whole thing in a try?
-        decoded_request = monerorequest.decode_monero_payment_request(self._app.views['pay'].payment_input.get())
+        decoded_request = decode_monero_payment_request(self._app.views['pay'].payment_input.get())
 
         if decoded_request["number_of_payments"] == 0:
             payment_count = f'every {decoded_request["schedule"]} days until canceled'

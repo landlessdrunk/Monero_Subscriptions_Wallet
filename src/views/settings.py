@@ -3,7 +3,6 @@ import customtkinter as ctk
 import styles
 from src.interfaces.view import View
 import config as cfg
-import src.views.set_currency as set_currency
 import tkinter
 
 class SettingsView(View):

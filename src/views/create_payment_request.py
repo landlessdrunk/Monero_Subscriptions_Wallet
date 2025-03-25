@@ -1,16 +1,14 @@
 import customtkinter as ctk
-import tkinter
-from tkcalendar import Calendar, DateEntry  # TODO: only some of this is used for calendar view
+from tkcalendar import Calendar  # TODO: only some of this is used for calendar view
 
-from datetime import datetime, timezone
+from datetime import datetime
 from src.exchange import Exchange
 from src.interfaces.view import View
 from config import default_currency, stagenet
 import config as cfg
 import styles
 import clipboard
-import monerorequest
-from src.wallet import Wallet
+from monerorequest import make_random_payment_id, make_monero_payment_request
 import re
 
 
@@ -136,7 +134,7 @@ class CreatePaymentRequestView(View):
         sellers_wallet = self.sellers_wallet_input.get().strip()
         currency = self.currency_input.get().strip()
         amount = self.amount_input.get().strip()
-        payment_id = monerorequest.make_random_payment_id()
+        payment_id = make_random_payment_id()
 
         # TODO: FIX THIS TO USE THE TIME ENTERED AND SHOW DEFAULT TIME AS PLACEHOLDER
         start_date = datetime.strptime(self.start_date_input.get_date(), '%m/%d/%Y')
@@ -150,7 +148,7 @@ class CreatePaymentRequestView(View):
 
         version = '2'
 
-        payment_request = monerorequest.make_monero_payment_request(
+        payment_request = make_monero_payment_request(
             custom_label=custom_label,
             sellers_wallet=sellers_wallet,
             currency=currency,

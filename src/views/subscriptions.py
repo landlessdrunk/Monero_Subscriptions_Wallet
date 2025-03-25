@@ -3,7 +3,6 @@ from src.interfaces.view import View
 import config as cfg
 import styles
 import json
-from datetime import datetime, timedelta
 from PIL import Image
 from src.subscription import Subscription
 

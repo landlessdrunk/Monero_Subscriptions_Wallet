@@ -1,12 +1,8 @@
 import customtkinter as ctk
-import monero_usd_price
 from src.interfaces.view import View
-from src.subscription import Subscription
 import config as cfg
 import styles
-import clipboard
-import monerorequest
-from datetime import datetime
+from monerorequest import Check
 
 
 def clear_temp_payment_info():
@@ -20,7 +16,7 @@ class ReviewSendView(View):
     def build(self):
         # TODO: wrap this whole thing in a try?
         wallet = cfg.SEND_TO_WALLET
-        wallet_is_valid = monerorequest.Check.wallet(wallet_address=wallet, allow_standard=True, allow_integrated_address=True, allow_subaddress=True)
+        wallet_is_valid = Check.wallet(wallet_address=wallet, allow_standard=True, allow_integrated_address=True, allow_subaddress=True)
         amount_is_valid = True
         currency_is_valid = True
 

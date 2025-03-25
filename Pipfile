@@ -15,13 +15,13 @@ pillow = "*"
 factory_boy = "*"
 time-machine = "*"
 vcrpy = "*"
-monerorequest = "*"
 crontab = "*"
 pyinstaller = "*"
 ruff = "*"
 pywin32-ctypes = "*"
 pefile = "*"
 macholib = "*"
+monerorequest = "*"
 
 [dev-packages]
 

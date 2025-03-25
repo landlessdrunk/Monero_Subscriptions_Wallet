@@ -1,14 +1,10 @@
 import customtkinter as ctk
-import tkinter
 
-from src.exchange import Exchange
 from src.interfaces.view import View
-from config import default_currency
 import config as cfg
 import styles
 import clipboard
-import monerorequest
-from src.wallet import Wallet
+from monerorequest import decode_monero_payment_request
 
 
 def insert_newlines(input_string, characters_per_line):
@@ -21,8 +17,8 @@ def insert_newlines(input_string, characters_per_line):
 class CopyPaymentRequestView(View):
     def build(self):
         self.payment_request = clipboard.paste()
-        print(monerorequest.decode_monero_payment_request(self.payment_request))
-        self.payment_request_payment_id = monerorequest.decode_monero_payment_request(self.payment_request)["payment_id"]
+        print(decode_monero_payment_request(self.payment_request))
+        self.payment_request_payment_id = decode_monero_payment_request(self.payment_request)["payment_id"]
 
         self._app.geometry(styles.COPY_PAYMENT_REQUEST_VIEW_GEOMETRY)
 

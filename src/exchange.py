@@ -5,7 +5,6 @@ from src.clients.goldback import scrape as goldback_scrape
 from src.clients.xe import scrape as xe_scrape
 from src.clients.rpc import RPCClient
 from monero_usd_price import median_price, calculate_atomic_units_from_monero, calculate_monero_from_atomic_units
-from config import rpc
 
 class Exchange():
     _options = None

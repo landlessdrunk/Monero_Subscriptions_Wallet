@@ -4,7 +4,7 @@ import util
 from src.exchange import Exchange
 from src.interfaces.view import View
 import config as cfg
-from config import default_currency, secondary_currency
+from config import default_currency
 from decimal import Decimal
 
 

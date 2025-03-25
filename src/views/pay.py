@@ -5,7 +5,7 @@ from config import stagenet
 import config as cfg
 import styles
 import clipboard
-import monerorequest
+from monerorequest import Check, Decode
 from src.wallet import Wallet
 
 def input_is_valid(input_string):
@@ -17,32 +17,31 @@ def input_is_valid(input_string):
 
 
 def input_is_valid_monero_wallet(input_string):
-    return monerorequest.Check.wallet(wallet_address=input_string, allow_standard=True, allow_integrated_address=True, allow_subaddress=True, allow_stagenet=stagenet())
+    return Check.wallet(wallet_address=input_string, allow_standard=True, allow_integrated_address=True, allow_subaddress=True, allow_stagenet=stagenet())
 
 
 def input_is_valid_monero_request(input_string):
     if 'monero-request:' in input_string:
         # Decode it
-        decoded_request = monerorequest.Decode.monero_payment_request_from_code(monero_payment_request=input_string)
+        decoded_request = Decode.monero_payment_request_from_code(monero_payment_request=input_string)
 
         print(decoded_request)
-
         # Validate fields
-        if not monerorequest.Check.name(decoded_request["custom_label"]):
+        if not Check.name(decoded_request["custom_label"]):
             return False
-        if not monerorequest.Check.wallet(decoded_request["sellers_wallet"], allow_standard=True, allow_integrated_address=True, allow_subaddress=True, allow_stagenet=stagenet()):
+        if not Check.wallet(decoded_request["sellers_wallet"], allow_standard=True, allow_integrated_address=True, allow_subaddress=True, allow_stagenet=stagenet()):
             return False
-        if not monerorequest.Check.amount(decoded_request["amount"]):
+        if not Check.amount(decoded_request["amount"]):
             return False
-        if not monerorequest.Check.payment_id(decoded_request["payment_id"]):
+        if not Check.payment_id(decoded_request["payment_id"]):
             return False
-        if not monerorequest.Check.start_date(decoded_request["start_date"]):
+        if not Check.start_date(decoded_request["start_date"]):
             return False
-        if not monerorequest.Check.schedule(decoded_request["schedule"]):
+        if not Check.schedule(decoded_request["schedule"]):
             return False
-        if not monerorequest.Check.number_of_payments(decoded_request["number_of_payments"]):
+        if not Check.number_of_payments(decoded_request["number_of_payments"]):
             return False
-        if not monerorequest.Check.change_indicator_url(decoded_request["change_indicator_url"]):
+        if not Check.change_indicator_url(decoded_request["change_indicator_url"]):
             return False
 
         return True

@@ -6,7 +6,7 @@ import time
 import logging
 import logging.config
 from datetime import datetime, timedelta
-import monerorequest
+from monerorequest import Decode, Check, make_random_payment_id, convert_datetime_object_to_truncated_RFC3339_timestamp_format, make_monero_payment_request
 from sched import scheduler
 from crontab import CronTab
 from src.clients.rpc import RPCClient
@@ -18,19 +18,19 @@ class Subscription:
     schedul = scheduler(timefunc=time.time)
 
     def __init__(self, custom_label, sellers_wallet, currency, amount,  payment_id, start_date, schedule, number_of_payments, change_indicator_url=''):
-        self.custom_label = custom_label if monerorequest.Check.name(custom_label) else ''
-        self.sellers_wallet = sellers_wallet if monerorequest.Check.wallet(wallet_address=sellers_wallet, allow_standard=True, allow_integrated_address=True, allow_subaddress=False, allow_stagenet=stagenet()) else ''
-        self.currency = currency if monerorequest.Check.currency(currency) else ''
-        self.amount = amount if monerorequest.Check.amount(amount) else ''
-        self.payment_id = payment_id if monerorequest.Check.payment_id(payment_id) else monerorequest.make_random_payment_id()
-        if monerorequest.Check.start_date(start_date):
+        self.custom_label = custom_label if Check.name(custom_label) else ''
+        self.sellers_wallet = sellers_wallet if Check.wallet(wallet_address=sellers_wallet, allow_standard=True, allow_integrated_address=True, allow_subaddress=False, allow_stagenet=stagenet()) else ''
+        self.currency = currency if Check.currency(currency) else ''
+        self.amount = amount if Check.amount(amount) else ''
+        self.payment_id = payment_id if Check.payment_id(payment_id) else make_random_payment_id()
+        if Check.start_date(start_date):
             start_date = datetime.strptime(start_date, '%Y-%m-%dT%H:%M:%S.%fZ')
         else:
             start_date = datetime.now()
         self.start_date = start_date
-        self.schedule = schedule if monerorequest.Check.schedule(schedule) else '0 0 1 * *'
-        self.number_of_payments = number_of_payments if monerorequest.Check.number_of_payments(number_of_payments) else 1
-        self.change_indicator_url = change_indicator_url if monerorequest.Check.change_indicator_url(change_indicator_url) else ''
+        self.schedule = schedule if Check.schedule(schedule) else '0 0 1 * *'
+        self.number_of_payments = number_of_payments if Check.number_of_payments(number_of_payments) else 1
+        self.change_indicator_url = change_indicator_url if Check.change_indicator_url(change_indicator_url) else ''
         logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(self.__module__)
 
@@ -41,7 +41,7 @@ class Subscription:
             "currency": self.currency,
             "amount": self.amount,
             "payment_id": self.payment_id,
-            "start_date":  monerorequest.convert_datetime_object_to_truncated_RFC3339_timestamp_format(self.start_date),
+            "start_date":  convert_datetime_object_to_truncated_RFC3339_timestamp_format(self.start_date),
             "schedule": self.schedule,
             "number_of_payments": self.number_of_payments,
             "change_indicator_url": self.change_indicator_url
@@ -52,12 +52,12 @@ class Subscription:
         return attributes
 
     def encode(self):
-        monero_request = monerorequest.make_monero_payment_request(custom_label=self.custom_label,
+        monero_request = make_monero_payment_request(custom_label=self.custom_label,
                                 sellers_wallet=self.sellers_wallet,
                                 currency=self.currency,
                                 amount=self.amount,
                                 payment_id=self.payment_id,
-                                start_date=monerorequest.convert_datetime_object_to_truncated_RFC3339_timestamp_format(self.start_date),
+                                start_date=convert_datetime_object_to_truncated_RFC3339_timestamp_format(self.start_date),
                                 schedule=self.schedule,
                                 number_of_payments=self.number_of_payments,
                                 change_indicator_url=self.change_indicator_url,
@@ -82,8 +82,8 @@ class Subscription:
 
     @classmethod
     def decode(cls, code):
-        subscription_data_as_json = monerorequest.Decode.monero_payment_request_from_code(monero_payment_request=code)
-
+        subscription_data_as_json = Decode.monero_payment_request_from_code(monero_payment_request=code)
+        subscription_data_as_json.pop('version', None)
         return subscription_data_as_json
 
     def make_payment(self):

@@ -3,7 +3,6 @@ import customtkinter as ctk
 from src.interfaces.view import View
 import config as cfg
 import styles
-from datetime import datetime
 from src.logging import config as logging_config
 from src.clients.rpc import RPCClient
 from src.transaction import Transaction
