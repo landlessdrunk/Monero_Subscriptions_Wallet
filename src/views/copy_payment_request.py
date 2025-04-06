@@ -17,8 +17,13 @@ def insert_newlines(input_string, characters_per_line):
 class CopyPaymentRequestView(View):
     def build(self):
         self.payment_request = clipboard.paste()
-        print(decode_monero_payment_request(self.payment_request))
-        self.payment_request_payment_id = decode_monero_payment_request(self.payment_request)["payment_id"]
+        request = decode_monero_payment_request(self.payment_request)
+        print(request)
+
+        if not request:
+            return self
+
+        self.payment_request_payment_id = request["payment_id"]
 
         self._app.geometry(styles.COPY_PAYMENT_REQUEST_VIEW_GEOMETRY)
 

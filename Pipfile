@@ -21,7 +21,8 @@ ruff = "*"
 pywin32-ctypes = "*"
 pefile = "*"
 macholib = "*"
-monerorequest = "*"
+cron-descriptor = "*"
+monerorequest = {file = "../monerorequest/dist/monerorequest-2.0.2-py3-none-any.whl"}
 
 [dev-packages]
 

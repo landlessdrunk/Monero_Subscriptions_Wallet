@@ -5,19 +5,12 @@ import config as cfg
 import styles
 from monerorequest import decode_monero_payment_request
 from datetime import datetime
-
+from cron_descriptor import get_description
 
 class ReviewRequestView(View):
     def build(self):
         # TODO: wrap this whole thing in a try?
         decoded_request = decode_monero_payment_request(self._app.views['pay'].payment_input.get())
-
-        if decoded_request["number_of_payments"] == 0:
-            payment_count = f'every {decoded_request["schedule"]} days until canceled'
-        elif decoded_request["number_of_payments"] == 1:
-            payment_count = 'one-time'
-        else:
-            payment_count = f'every {decoded_request["schedule"]} days until {decoded_request["number_of_payments"]} payments have been made'
 
         self._app.geometry(styles.REVIEW_REQUEST_PROMPT_VIEW_GEOMETRY)
 
@@ -30,7 +23,7 @@ class ReviewRequestView(View):
 
         # TODO: show conversion to default currency in ()
         worth_of_xmr_text = ' worth of XMR' if decoded_request["currency"].upper() != 'XMR' else ''
-        amount_label = self.add(ctk.CTkLabel(self._app, text=f'{decoded_request["amount"]} {decoded_request["currency"]}{worth_of_xmr_text} billed {payment_count}', font=styles.BODY_FONT_SIZE))
+        amount_label = self.add(ctk.CTkLabel(self._app, text=f'{decoded_request["amount"]} {decoded_request["currency"]}{worth_of_xmr_text} billed {get_description(decoded_request["schedule"]).lower()}', font=styles.BODY_FONT_SIZE))
         amount_label.grid(row=2, column=0, columnspan=3, padx=10, pady=0, sticky="ew")
 
         # Start Date  decoded_request["start_date"]
