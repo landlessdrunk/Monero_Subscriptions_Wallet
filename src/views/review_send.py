@@ -60,6 +60,9 @@ class ReviewSendView(View):
 
         return self
 
+    def activate(self):
+        return self
+
     def cancel_button(self):
         clear_temp_payment_info()
         self.open_main()

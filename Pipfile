@@ -22,6 +22,7 @@ pywin32-ctypes = "*"
 pefile = "*"
 macholib = "*"
 cron-descriptor = "*"
+pystray = "*"
 monerorequest = {file = "../monerorequest/dist/monerorequest-2.0.2-py3-none-any.whl"}
 
 [dev-packages]

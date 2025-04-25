@@ -17,3 +17,15 @@ class View(ABC):
     @abstractmethod
     def build(self):
         pass
+
+    @abstractmethod
+    def activate(self):
+        pass
+
+    def deactivate(self):
+        for element in self._elements:
+            element.grid_remove()
+
+    def reactivate(self):
+        for element in self._elements:
+            element.grid()

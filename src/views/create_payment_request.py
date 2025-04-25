@@ -42,7 +42,7 @@ class CreatePaymentRequestView(View):
 
         self.heading_frame = self.add(ctk.CTkFrame(self._app))
         self.heading_frame.columnconfigure([0, 1, 2], weight=1)
-        self.heading_frame.pack(fill='x', padx=0, pady=0)
+        # self.heading_frame.pack(fill='x', padx=0, pady=0)
 
         # Back Button
         back_image = ctk.CTkImage(styles.Image.open(styles.back_icon), size=(24, 24))
@@ -60,7 +60,7 @@ class CreatePaymentRequestView(View):
 
 
         self.content_frame = self.add(ctk.CTkFrame(self._app))
-        self.content_frame.pack(fill='both', expand=True, padx=0, pady=0)
+        # self.content_frame.pack(fill='both', expand=True, padx=0, pady=0)
         # Configure the grid layout to have 100 columns with equal size
         for i in range(10):
             self.content_frame.grid_columnconfigure(i, weight=1)
@@ -127,6 +127,9 @@ class CreatePaymentRequestView(View):
         create_button.grid(row=7, column=0, columnspan=10, padx=120, pady=10, sticky="ew")
 
         self._app.update_idletasks()
+        return self
+
+    def activate(self):
         return self
 
     def billing_frequency_callback(self, choice):

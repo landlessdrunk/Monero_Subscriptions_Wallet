@@ -15,6 +15,8 @@ from config import rpc, is_first_launch
 from src.views import *
 import config as cfg
 from src.subscription import Subscription
+import pystray
+from PIL import Image, ImageDraw
 
 ctk.set_default_color_theme(path.abspath(path.join(path.dirname(__file__), "monero_theme.json")))
 
@@ -23,6 +25,7 @@ ctk.set_default_color_theme(path.abspath(path.join(path.dirname(__file__), "mone
 class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.current_view = None
         logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(self.__module__)
         self.define_all_views()
@@ -49,12 +52,15 @@ class App(ctk.CTk):
             'copy_payment_request': CopyPaymentRequestView(self),
             'history': HistoryView(self)
         }
+        for view in self.views.values():
+            view.build()
+            view.deactivate()
 
     def spawn_appropriate_initial_window(self):
         if is_first_launch() == 'True':
-            self.current_view = self.views['welcome'].build()
+            self.switch_view('welcome')
         else:
-            self.current_view = self.views['main'].build()
+            self.switch_view('main')
 
     def start_rpc_server_if_appropriate(self):
         if rpc() == 'True':
@@ -63,9 +69,11 @@ class App(ctk.CTk):
             self.rpc_server.check_readiness()
 
     def switch_view(self, view_name: str):
-        self.current_view.destroy()
+        if self.current_view:
+            self.current_view.deactivate()
+        self.views[view_name].reactivate()
+        self.views[view_name].activate()
         self.current_view = self.views[view_name]
-        self.current_view.build()
 
     def schedule_payments(self):
         raw_subs = json.loads(cfg.subscriptions())
@@ -83,8 +91,37 @@ class App(ctk.CTk):
 
     def shutdown_steps(self):
         self.destroy()
+        # self.icon.stop()
         if rpc() == 'True':
             self.rpc_server.kill()
+
+    def tray_icon(self):
+        # img = Image.open('assets/icon_black.png')
+        # sized_img = img.resize(size=[64,64])
+        """
+        Looking through the [_draw](https://github.com/moses-palmer/pystray/blob/master/lib/pystray/_xorg.py#L354)
+        function the `dim.width` and `dim.height` values I'm getting are just 1, and 1.
+        This makes some amount of sense since I suppose there isn't anything in `self._window` yet,
+        but what confuses me is that [_assert_icon_data](https://github.com/moses-palmer/pystray/blob/master/lib/pystray/_xorg.py#L366)
+        function then uses these dimensions to resize the `_icon` and [paste](https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image.paste)
+        it into the `_icon_data` `PIL.Image` that was created. All that said, trying to change these dimensions doesn't help.
+        """
+        sized_img = Image.open('assets/app.ico')
+        self.icon = pystray.Icon('Monero Subscriptions Wallet', icon=self.create_image(64,64,'black','white'))
+        self.icon.run_detached()
+
+    def create_image(self, width, height, color1, color2):
+        # Generate an image and draw a pattern
+        image = Image.new('RGB', (width, height), color1)
+        dc = ImageDraw.Draw(image)
+        dc.rectangle(
+            (width // 2, 0, width, height // 2),
+            fill=color2)
+        dc.rectangle(
+            (0, height // 2, width // 2, height),
+            fill=color2)
+
+        return image
 
 #Need to make this work with Windows.
 #https://stackoverflow.com/questions/3425294/how-to-detect-the-os-default-language-in-python
@@ -95,4 +132,5 @@ app.title("Monero Subscriptions Wallet")
 app.iconphoto(True, PhotoImage(file=styles.icon))
 app.protocol("WM_DELETE_WINDOW", app.shutdown_steps)
 app.resizable(False, False)  # Make the window non-resizable
+# app.tray_icon()
 app.mainloop()

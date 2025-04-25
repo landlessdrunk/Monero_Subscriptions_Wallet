@@ -16,15 +16,6 @@ def insert_newlines(input_string, characters_per_line):
 
 class CopyPaymentRequestView(View):
     def build(self):
-        self.payment_request = clipboard.paste()
-        request = decode_monero_payment_request(self.payment_request)
-        print(request)
-
-        if not request:
-            return self
-
-        self.payment_request_payment_id = request["payment_id"]
-
         self._app.geometry(styles.COPY_PAYMENT_REQUEST_VIEW_GEOMETRY)
 
         # Back button and title
@@ -38,9 +29,6 @@ class CopyPaymentRequestView(View):
 
         second_text = self.add(ctk.CTkLabel(self._app, text="buyer if you want to know who to credit with a purchase.", font=styles.BODY_FONT_SIZE))
         second_text.grid(row=2, column=0, columnspan=3, padx=10, pady=0, sticky='ew')
-
-        third_text = self.add(ctk.CTkLabel(self._app, text=f"Only you can see the payment ID: {self.payment_request_payment_id}", font=styles.BODY_FONT_SIZE))
-        third_text.grid(row=3, column=0, columnspan=3, padx=10, pady=0, sticky='ew')
 
         # Frame to hold buttons
         center_frame = self.add(ctk.CTkFrame(self._app, ))
@@ -57,6 +45,13 @@ class CopyPaymentRequestView(View):
         next_button = self.add(ctk.CTkButton(self._app, text="Finished", corner_radius=15, command=self.open_main))
         next_button.grid(row=5, column=0, columnspan=3, padx=120, pady=(10, 15), sticky="ew")
 
+        return self
+
+    def activate(self):
+        self.payment_request = decode_monero_payment_request(clipboard.paste())
+        self.payment_request_payment_id = self.payment_request["payment_id"]
+        self.third_text = self.add(ctk.CTkLabel(self._app, text=f"Only you can see the payment ID: {self.payment_request_payment_id}", font=styles.BODY_FONT_SIZE))
+        self.third_text.grid(row=3, column=0, columnspan=3, padx=10, pady=0, sticky='ew')
         return self
 
     def open_main(self):

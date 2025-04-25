@@ -38,6 +38,9 @@ class HistoryView(View):
 
         return self
 
+    def activate(self):
+        return self
+
     def open_main(self):
         self._app.switch_view('main')
 

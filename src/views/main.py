@@ -75,6 +75,9 @@ class MainView(View):
 
         return self
 
+    def activate(self):
+        return self
+
     def make_appropriate_geometry(self):
         if cfg.SHOULD_CENTER_WINDOW:
             cfg.SHOULD_CENTER_WINDOW = False

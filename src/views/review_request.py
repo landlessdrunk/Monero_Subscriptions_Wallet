@@ -10,7 +10,7 @@ from cron_descriptor import get_description
 class ReviewRequestView(View):
     def build(self):
         # TODO: wrap this whole thing in a try?
-        decoded_request = decode_monero_payment_request(self._app.views['pay'].payment_input.get())
+        self.decoded_request = decode_monero_payment_request(self._app.views['pay'].payment_input.get())
 
         self._app.geometry(styles.REVIEW_REQUEST_PROMPT_VIEW_GEOMETRY)
 
@@ -18,21 +18,20 @@ class ReviewRequestView(View):
         styles.back_and_title(self, ctk, cfg, title='Add Payment Request?')
 
         # Custom Label
-        custom_label = self.add(ctk.CTkLabel(self._app, text=f'{decoded_request["custom_label"][:80]}:', font=styles.SUBHEADING_FONT_SIZE))
-        custom_label.grid(row=1, column=0, columnspan=3, padx=10, pady=(10, 0), sticky="ew")
+        self.custom_label = self.add(ctk.CTkLabel(self._app, text=self.custom_label_text(), font=styles.SUBHEADING_FONT_SIZE))
+        self.custom_label.grid(row=1, column=0, columnspan=3, padx=10, pady=(10, 0), sticky="ew")
 
         # TODO: show conversion to default currency in ()
-        worth_of_xmr_text = ' worth of XMR' if decoded_request["currency"].upper() != 'XMR' else ''
-        amount_label = self.add(ctk.CTkLabel(self._app, text=f'{decoded_request["amount"]} {decoded_request["currency"]}{worth_of_xmr_text} billed {get_description(decoded_request["schedule"]).lower()}', font=styles.BODY_FONT_SIZE))
-        amount_label.grid(row=2, column=0, columnspan=3, padx=10, pady=0, sticky="ew")
+        self.amount_label = self.add(ctk.CTkLabel(self._app, text=self.amount_label_text(), font=styles.BODY_FONT_SIZE))
+        self.amount_label.grid(row=2, column=0, columnspan=3, padx=10, pady=0, sticky="ew")
 
         # Start Date  decoded_request["start_date"]
-        starting_on = self.add(ctk.CTkLabel(self._app, text=f'First payment due: {datetime.strptime(decoded_request["start_date"].split("T")[0], "%Y-%m-%d").strftime("%B %-d, %Y")}', font=styles.BODY_FONT_SIZE))
-        starting_on.grid(row=3, column=0, columnspan=3, padx=10, pady=0, sticky="ew")
+        self.starting_on = self.add(ctk.CTkLabel(self._app, text=self.starting_on_text(), font=styles.BODY_FONT_SIZE))
+        self.starting_on.grid(row=3, column=0, columnspan=3, padx=10, pady=0, sticky="ew")
 
         # Sellers Wallet
-        sellers_wallet_label = self.add(ctk.CTkLabel(self._app, text=f'Paying To: {decoded_request["sellers_wallet"][:5]}...{decoded_request["sellers_wallet"][-5:]}', font=styles.BODY_FONT_SIZE))
-        sellers_wallet_label.grid(row=4, column=0, columnspan=3, padx=10, pady=0, sticky="ew")
+        self.sellers_wallet_label = self.add(ctk.CTkLabel(self._app, text=self.sellers_wallet_label_text(), font=styles.BODY_FONT_SIZE))
+        self.sellers_wallet_label.grid(row=4, column=0, columnspan=3, padx=10, pady=0, sticky="ew")
 
         # TODO: Have window adjust automatically if we even display this.
         '''
@@ -51,11 +50,56 @@ class ReviewRequestView(View):
         cancel_button.grid(row=0, column=0, padx=(10, 5), pady=(0, 10), sticky="ew")
 
         # Confirm button
-        confirm_text = "Pay Now" if decoded_request["number_of_payments"] == 1 else "Subscribe"
-        confirm_button = self.add(ctk.CTkButton(center_frame, text=confirm_text, corner_radius=15,  command=self.confirm_button))
-        confirm_button.grid(row=0, column=1, padx=(5, 10), pady=(0, 10), sticky="ew")
+        self.confirm_button = self.add(ctk.CTkButton(center_frame, text=self.confirm_button_text(), corner_radius=15,  command=self.confirm_button))
+        self.confirm_button.grid(row=0, column=1, padx=(5, 10), pady=(0, 10), sticky="ew")
 
         return self
+
+    def activate(self):
+        self.decoded_request = decode_monero_payment_request(self._app.views['pay'].payment_input.get())
+        self.custom_label.configure(text=self.custom_label_text())
+        self.amount_label.configure(text=self.amount_label_text())
+        self.starting_on.configure(text=self.starting_on_text())
+        self.sellers_wallet_label.configure(text=self.sellers_wallet_label_text())
+        self.confirm_button.configure(text=self.confirm_button_text())
+        return self
+
+    def custom_label_text(self):
+        if self.decoded_request:
+            label_text = f'{self.decoded_request["custom_label"][:80]}:'
+        else:
+            label_text = ''
+        return label_text
+
+    def amount_label_text(self):
+        if self.decoded_request:
+            worth_of_xmr_text = ' worth of XMR' if self.decoded_request["currency"].upper() != 'XMR' else ''
+            label_text = f'{self.decoded_request["amount"]} {self.decoded_request["currency"]}{worth_of_xmr_text} billed {get_description(self.decoded_request["schedule"]).lower()}'
+        else:
+            label_text = ''
+        return label_text
+
+
+    def starting_on_text(self):
+        if self.decoded_request:
+            label_text = f'First payment due: {datetime.strptime(self.decoded_request["start_date"].split("T")[0], "%Y-%m-%d").strftime("%B %-d, %Y")}'
+        else:
+            label_text = ''
+        return label_text
+
+    def sellers_wallet_label_text(self):
+        if self.decoded_request:
+            label_text = f'Paying To: {self.decoded_request["sellers_wallet"][:5]}...{self.decoded_request["sellers_wallet"][-5:]}'
+        else:
+            label_text = ''
+        return label_text
+
+    def confirm_button_text(self):
+        if self.decoded_request:
+            label_text = "Pay Now" if self.decoded_request["number_of_payments"] == 1 else "Subscribe"
+        else:
+            label_text = ''
+        return label_text
 
     def open_main(self):
         self._app.switch_view('main')

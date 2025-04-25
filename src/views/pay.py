@@ -79,6 +79,9 @@ class PayView(View):
         self._app.update_idletasks()
         return self
 
+    def activate(self):
+        return self
+
     def open_main(self):
         self._app.switch_view('main')
 
