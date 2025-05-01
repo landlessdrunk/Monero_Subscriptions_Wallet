@@ -7,6 +7,10 @@ import styles
 from src.logging import config as logging_config
 from src.clients.rpc import RPCClient
 from src.transaction import Transaction
+from src.exchange import Exchange
+from src.wallet import Wallet
+from src.rpc_server import RPCServer
+from src.observers.rpc_readiness_observer import RPCReadinessObserver
 from src.views.mouse_scrollable_frame import MouseScrollableFrame
 from sched import scheduler
 import time
@@ -30,16 +34,20 @@ class HistoryView(View):
         #add_button = self.add(ctk.CTkButton(self._app, image=add_image, text='', fg_color='transparent', width=35, height=30, corner_radius=7, command=self.add_subscription))
         #add_button.grid(row=0, column=2, padx=10, pady=(10, 20), sticky="e")
 
+        #TODO: This doesn't work as intended because the RPC Wallet server has yet to properly be started.
+        self.transactions_frame = self.add(TransactionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
+        rpc_server = RPCServer.get(Wallet())
+        rpc_server.attach(RPCReadinessObserver(self.transactions_frame))
         self._app.grid_rowconfigure(1, weight=1)  # Changes this globally. Set back when closing view.
         return self
 
     def activation(self):
-        if len(cfg.transactions) > 4:
-            self._app.geometry(styles.center_window_x(self._app, styles.HISTORY_LARGE_VIEW_GEOMETRY))
-            #self._app.geometry(styles.HISTORY_LARGE_VIEW_GEOMETRY)
-        else:
-            self._app.geometry(styles.HISTORY_SMALL_VIEW_GEOMETRY)
-        self.transactions_frame = self.add(TransactionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
+        #TODO: Update this to update transactions periodically like the scrollable frame does.
+        # if len(self.TRANSACTIONS) > 4:
+        #     self._app.geometry(styles.center_window_x(self._app, styles.HISTORY_LARGE_VIEW_GEOMETRY))
+        #     #self._app.geometry(styles.HISTORY_LARGE_VIEW_GEOMETRY)
+        # else:
+        #     self._app.geometry(styles.HISTORY_SMALL_VIEW_GEOMETRY)
         #TODO: Figure out how to stop this thread from running in other views, or a way to handle the constant updates
         self.transaction_thread()
         return self
@@ -70,7 +78,18 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
         self.grid(row=1, column=0, columnspan=3, sticky='nsew')
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(1, weight=1)
-        self.transactions = RPCClient().get_transfers()
+        self.schedule_tx_update()
+
+    def open_main(self):
+        self.master.master.master.switch_view('main')
+
+    def _add_tx(self, tx, row):
+        TransactionFrame(self, tx, row)
+
+    def schedule_tx_update(self):
+        self.schedul.enter(delay=5, priority=1, action=self.update_txs)
+
+    def render_txs(self):
         if self.transactions:
             for direction, txs in self.transactions.items():
                 txs.sort(reverse=True, key=lambda t: t['timestamp'])
@@ -83,16 +102,7 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
         else:
             self.no_tx_text = ctk.CTkLabel(self, text="     No transactions yet.")
             self.no_tx_text.pack(padx=10, pady=(50, 0))
-        self.schedule_tx_update()
 
-    def open_main(self):
-        self.master.master.master.switch_view('main')
-
-    def _add_tx(self, tx, row):
-        TransactionFrame(self, tx, row)
-
-    def schedule_tx_update(self):
-        self.schedul.enter(delay=5, priority=1, action=self.update_txs)
 
     def update_txs(self):
         self.logger.debug('Updating Transactions')
@@ -138,8 +148,7 @@ class TransactionFrame(ctk.CTkFrame):
         self.columnconfigure(1, weight=1)
 
         symbol = "+" if tx.direction == "in" else "-"
-
-        amount_text = f"{symbol} {tx.amt()} {tx.subscription()['currency'] if tx.subscription() else 'XMR'}"
+        amount_text = f"{symbol} {Exchange.convert(tx.subscription()['currency'], tx.amt()) if tx.subscription() else tx.amt()} {tx.subscription()['currency'] if tx.subscription() else 'XMR'}"
         payment_name_text = tx.notes() or (tx.payment_id[:49] + "…" if len(tx.payment_id) >= 50 else tx.payment_id)
 
         date_text = f"On {tx.time()}"

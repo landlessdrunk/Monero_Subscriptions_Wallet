@@ -22,15 +22,14 @@ class RPCServer(Notifier):
 
     def __init__(self, wallet=Wallet()):
         self.wallet = wallet
-        self.rpc_is_ready = 0
         self.process = None
         self.wallet_process = None
         logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(self.__module__)
         self.failed_to_start = False
-        self.successful_start = False
         self.status_message = ''
         self._observers = []
+        self._started = False
 
     def attach(self, observer: Observer):
         self._observers.append(observer)
@@ -93,6 +92,7 @@ class RPCServer(Notifier):
                 if not rpc_client.open_wallet():
                     self.status_message = 'RPC Server: Failed to Open Wallet'
                 self.logger.debug(rpc_client.refresh())
+                self._started = True
                 Exchange.refresh_prices()
                 rpc_client.get_balance()
                 self.notify()
@@ -113,3 +113,7 @@ class RPCServer(Notifier):
 
     def start(self):
         self._start_rpc()
+
+    @property
+    def started(self):
+        return self._started
