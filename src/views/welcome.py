@@ -7,9 +7,6 @@ class WelcomeView(View):
     def build(self):
         def selected_currency_callback(choice):
             cfg.CURRENT_SEND_CURRENT_AMOUNT = choice
-
-        self._app.geometry(styles.make_centered_geometry(styles.WELCOME_VIEW_GEOMETRY))
-
         # Title
         label = self.add(ctk.CTkLabel(self._app, text='Welcome to the Subscriptions Wallet!', font=styles.HEADINGS_FONT_SIZE))
         label.grid(row=0, column=0, columnspan=3, padx=10, pady=(15, 0), sticky="ew")
@@ -48,7 +45,8 @@ class WelcomeView(View):
 
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(styles.make_centered_geometry(styles.WELCOME_VIEW_GEOMETRY))
         return self
 
     def open_main(self):

@@ -53,8 +53,6 @@ def check_if_node_works(node):
 
 class NodeSelectionView(View):
     def build(self):
-        self._app.geometry(styles.NODE_VIEW_GEOMETRY)
-
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title=' Set Node:')
 
@@ -80,7 +78,8 @@ class NodeSelectionView(View):
         self._app.update_idletasks()
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(styles.NODE_VIEW_GEOMETRY)
         return self
 
     def open_main(self):

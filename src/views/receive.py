@@ -46,8 +46,6 @@ def generate_monero_qr(wallet_address):
 
 class ReceiveView(View):
     def build(self):
-        self._app.geometry(styles.RECEIVE_VIEW_GEOMETRY)
-
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title='Your Wallet:', pad_bottom=0)
 
@@ -62,20 +60,11 @@ class ReceiveView(View):
         frame.columnconfigure([0, 1, 2], weight=1)
 
         # Left Frame
-        left_frame = self.add(ctk.CTkFrame(frame, fg_color='transparent'))
-        left_frame.grid(row=0, column=0, padx=(10, 5), pady=(0, 5), sticky="nsew")
-        left_frame.columnconfigure([0], weight=1)
+        self.left_frame = self.add(ctk.CTkFrame(frame, fg_color='transparent'))
+        self.left_frame.grid(row=0, column=0, padx=(10, 5), pady=(0, 5), sticky="nsew")
+        self.left_frame.columnconfigure([0], weight=1)
 
-        wallet_text = self.add(ctk.CTkLabel(left_frame, text=util.shortened_wallet(wallet=self.wallet_address)))
-        wallet_text.grid(row=0, column=0, padx=(5, 10), pady=(0, 5))
-
-        # QR Code
-        qr_image_name = generate_monero_qr(self.wallet_address)
-        qr_image_object = ctk.CTkImage(dark_image=Image.open(qr_image_name), size=(190, 190))
-        qr_image = self.add(ctk.CTkLabel(left_frame, image=qr_image_object, text=''), )
-        qr_image.grid(row=1, column=0, padx=10, pady=(0, 10))
-
-        copy_wallet_button = self.add(ctk.CTkButton(left_frame, text="Copy Wallet", corner_radius=15, command=self.copy_wallet_address))
+        copy_wallet_button = self.add(ctk.CTkButton(self.left_frame, text="Copy Wallet", corner_radius=15, command=self.copy_wallet_address))
         copy_wallet_button.grid(row=2, column=0, padx=40, pady=10, sticky="ew")
 
 
@@ -129,7 +118,16 @@ class ReceiveView(View):
 
         return self
 
-    def activate(self):
+    def activation(self):
+        wallet_text = self.add(ctk.CTkLabel(self.left_frame, text=util.shortened_wallet(wallet=self.wallet_address)))
+        wallet_text.grid(row=0, column=0, padx=(5, 10), pady=(0, 5))
+
+        # QR Code
+        qr_image_name = generate_monero_qr(self.wallet_address)
+        qr_image_object = ctk.CTkImage(dark_image=Image.open(qr_image_name), size=(190, 190))
+        qr_image = self.add(ctk.CTkLabel(self.left_frame, image=qr_image_object, text=''), )
+        qr_image.grid(row=1, column=0, padx=10, pady=(0, 10))
+        self._app.geometry(styles.RECEIVE_VIEW_GEOMETRY)
         return self
 
     def open_main(self):

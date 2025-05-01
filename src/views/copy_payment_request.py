@@ -16,8 +16,6 @@ def insert_newlines(input_string, characters_per_line):
 
 class CopyPaymentRequestView(View):
     def build(self):
-        self._app.geometry(styles.COPY_PAYMENT_REQUEST_VIEW_GEOMETRY)
-
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title='Payment Request Created:')
 
@@ -47,7 +45,8 @@ class CopyPaymentRequestView(View):
 
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(styles.COPY_PAYMENT_REQUEST_VIEW_GEOMETRY)
         self.payment_request = decode_monero_payment_request(clipboard.paste())
         self.payment_request_payment_id = self.payment_request["payment_id"]
         self.third_text = self.add(ctk.CTkLabel(self._app, text=f"Only you can see the payment ID: {self.payment_request_payment_id}", font=styles.BODY_FONT_SIZE))

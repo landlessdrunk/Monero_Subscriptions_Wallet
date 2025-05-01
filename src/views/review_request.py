@@ -11,9 +11,6 @@ class ReviewRequestView(View):
     def build(self):
         # TODO: wrap this whole thing in a try?
         self.decoded_request = decode_monero_payment_request(self._app.views['pay'].payment_input.get())
-
-        self._app.geometry(styles.REVIEW_REQUEST_PROMPT_VIEW_GEOMETRY)
-
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title='Add Payment Request?')
 
@@ -55,7 +52,8 @@ class ReviewRequestView(View):
 
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(styles.REVIEW_REQUEST_PROMPT_VIEW_GEOMETRY)
         self.decoded_request = decode_monero_payment_request(self._app.views['pay'].payment_input.get())
         self.custom_label.configure(text=self.custom_label_text())
         self.amount_label.configure(text=self.amount_label_text())

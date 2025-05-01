@@ -5,15 +5,10 @@ import styles
 import json
 from PIL import Image
 from src.subscription import Subscription
-
+from src.views.mouse_scrollable_frame import MouseScrollableFrame
 
 class SubscriptionsView(View):
     def build(self):
-        if len(json.loads(cfg.subscriptions())) > 1:
-            self._app.geometry(styles.SUBSCRIPTIONS_LARGE_VIEW_GEOMETRY)
-        else:
-            self._app.geometry(styles.SUBSCRIPTIONS_SMALL_VIEW_GEOMETRY)
-
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title='Manage Subscriptions:', pad_bottom=10)
 
@@ -27,11 +22,15 @@ class SubscriptionsView(View):
 
         self._app.grid_rowconfigure(1, weight=1)  # Changes this globally. Set back when closing view.
 
-        self.my_frame = self.add(SubscriptionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
-
         return self
 
-    def activate(self):
+    def activation(self):
+        if len(json.loads(cfg.subscriptions())) > 1:
+            self._app.geometry(styles.SUBSCRIPTIONS_LARGE_VIEW_GEOMETRY)
+        else:
+            self._app.geometry(styles.SUBSCRIPTIONS_SMALL_VIEW_GEOMETRY)
+
+        self.my_frame = self.add(SubscriptionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
         return self
 
     def open_main(self):
@@ -47,7 +46,7 @@ class SubscriptionsView(View):
         super().destroy()
 
 
-class SubscriptionsScrollableFrame(ctk.CTkScrollableFrame):
+class SubscriptionsScrollableFrame(MouseScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid(row=1, column=0, columnspan=3, sticky='nsew')

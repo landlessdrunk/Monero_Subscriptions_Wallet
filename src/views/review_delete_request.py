@@ -6,8 +6,6 @@ import styles
 
 class ReviewDeleteRequestView(View):
     def build(self):
-        self._app.geometry(styles.REVIEW_PROMPT_GEOMETRY)
-
         # Title
         label = self.add(ctk.CTkLabel(self._app, text='Cancel Subscription?', font=styles.HEADINGS_FONT_SIZE))
         label.grid(row=0, column=0, columnspan=3, padx=10, pady=(50, 5), sticky="ew")
@@ -27,7 +25,8 @@ class ReviewDeleteRequestView(View):
 
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(styles.REVIEW_PROMPT_GEOMETRY)
         return self
 
     def open_main(self):

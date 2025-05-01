@@ -12,7 +12,6 @@ class SettingsView(View):
         self.toplevel_window = None
 
     def build(self):
-        self._app.geometry(styles.SETTINGS_VIEW_GEOMETRY)
         # Configure the main window grid for spacing and alignment
         #self._app.columnconfigure([0, 1, 2], weight=1)  # 3 columns 2 rows
 
@@ -41,7 +40,8 @@ class SettingsView(View):
 
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(styles.SETTINGS_VIEW_GEOMETRY)
         return self
 
     def open_main(self):

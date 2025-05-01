@@ -4,6 +4,7 @@ class View(ABC):
     def __init__(self, app):
         self._app = app
         self._elements = []
+        self._activated = False
 
     def add(self, element):
         self._elements.append(element)
@@ -18,8 +19,12 @@ class View(ABC):
     def build(self):
         pass
 
-    @abstractmethod
     def activate(self):
+        self.activation()
+        self._activated = True
+
+    @abstractmethod
+    def activation(self):
         pass
 
     def deactivate(self):
@@ -29,3 +34,7 @@ class View(ABC):
     def reactivate(self):
         for element in self._elements:
             element.grid()
+
+    @property
+    def activated(self):
+        return self._activated

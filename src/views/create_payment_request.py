@@ -14,6 +14,7 @@ from monerorequest.request_v2 import RequestV2
 import re
 from textwrap import wrap
 
+#monero-request:2:H4sIAAAAAAAC/y1OW2+CMBT+K0sfF11Kx0V4Q1RMVEKGDuNLU0q5GKCkLQ5d9t9XjDknOfluOd8vIC0fOgU8YIAZoBXpSobrLq8pUVzgQTRampRBCNbRu0anZPUkpOItbkjGJsuRSaXZbmgzJjAvcE/uLeuUBB6cgRfAda6tzgIVGSqobRHHMtxMxyStWD40TKvvb6+ZaNY0TEj8Q/SdOlpuUcVRtdmvx89HbNgXPyZse5Yxj+jjm4QcmVZQrpLUTfv6MN5iI3LSfDwbX75545ntL8NwOZ7KKw0itL+yJIzr7cJf73r/sNkF00tFhMI5UVMXBJE1h+YcLY4Qes/9gBBewN8/nE3d8TgBAAA=
 
 class CreatePaymentRequestView(View):
     def build(self):
@@ -24,8 +25,6 @@ class CreatePaymentRequestView(View):
 
         def selected_currency_callback(choice):
             cfg.CURRENT_CREATE_PAYMENT_REQUEST_CURRENCY = choice
-
-        self._app.geometry(styles.CREATE_PAYMENT_REQUEST_VIEW_GEOMETRY)
 
         # TODO: Can we set the border color through the theme file instead?
         # Border Color
@@ -129,7 +128,8 @@ class CreatePaymentRequestView(View):
         self._app.update_idletasks()
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(styles.CREATE_PAYMENT_REQUEST_VIEW_GEOMETRY)
         return self
 
     def billing_frequency_callback(self, choice):

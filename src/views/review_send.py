@@ -30,12 +30,6 @@ class ReviewSendView(View):
 
         # if send_amount is <= wallet_balance
 
-
-
-        self._app.geometry(styles.REVIEW_PROMPT_GEOMETRY)
-
-
-
         # Title
         label = self.add(ctk.CTkLabel(self._app, text='Send Payment?', font=styles.HEADINGS_FONT_SIZE))
         label.grid(row=0, column=0, columnspan=3, padx=10, pady=(45, 5), sticky="ew")
@@ -60,7 +54,8 @@ class ReviewSendView(View):
 
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(styles.REVIEW_PROMPT_GEOMETRY)
         return self
 
     def cancel_button(self):

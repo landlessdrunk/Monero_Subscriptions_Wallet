@@ -37,7 +37,7 @@ config = {
             'level': 'DEBUG',
             'handlers': ['console']
         },
-        'src.view.history': {
+        'src.views.history': {
             'level': 'DEBUG',
             'handlers': ['console']
         }

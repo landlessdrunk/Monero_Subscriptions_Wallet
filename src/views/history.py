@@ -1,11 +1,15 @@
 import logging
 import customtkinter as ctk
+import threading
 from src.interfaces.view import View
 import config as cfg
 import styles
 from src.logging import config as logging_config
 from src.clients.rpc import RPCClient
 from src.transaction import Transaction
+from src.views.mouse_scrollable_frame import MouseScrollableFrame
+from sched import scheduler
+import time
 
 def center_string(s):
     # Trim the string to 50 characters if it's longer
@@ -18,12 +22,6 @@ def center_string(s):
 
 class HistoryView(View):
     def build(self):
-        if len(cfg.transactions) > 4:
-            self._app.geometry(styles.center_window_x(self._app, styles.HISTORY_LARGE_VIEW_GEOMETRY))
-            #self._app.geometry(styles.HISTORY_LARGE_VIEW_GEOMETRY)
-        else:
-            self._app.geometry(styles.HISTORY_SMALL_VIEW_GEOMETRY)
-
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title='Transaction History:', pad_bottom=10)
 
@@ -33,12 +31,17 @@ class HistoryView(View):
         #add_button.grid(row=0, column=2, padx=10, pady=(10, 20), sticky="e")
 
         self._app.grid_rowconfigure(1, weight=1)  # Changes this globally. Set back when closing view.
-
-        self.transactions_frame = self.add(TransactionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
-
         return self
 
-    def activate(self):
+    def activation(self):
+        if len(cfg.transactions) > 4:
+            self._app.geometry(styles.center_window_x(self._app, styles.HISTORY_LARGE_VIEW_GEOMETRY))
+            #self._app.geometry(styles.HISTORY_LARGE_VIEW_GEOMETRY)
+        else:
+            self._app.geometry(styles.HISTORY_SMALL_VIEW_GEOMETRY)
+        self.transactions_frame = self.add(TransactionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
+        #TODO: Figure out how to stop this thread from running in other views, or a way to handle the constant updates
+        self.transaction_thread()
         return self
 
     def open_main(self):
@@ -49,7 +52,17 @@ class HistoryView(View):
         self.transactions_frame._parent_frame.destroy()
         super().destroy()
 
-class TransactionsScrollableFrame(ctk.CTkScrollableFrame):
+    def transaction_thread(self):
+        tx_thread = threading.Thread(target=self.run_transaction_update)
+        tx_thread.daemon = True
+        tx_thread.start()
+
+    def run_transaction_update(self):
+        self.transactions_frame.schedul.run()
+
+class TransactionsScrollableFrame(MouseScrollableFrame):
+    schedul = scheduler(timefunc=time.time)
+
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         logging.config.dictConfig(logging_config)
@@ -57,9 +70,9 @@ class TransactionsScrollableFrame(ctk.CTkScrollableFrame):
         self.grid(row=1, column=0, columnspan=3, sticky='nsew')
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(1, weight=1)
-        transactions = RPCClient().get_transfers()
-        if transactions:
-            for direction, txs in transactions.items():
+        self.transactions = RPCClient().get_transfers()
+        if self.transactions:
+            for direction, txs in self.transactions.items():
                 txs.sort(reverse=True, key=lambda t: t['timestamp'])
                 for i, tx in enumerate(txs):
                     try:
@@ -68,14 +81,51 @@ class TransactionsScrollableFrame(ctk.CTkScrollableFrame):
                     except (TypeError, UnboundLocalError) as e:
                         self.logger.debug(str(e))
         else:
-            no_tx_text = ctk.CTkLabel(self, text="     No transactions yet.", )
-            no_tx_text.pack(padx=10, pady=(50, 0))
+            self.no_tx_text = ctk.CTkLabel(self, text="     No transactions yet.")
+            self.no_tx_text.pack(padx=10, pady=(50, 0))
+        self.schedule_tx_update()
 
     def open_main(self):
         self.master.master.master.switch_view('main')
 
     def _add_tx(self, tx, row):
         TransactionFrame(self, tx, row)
+
+    def schedule_tx_update(self):
+        self.schedul.enter(delay=5, priority=1, action=self.update_txs)
+
+    def update_txs(self):
+        self.logger.debug('Updating Transactions')
+        new_transactions = RPCClient().get_transfers()
+        diff_transactions = {
+            'in': [],
+            'out': [],
+            'pending': []
+        }
+        for new_dir, new_txs in new_transactions.items():
+            for new_tx in new_txs:
+                old_tx_ids = {'in': [], 'out': [], 'pending': []}
+                for old_dir, old_txs in self.transactions.items():
+                    for old_tx in old_txs:
+                        if not old_tx_ids.get(old_dir):
+                            old_tx_ids[old_dir] = []
+                        old_tx_ids[old_dir].append(old_tx['txid'])
+                if new_tx['txid'] not in old_tx_ids[new_dir]:
+                    diff_transactions[new_dir].append(new_tx)
+
+        if getattr(self, 'no_tx_text', None) and any([diff for diffs in diff_transactions.values() for diff in diffs]):
+            self.no_tx_text.destroy()
+            self.no_tx_text = None
+        for direction, txs in diff_transactions.items():
+            txs.sort(reverse=True, key=lambda t: t['timestamp'])
+            for i, tx in enumerate(txs):
+                try:
+                    transaction = Transaction(**tx, direction=direction)
+                    self._add_tx(transaction, i+len(old_tx_ids[direction]))
+                except (TypeError, UnboundLocalError) as e:
+                    self.logger.debug(str(e))
+        self.transactions = new_transactions
+        self.schedule_tx_update()
 
 class TransactionFrame(ctk.CTkFrame):
     def __init__(self, master, tx, row, **kwargs):
@@ -89,7 +139,7 @@ class TransactionFrame(ctk.CTkFrame):
 
         symbol = "+" if tx.direction == "in" else "-"
 
-        amount_text = f"{symbol} {tx.amt()} XMR"
+        amount_text = f"{symbol} {tx.amt()} {tx.subscription()['currency'] if tx.subscription() else 'XMR'}"
         payment_name_text = tx.notes() or (tx.payment_id[:49] + "…" if len(tx.payment_id) >= 50 else tx.payment_id)
 
         date_text = f"On {tx.time()}"

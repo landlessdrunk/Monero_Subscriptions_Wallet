@@ -52,8 +52,6 @@ def input_is_valid_monero_request(input_string):
 
 class PayView(View):
     def build(self):
-        self._app.geometry(styles.PAY_VIEW_GEOMETRY)
-
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title='Pay To:')
 
@@ -61,7 +59,6 @@ class PayView(View):
         # Input box
         self.payment_input = tkinter.StringVar(self._app, name='payment_input')
         clipboard_contents = clipboard.paste()
-
         if input_is_valid(input_string=clipboard_contents) and clipboard_contents != Wallet().address:
             self.payment_input.set(clipboard_contents)
 
@@ -79,8 +76,22 @@ class PayView(View):
         self._app.update_idletasks()
         return self
 
-    def activate(self):
+    def activation(self):
+        cb = clipboard.paste()
+        if input_is_valid(input_string=cb) and cb != Wallet().address:
+            self.payment_input.set(cb)
+            self.input_box_for_wallet_or_request.configure(textvariable=self.payment_input, placeholder_text=None)
+
+        self._app.geometry(styles.PAY_VIEW_GEOMETRY)
         return self
+
+    def reactivate(self):
+        super().reactivate()
+        cb = clipboard.paste()
+        if input_is_valid(input_string=cb) and cb != Wallet().address:
+            self.payment_input.set(cb)
+            self.input_box_for_wallet_or_request.configure(textvariable=self.payment_input)
+            self.input_box_for_wallet_or_request.configure(placeholder_text=None)
 
     def open_main(self):
         self._app.switch_view('main')

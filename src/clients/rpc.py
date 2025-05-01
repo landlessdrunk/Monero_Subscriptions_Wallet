@@ -166,7 +166,7 @@ class RPCClient(Notifier):
 
     def transfer(self, destination, amount):
         try:
-            return self.post(self._transfer(destination, amount))['result']
+            return self.post(self._transfer(destination, amount)).get('result')
         except requests.exceptions.ConnectionError as e:
             self.logger.debug(str(e))
             return False
@@ -190,7 +190,7 @@ class RPCClient(Notifier):
             return self._transfers['result']
         except requests.exceptions.ConnectionError as e:
             self.logger.debug(str(e))
-            return False
+            return {}
 
     def _get_transfers(self):
         return {

@@ -23,8 +23,6 @@ class MainView(View):
 
     def build(self):
         # TODO: Work in progress
-        self._app.geometry(self.make_appropriate_geometry())  # Centered on first launch only.
-
         # Configure the main window grid for spacing and alignment
         self._app.columnconfigure([0, 1, 2], weight=1)  # 3 columns 2 rows
 
@@ -75,7 +73,8 @@ class MainView(View):
 
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(self.make_appropriate_geometry())  # Centered on first launch only.
         return self
 
     def make_appropriate_geometry(self):

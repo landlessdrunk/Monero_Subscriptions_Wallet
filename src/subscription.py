@@ -13,6 +13,7 @@ from src.clients.rpc import RPCClient
 from src.logging import config as logging_config
 from config import send_payments, stagenet, config_file
 from src.exchange import Exchange
+from src.transaction import Transaction
 
 class Subscription:
     schedul = scheduler(timefunc=time.time)
@@ -94,6 +95,8 @@ class Subscription:
                 client = RPCClient.get()
                 integrated_address = client.make_integrated_address(self.sellers_wallet, self.payment_id)['integrated_address']
                 transfer_result = client.transfer(integrated_address, self.amount)
+                if not transfer_result:
+                    breakpoint()
                 client.set_tx_notes([transfer_result['tx_hash']], [self.custom_label])
                 self.logger.info('Sent %s XMR', self.amount)
                 Exchange.refresh_prices()
@@ -129,3 +132,7 @@ class Subscription:
         for event in self.schedul.queue:
             if self.json_friendly() == event.action.__self__.json_friendly():
                 self.schedul.cancel(event)
+
+    def transactions(self):
+        txs = RPCClient.get().get_transfers()
+        return [Transaction(**tx) for tx in txs if tx['payment_id'] == self.payment_id]

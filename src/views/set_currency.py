@@ -8,8 +8,6 @@ from config import default_currency, secondary_currency
 
 class SetCurrencyView(View):
     def build(self):
-        self._app.geometry(styles.SET_CURRENCY_VIEW_GEOMETRY)
-
         def default_currency_selector_callback(choice):
             cfg.config_file.set(section='subscriptions', option='default_currency', value=choice)
             cfg.config_file.write()
@@ -41,7 +39,8 @@ class SetCurrencyView(View):
 
         return self
 
-    def activate(self):
+    def activation(self):
+        self._app.geometry(styles.SET_CURRENCY_VIEW_GEOMETRY)
         return self
 
     def open_main(self):
