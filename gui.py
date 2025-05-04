@@ -168,19 +168,20 @@ def signal_handler(sig, frame):
     qt_app.quit()
     sys.exit(0)
 
+qt_app = QApplication(sys.argv)
 #Need to make this work with Windows.
 #https://stackoverflow.com/questions/3425294/how-to-detect-the-os-default-language-in-python
-locale.setlocale(locale.LC_ALL, environ['LANG'])
-qt_app = QApplication(sys.argv)
+if __name__ == "__main__":
+    locale.setlocale(locale.LC_ALL, environ['LANG'])
 
-app = App()
-app.title("Monero Subscriptions Wallet")
-app.iconphoto(True, PhotoImage(file=styles.icon))
-app.protocol("WM_DELETE_WINDOW", app.hide_to_tray)
-app.resizable(False, False)  # Make the window non-resizable
-app.create_tray_icon(qt_app)
+    app = App()
+    app.title("Monero Subscriptions Wallet")
+    app.iconphoto(True, PhotoImage(file=styles.icon))
+    app.protocol("WM_DELETE_WINDOW", app.hide_to_tray)
+    app.resizable(False, False)  # Make the window non-resizable
+    app.create_tray_icon(qt_app)
 
-signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
 
-app.mainloop()
+    app.mainloop()

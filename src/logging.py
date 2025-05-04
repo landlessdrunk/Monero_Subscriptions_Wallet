@@ -40,6 +40,10 @@ config = {
         'src.views.history': {
             'level': 'DEBUG',
             'handlers': ['console']
+        },
+        'src.views.main': {
+            'level': 'DEBUG',
+            'handlers': ['console']
         }
     }
 }

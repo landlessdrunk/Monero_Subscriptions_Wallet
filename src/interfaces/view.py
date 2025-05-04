@@ -1,10 +1,15 @@
 from abc import ABC, abstractmethod
+import logging
+import logging.config
+from src.logging import config as logging_config
 
 class View(ABC):
     def __init__(self, app):
         self._app = app
         self._elements = []
         self._activated = False
+        logging.config.dictConfig(logging_config)
+        self.logger = logging.getLogger(self.__module__)
 
     def add(self, element):
         self._elements.append(element)

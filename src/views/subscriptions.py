@@ -38,8 +38,6 @@ class SubscriptionsView(View):
 
     def add_subscription(self):
         self._app.switch_view('pay')
-        #TODO: Adding subscription doesn't seem to start the scheduled payments.
-        #TODO: Adding subscription doesn't seem to add the subscription to the view.
         # self.master.master.master.switch_view('pay')
 
     def destroy(self):

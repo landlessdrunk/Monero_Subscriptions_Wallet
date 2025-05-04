@@ -46,3 +46,4 @@ class Transaction:
         for sub in subscriptions:
             if sub['payment_id'] == self.payment_id:
                 return sub
+        return {}

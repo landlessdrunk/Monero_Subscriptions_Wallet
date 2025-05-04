@@ -96,7 +96,7 @@ class Subscription:
                 integrated_address = client.make_integrated_address(self.sellers_wallet, self.payment_id)['integrated_address']
                 transfer_result = client.transfer(integrated_address, Exchange.to_atomic_units(self.currency, float(self.amount)))
                 client.set_tx_notes([transfer_result['tx_hash']], [self.custom_label])
-                self.logger.info('Sent %s XMR', self.amount)
+                self.logger.info('Sent %s %s', self.amount, self.currency)
                 Exchange.refresh_prices()
                 if self.number_of_payments == 1:
                     self.number_of_payments = -1

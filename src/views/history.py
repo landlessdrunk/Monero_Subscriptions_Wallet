@@ -14,6 +14,7 @@ from src.observers.rpc_readiness_observer import RPCReadinessObserver
 from src.views.mouse_scrollable_frame import MouseScrollableFrame
 from sched import scheduler
 import time
+from monero_usd_price import calculate_monero_from_atomic_units
 
 def center_string(s):
     # Trim the string to 50 characters if it's longer
@@ -152,7 +153,10 @@ class TransactionFrame(ctk.CTkFrame):
         self.columnconfigure(1, weight=1)
 
         symbol = "+" if tx.direction == "in" else "-"
-        amount_text = f"{symbol} {Exchange.convert(tx.subscription()['currency'], Exchange.to_atomic_units(tx.amt())) if tx.subscription() else Exchange.to_atomic_units(tx.amt())} {tx.subscription()['currency'] if tx.subscription() else 'XMR'}"
+        sub_text = Exchange.convert(tx.subscription()['currency'], calculate_monero_from_atomic_units(tx.amt())) if tx.subscription() else None
+        no_sub_text = calculate_monero_from_atomic_units(tx.amt())
+        currency_text = tx.subscription()['currency'] if tx.subscription() else 'XMR'
+        amount_text = f"{symbol} {sub_text if tx.subscription() else no_sub_text} {currency_text}"
         payment_name_text = tx.notes() or (tx.payment_id[:49] + "…" if len(tx.payment_id) >= 50 else tx.payment_id)
 
         date_text = f"On {tx.time()}"

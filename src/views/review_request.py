@@ -109,4 +109,6 @@ class ReviewRequestView(View):
         sub = Subscription(**Subscription.decode(self._app.views['pay'].payment_input.get()))
         cfg.config_file.add_subscription(sub)
         sub.queue()
+        #TODO: Adding subscription doesn't seem to start the scheduled payments.
+        #TODO: Adding subscription doesn't seem to add the subscription to the view.
         self._app.switch_view('subscriptions')

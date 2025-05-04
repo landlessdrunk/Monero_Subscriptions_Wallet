@@ -35,8 +35,9 @@ class MainView(View):
         rpc_status.grid(row=0, column=0, columnspan=3, padx=10, pady=5, sticky="ew")
 
         # History Button
-        history_image = ctk.CTkImage(Image.open(styles.history_icon), size=(22, 22))
-        history_button = self.add(ctk.CTkButton(self._app, image=history_image, text="", fg_color='transparent', width=35, height=30, corner_radius=7, command=self.open_history))
+        self.history_image = ctk.CTkImage(Image.open(styles.history_icon), size=(22, 22))
+        self.logger.debug(styles.history_icon)
+        history_button = self.add(ctk.CTkButton(self._app, image=self.history_image, text="", fg_color='transparent', width=35, height=30, corner_radius=7, command=self.open_history))
         history_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         # Settings Button
