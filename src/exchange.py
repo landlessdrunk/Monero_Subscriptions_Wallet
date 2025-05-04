@@ -58,7 +58,6 @@ class Exchange():
                 sym_value = goldback_scrape()
             else:
                 sym_value = xe_scrape(from_sym)
-
             usd_value = float(sym_value) * amount
             xmr_value = usd_value / float(cls.US_EXCHANGE)
         else:

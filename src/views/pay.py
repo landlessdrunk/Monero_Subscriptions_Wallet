@@ -91,7 +91,6 @@ class PayView(View):
         if input_is_valid(input_string=cb) and cb != Wallet().address:
             self.payment_input.set(cb)
             self.input_box_for_wallet_or_request.configure(textvariable=self.payment_input)
-            self.input_box_for_wallet_or_request.configure(placeholder_text=None)
 
     def open_main(self):
         self._app.switch_view('main')

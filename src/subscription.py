@@ -94,7 +94,7 @@ class Subscription:
             if send_payments():
                 client = RPCClient.get()
                 integrated_address = client.make_integrated_address(self.sellers_wallet, self.payment_id)['integrated_address']
-                transfer_result = client.transfer(integrated_address, self.amount)
+                transfer_result = client.transfer(integrated_address, Exchange.to_atomic_units(self.currency, float(self.amount)))
                 client.set_tx_notes([transfer_result['tx_hash']], [self.custom_label])
                 self.logger.info('Sent %s XMR', self.amount)
                 Exchange.refresh_prices()

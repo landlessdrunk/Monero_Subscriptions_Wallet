@@ -79,6 +79,7 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.schedule_tx_update()
+        self.transactions = None
 
     def open_main(self):
         self.master.master.master.switch_view('main')
@@ -107,25 +108,28 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
     def update_txs(self):
         self.logger.debug('Updating Transactions')
         new_transactions = RPCClient().get_transfers()
+        #TODO: How to handle pending transactions? Pending transfers aren't included
         diff_transactions = {
             'in': [],
             'out': [],
             'pending': []
         }
-        for new_dir, new_txs in new_transactions.items():
-            for new_tx in new_txs:
-                old_tx_ids = {'in': [], 'out': [], 'pending': []}
-                for old_dir, old_txs in self.transactions.items():
-                    for old_tx in old_txs:
-                        if not old_tx_ids.get(old_dir):
-                            old_tx_ids[old_dir] = []
-                        old_tx_ids[old_dir].append(old_tx['txid'])
-                if new_tx['txid'] not in old_tx_ids[new_dir]:
-                    diff_transactions[new_dir].append(new_tx)
+        if self.transactions:
+            for new_dir, new_txs in new_transactions.items():
+                for new_tx in new_txs:
+                    old_tx_ids = {'in': [], 'out': [], 'pending': []}
+                    for old_dir, old_txs in self.transactions.items():
+                        for old_tx in old_txs:
+                            if not old_tx_ids.get(old_dir):
+                                old_tx_ids[old_dir] = []
+                            old_tx_ids[old_dir].append(old_tx['txid'])
+                    if new_tx['txid'] not in old_tx_ids[new_dir]:
+                        diff_transactions[new_dir].append(new_tx)
 
         if getattr(self, 'no_tx_text', None) and any([diff for diffs in diff_transactions.values() for diff in diffs]):
             self.no_tx_text.destroy()
             self.no_tx_text = None
+
         for direction, txs in diff_transactions.items():
             txs.sort(reverse=True, key=lambda t: t['timestamp'])
             for i, tx in enumerate(txs):
@@ -148,7 +152,7 @@ class TransactionFrame(ctk.CTkFrame):
         self.columnconfigure(1, weight=1)
 
         symbol = "+" if tx.direction == "in" else "-"
-        amount_text = f"{symbol} {Exchange.convert(tx.subscription()['currency'], tx.amt()) if tx.subscription() else tx.amt()} {tx.subscription()['currency'] if tx.subscription() else 'XMR'}"
+        amount_text = f"{symbol} {Exchange.convert(tx.subscription()['currency'], Exchange.to_atomic_units(tx.amt())) if tx.subscription() else Exchange.to_atomic_units(tx.amt())} {tx.subscription()['currency'] if tx.subscription() else 'XMR'}"
         payment_name_text = tx.notes() or (tx.payment_id[:49] + "…" if len(tx.payment_id) >= 50 else tx.payment_id)
 
         date_text = f"On {tx.time()}"
