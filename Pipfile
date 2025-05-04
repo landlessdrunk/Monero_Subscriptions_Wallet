@@ -22,8 +22,8 @@ pywin32-ctypes = "*"
 pefile = "*"
 macholib = "*"
 cron-descriptor = "*"
-monerorequest = {file = "../monerorequest/dist/monerorequest-2.0.2-py3-none-any.whl"}
 pyqt5 = "*"
+monerorequest = "*"
 
 [dev-packages]
 
