@@ -29,6 +29,8 @@ class App(ctk.CTk):
         self.current_view = None
         logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(self.__module__)
+        self._qt_app = QApplication(sys.argv)
+
         self.define_all_views()
         self.spawn_appropriate_initial_window()
         self.start_rpc_server_if_appropriate()
@@ -99,14 +101,14 @@ class App(ctk.CTk):
             self.rpc_server.kill()
 
     # PyQt5 System Tray Setup
-    def create_tray_icon(self, app):
+    def create_tray_icon(self):
         # Create a 32x32 red square pixmap
         pixmap = QPixmap(32, 32)
         pixmap.fill(QColor(255, 0, 0))  # Red
         icon = QIcon('assets/icon.ico')
 
         # Create system tray icon
-        self.tray_icon = QSystemTrayIcon(icon, app)
+        self.tray_icon = QSystemTrayIcon(icon, self.qt_app)
 
         # Create context menu
         menu = QMenu()
@@ -147,7 +149,7 @@ class App(ctk.CTk):
 
     def process_qt_events(self):
         # Process Qt events to keep tray icon responsive
-        qt_app.processEvents()
+        self.qt_app.processEvents()
         self.after(50, self.process_qt_events)  # Call again after 50ms
 
     def create_image(self, width, height, color1, color2):
@@ -163,12 +165,15 @@ class App(ctk.CTk):
 
         return image
 
-def signal_handler(sig, frame):
-    app.shutdown_steps()
-    qt_app.quit()
-    sys.exit(0)
+    def signal_handler(self, sig, frame):
+        self.shutdown_steps()
+        self.qt_app.quit()
+        sys.exit(0)
 
-qt_app = QApplication(sys.argv)
+    @property
+    def qt_app(self):
+        return self._qt_app
+
 #Need to make this work with Windows.
 #https://stackoverflow.com/questions/3425294/how-to-detect-the-os-default-language-in-python
 if __name__ == "__main__":
@@ -179,9 +184,9 @@ if __name__ == "__main__":
     app.iconphoto(True, PhotoImage(file=styles.icon))
     app.protocol("WM_DELETE_WINDOW", app.hide_to_tray)
     app.resizable(False, False)  # Make the window non-resizable
-    app.create_tray_icon(qt_app)
+    app.create_tray_icon()
 
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, app.signal_handler)
+    signal.signal(signal.SIGTERM, app.signal_handler)
 
     app.mainloop()
