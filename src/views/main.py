@@ -11,7 +11,6 @@ from src.wallet import Wallet
 from src.exchange import Exchange
 from PIL import Image
 
-
 class MainView(View):
     def __init__(self, app):
         super().__init__(app)
@@ -37,13 +36,13 @@ class MainView(View):
         # History Button
         self.history_image = ctk.CTkImage(Image.open(styles.history_icon), size=(22, 22))
         self.logger.debug(styles.history_icon)
-        history_button = self.add(ctk.CTkButton(self._app, image=self.history_image, text="", fg_color='transparent', width=35, height=30, corner_radius=7, command=self.open_history))
-        history_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.history_button = self.add(ctk.CTkButton(self._app, image=self.history_image, text="", fg_color='transparent', width=35, height=30, corner_radius=7, command=self.open_history))
+        self.history_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         # Settings Button
         settings_image = ctk.CTkImage(Image.open(styles.settings_icon), size=(24, 24))
-        settings_button = self.add(ctk.CTkButton(self._app, image=settings_image, text="", fg_color='transparent', width=35, height=30, corner_radius=7, command=self.open_settings))
-        settings_button.grid(row=0, column=2, padx=10, pady=10, sticky="e")
+        self.settings_button = self.add(ctk.CTkButton(self._app, image=settings_image, text="", fg_color='transparent', width=35, height=30, corner_radius=7, command=self.open_settings))
+        self.settings_button.grid(row=0, column=2, padx=10, pady=10, sticky="e")
 
         # Amount
         self.amount = self.add(ctk.CTkLabel(self._app, text=self._get_currency_text(), font=(styles.font, 48)))
@@ -61,16 +60,16 @@ class MainView(View):
         center_frame.columnconfigure([0, 1], weight=1)  # Frame will span 3 columns but contain two columns (0 and 1)
 
         # Receive Button
-        receive_button = ctk.CTkButton(center_frame, text="Receive", corner_radius=15, command=self.open_recieve)
-        receive_button.grid(row=0, column=0, padx=(10, 5), pady=(0, 10), sticky="ew")
+        self.receive_button = ctk.CTkButton(center_frame, text="Receive", corner_radius=15, command=self.open_recieve)
+        self.receive_button.grid(row=0, column=0, padx=(10, 5), pady=(0, 10), sticky="ew")
 
         # Pay Button
-        pay_button = ctk.CTkButton(center_frame, text="Pay", corner_radius=15, command=self.open_pay)
-        pay_button.grid(row=0, column=1, padx=(5, 10), pady=(0, 10), sticky="ew")
+        self.pay_button = ctk.CTkButton(center_frame, text="Pay", corner_radius=15, command=self.open_pay)
+        self.pay_button.grid(row=0, column=1, padx=(5, 10), pady=(0, 10), sticky="ew")
 
         # Manage Subscriptions Button
-        subscriptions_button = ctk.CTkButton(center_frame, text="Manage Subscriptions", corner_radius=15, command=self.open_subscriptions)
-        subscriptions_button.grid(row=1, column=0, columnspan=3, padx=10, pady=(0, 10), sticky="ew")
+        self.subscriptions_button = ctk.CTkButton(center_frame, text="Manage Subscriptions", corner_radius=15, command=self.open_subscriptions)
+        self.subscriptions_button.grid(row=1, column=0, columnspan=3, padx=10, pady=(0, 10), sticky="ew")
 
         return self
 

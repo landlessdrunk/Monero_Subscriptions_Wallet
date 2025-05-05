@@ -4,12 +4,20 @@ from src.wallet import Wallet
 
 def rpc_server_test(wallet_name='test_wallet'):
     with patch('config.stagenet', return_value=True):
+        server = rpc_server_setup(wallet_name)
+        yield
+        rpc_server_teardown(server)
+
+def rpc_server_setup(wallet_name='test_wallet'):
+    with patch('config.stagenet', return_value=True):
         wallet = Wallet('test_wallet')
         rpc_server = RPCServer(wallet)
         rpc_server.start()
         rpc_server.ready()
-        yield
-        rpc_server.kill()
+    return rpc_server
+
+def rpc_server_teardown(rpc_server):
+    rpc_server.kill()
 
 '''
 What is this for?
