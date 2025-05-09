@@ -59,6 +59,9 @@ class RPCServer(Notifier):
 
     def kill(self):
         self.logger.debug('Killing RPC Server Process')
+        for observer in self._observers:
+            self.detach(observer)
+        self._started = False
         self.process.kill()
 
     def ready(self):

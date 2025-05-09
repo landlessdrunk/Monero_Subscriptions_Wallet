@@ -12,4 +12,5 @@ class BalanceObserver(Observer):
             balance_text = Exchange.display(to_sym=default_currency())
         else:
             balance_text = Exchange.display(to_sym=secondary_currency())
-        self.label.configure(text=balance_text)
+        if self.label.winfo_exists():
+            self.label.configure(text=balance_text)

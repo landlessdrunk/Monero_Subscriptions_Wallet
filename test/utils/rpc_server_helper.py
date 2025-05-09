@@ -11,9 +11,8 @@ def rpc_server_test(wallet_name='test_wallet'):
 def rpc_server_setup(wallet_name='test_wallet'):
     with patch('config.stagenet', return_value=True):
         wallet = Wallet('test_wallet')
-        rpc_server = RPCServer(wallet)
+        rpc_server = RPCServer.get(wallet)
         rpc_server.start()
-        rpc_server.ready()
     return rpc_server
 
 def rpc_server_teardown(rpc_server):

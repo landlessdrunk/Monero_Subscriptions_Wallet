@@ -11,10 +11,13 @@ from src.exchange import Exchange
 from src.wallet import Wallet
 from src.rpc_server import RPCServer
 from src.observers.rpc_readiness_observer import RPCReadinessObserver
+from src.observers.history_tx_observer import HistoryTxObserver
 from src.views.mouse_scrollable_frame import MouseScrollableFrame
 from sched import scheduler
 import time
 from monero_usd_price import calculate_monero_from_atomic_units
+from src.interfaces.notifier import Notifier
+from src.interfaces.observer import Observer
 
 def center_string(s):
     # Trim the string to 50 characters if it's longer
@@ -26,6 +29,10 @@ def center_string(s):
     return centered_string
 
 class HistoryView(View):
+    def __init__(self, app):
+        super().__init__(app)
+        self._tx_thread = None
+
     def build(self):
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title='Transaction History:', pad_bottom=10)
@@ -37,6 +44,7 @@ class HistoryView(View):
 
         #TODO: This doesn't work as intended because the RPC Wallet server has yet to properly be started.
         self.transactions_frame = self.add(TransactionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
+        self.transactions_frame.attach(HistoryTxObserver(self.transactions_frame))
         rpc_server = RPCServer.get(Wallet())
         rpc_server.attach(RPCReadinessObserver(self.transactions_frame))
         self._app.grid_rowconfigure(1, weight=1)  # Changes this globally. Set back when closing view.
@@ -49,7 +57,6 @@ class HistoryView(View):
         #     #self._app.geometry(styles.HISTORY_LARGE_VIEW_GEOMETRY)
         # else:
         #     self._app.geometry(styles.HISTORY_SMALL_VIEW_GEOMETRY)
-        #TODO: Figure out how to stop this thread from running in other views, or a way to handle the constant updates
         self.transaction_thread()
         return self
 
@@ -58,22 +65,27 @@ class HistoryView(View):
 
     def destroy(self):
         self._app.grid_rowconfigure(1, weight=0)
-        self.transactions_frame._parent_frame.destroy()
+        for event in self.transactions_frame.schedul.queue:
+            self.transactions_frame.schedul.cancel(event)
+        self._tx_thread = None
         super().destroy()
 
     def transaction_thread(self):
-        tx_thread = threading.Thread(target=self.run_transaction_update)
-        tx_thread.daemon = True
-        tx_thread.start()
+        if not self._tx_thread:
+            self._tx_thread = threading.Thread(target=self.run_transaction_update)
+            self._tx_thread.daemon = True
+            self._tx_thread.start()
+        return self._tx_thread
 
     def run_transaction_update(self):
         self.transactions_frame.schedul.run()
 
-class TransactionsScrollableFrame(MouseScrollableFrame):
+class TransactionsScrollableFrame(MouseScrollableFrame, Notifier):
     schedul = scheduler(timefunc=time.time)
 
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self._app = master
         logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(self.__module__)
         self.grid(row=1, column=0, columnspan=3, sticky='nsew')
@@ -81,17 +93,31 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
         self.grid_columnconfigure(1, weight=1)
         self.schedule_tx_update()
         self.transactions = None
+        self.transaction_frames = []
+        self._observers = []
 
     def open_main(self):
-        self.master.master.master.switch_view('main')
+        self._app.switch_view('main')
 
     def _add_tx(self, tx, row):
-        TransactionFrame(self, tx, row)
+        self.transaction_frames.append(TransactionFrame(self, tx, row))
 
     def schedule_tx_update(self):
-        self.schedul.enter(delay=5, priority=1, action=self.update_txs)
+        self._app.transactions_queue.put(self.update_txs)
+
+    def attach(self, observer: Observer):
+        self._observers.append(observer)
+
+    def detach(self, observer: Observer):
+        if observer in self._observers:
+            self._observers.remove(observer)
+
+    def notify(self):
+        for observer in self._observers:
+            observer.update(self)
 
     def render_txs(self):
+        # breakpoint()
         if self.transactions:
             for direction, txs in self.transactions.items():
                 txs.sort(reverse=True, key=lambda t: t['timestamp'])
@@ -99,16 +125,16 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
                     try:
                         transaction = Transaction(**tx, direction=direction)
                         self._add_tx(transaction, i)
-                    except (TypeError, UnboundLocalError) as e:
+                    except (TypeError, UnboundLocalError, RuntimeError) as e:
                         self.logger.debug(str(e))
         else:
             self.no_tx_text = ctk.CTkLabel(self, text="     No transactions yet.")
-            self.no_tx_text.pack(padx=10, pady=(50, 0))
+            self.no_tx_text.grid(row=1, column=1, padx=10, pady=(50, 0))
 
 
     def update_txs(self):
         self.logger.debug('Updating Transactions')
-        new_transactions = RPCClient().get_transfers()
+        new_transactions = RPCClient.get().get_transfers()
         #TODO: How to handle pending transactions? Pending transfers aren't included
         diff_transactions = {
             'in': [],
@@ -137,7 +163,7 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
                 try:
                     transaction = Transaction(**tx, direction=direction)
                     self._add_tx(transaction, i+len(old_tx_ids[direction]))
-                except (TypeError, UnboundLocalError) as e:
+                except (TypeError, UnboundLocalError, RuntimeError) as e:
                     self.logger.debug(str(e))
         self.transactions = new_transactions
         self.schedule_tx_update()

@@ -19,6 +19,8 @@ import config as cfg
 from src.subscription import Subscription
 from PIL import Image, ImageDraw
 import sys
+import queue
+
 ctk.set_default_color_theme(path.abspath(path.join(path.dirname(__file__), "monero_theme.json")))
 
 # TODO: Get this from the config file first. If not present, use what is currently set below.
@@ -30,13 +32,23 @@ class App(ctk.CTk):
         logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(self.__module__)
         self._qt_app = QApplication(sys.argv)
-
+        self.transactions_queue = queue.Queue()
         self.define_all_views()
         self.spawn_appropriate_initial_window()
         self.start_rpc_server_if_appropriate()
         self.schedule_payments()
         self.scheduler_thread()
         self.process_qt_events()
+        self.process_queue()
+
+    def process_queue(self):
+        try:
+            task = self.transactions_queue.get_nowait()
+            task()
+            self.transactions_queue.task_done()
+        except queue.Empty:
+            pass
+        self.after(5000, self.process_queue)
 
     def define_all_views(self):
         self.views = {
@@ -93,6 +105,11 @@ class App(ctk.CTk):
 
     def run_scheduler(self):
         Subscription.schedul.run()
+
+    def destroy(self):
+        for key, view in self.views.items():
+            view.destroy()
+        super().destroy()
 
     def shutdown_steps(self):
         self.destroy()

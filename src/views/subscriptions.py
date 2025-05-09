@@ -42,7 +42,6 @@ class SubscriptionsView(View):
 
     def destroy(self):
         self._app.grid_rowconfigure(1, weight=0)
-        self.my_frame._parent_frame.destroy()
         super().destroy()
 
 
