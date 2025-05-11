@@ -15,10 +15,8 @@ def input_is_valid(input_string):
 
     return False
 
-
 def input_is_valid_monero_wallet(input_string):
     return Check.wallet(wallet_address=input_string, allow_standard=True, allow_integrated_address=True, allow_subaddress=True, allow_stagenet=stagenet())
-
 
 def input_is_valid_monero_request(input_string):
     if 'monero-request:' in input_string:
@@ -70,8 +68,8 @@ class PayView(View):
         self.input_box_for_wallet_or_request.grid(row=1, column=0, columnspan=3, padx=70, pady=(27.5, 0), sticky="ew")
 
         # Next button
-        next_button = self.add(ctk.CTkButton(self._app, text="Continue", corner_radius=15, command=self.next_button))
-        next_button.grid(row=2, column=0, columnspan=3, padx=120, pady=15, sticky="ew")
+        self.next_button = self.add(ctk.CTkButton(self._app, text="Continue", corner_radius=15, command=self.next_button_action))
+        self.next_button.grid(row=2, column=0, columnspan=3, padx=120, pady=15, sticky="ew")
 
         self._app.update_idletasks()
         return self
@@ -103,7 +101,7 @@ class PayView(View):
             # Move to "how much" view
             self._app.switch_view('amount')
 
-    def next_button(self):
+    def next_button_action(self):
         input_string = self.input_box_for_wallet_or_request.get().strip()
         if input_is_valid(input_string=input_string):
             self.wallet_or_request_logic(input_string=input_string)

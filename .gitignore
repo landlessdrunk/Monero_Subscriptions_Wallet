@@ -5,6 +5,7 @@ __pycache__/
 .DS_Store
 temp.py
 config.ini
+config-test.ini
 *.idea
 wallet_qr_code.png
 build/

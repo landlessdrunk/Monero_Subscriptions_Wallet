@@ -30,8 +30,15 @@ class SubscriptionsView(View):
         else:
             self._app.geometry(styles.SUBSCRIPTIONS_SMALL_VIEW_GEOMETRY)
 
-        self.my_frame = self.add(SubscriptionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
+        self.sub_frame = self.add(SubscriptionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
         return self
+
+    def reactivate(self):
+        super().reactivate()
+        self._app.subscriptions_queue.put(self.update_subscriptions)
+
+    def update_subscriptions(self):
+        self.sub_frame.update_subscriptions()
 
     def open_main(self):
         self._app.switch_view('main')
@@ -51,11 +58,11 @@ class SubscriptionsScrollableFrame(MouseScrollableFrame):
         self.grid(row=1, column=0, columnspan=3, sticky='nsew')
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(1, weight=1)
-        subscriptions = json.loads(cfg.subscriptions())
-
-        if subscriptions:
-            for i, sub in enumerate(subscriptions):
-                self._create_subscription(Subscription(**sub), i)
+        self.subscriptions = json.loads(cfg.subscriptions())
+        self.sub_frames = []
+        if self.subscriptions:
+            for i, sub in enumerate(self.subscriptions):
+                self.sub_frames.append(self._create_subscription(Subscription(**sub), i))
 
         else:
             no_subs_text = ctk.CTkLabel(self, text="     You haven't added any subscriptions yet.", )
@@ -68,13 +75,25 @@ class SubscriptionsScrollableFrame(MouseScrollableFrame):
         self.master.master.master.switch_view('main')
 
     def _create_subscription(self, sub, row):
-        SubscriptionFrame(self, sub, row)
+        return SubscriptionFrame(self, sub, row)
 
+    def update_subscriptions(self):
+        for idx, sub in enumerate(self.subscriptions_diff()):
+            self._create_subscription(Subscription(**sub), len(self.sub_frames) + (idx+1))
+
+    def subscriptions_diff(self):
+        new_subs = json.loads(cfg.subscriptions())
+        current_subs = [sub_frame.subscription for sub_frame in self.sub_frames]
+        diff_subs = []
+        for sub in new_subs:
+            if not any(sub == cur_sub for cur_sub in current_subs):
+                diff_subs.append(sub)
+        return diff_subs
 
 class SubscriptionFrame(ctk.CTkFrame):
     def __init__(self, master, sub, row, **kwargs):
         super().__init__(master, **kwargs)
-
+        self.subscription = sub
         # Padding and stuff for each SubscriptionFrame
         self.grid(row=row, column=1, columnspan=3, sticky="nsew", padx=10, pady=(0, 10))
 

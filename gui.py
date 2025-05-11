@@ -33,22 +33,33 @@ class App(ctk.CTk):
         self.logger = logging.getLogger(self.__module__)
         self._qt_app = QApplication(sys.argv)
         self.transactions_queue = queue.Queue()
+        self.subscriptions_queue = queue.Queue()
         self.define_all_views()
         self.spawn_appropriate_initial_window()
         self.start_rpc_server_if_appropriate()
         self.schedule_payments()
         self.scheduler_thread()
         self.process_qt_events()
-        self.process_queue()
+        self.process_tx_queue()
+        self.process_sub_queue()
 
-    def process_queue(self):
+    def process_tx_queue(self):
         try:
             task = self.transactions_queue.get_nowait()
             task()
             self.transactions_queue.task_done()
         except queue.Empty:
             pass
-        self.after(5000, self.process_queue)
+        self.after(5000, self.process_tx_queue)
+
+    def process_sub_queue(self):
+        try:
+            task = self.subscriptions_queue.get_nowait()
+            task()
+            self.subscriptions_queue.task_done()
+        except queue.Empty:
+            pass
+        self.after(50, self.process_sub_queue)
 
     def define_all_views(self):
         self.views = {

@@ -1,3 +1,4 @@
+
 """
 Configuration File for Monero Subscriptions Wallet
 Contains global settings and variables used across the application.
@@ -40,7 +41,6 @@ config_options = {
         'is_first_launch': True,
         'send_payments': True
     }
-
 }
 
 class ConfigFile():
@@ -122,6 +122,9 @@ class ConfigFile():
         with open(filepath, 'r') as f:
             self.set('subscriptions', 'subscriptions', json.dumps(json.loads(f.read())))
         self.write()
+
+    def clear(self):
+        self.create()
 
 config_file = ConfigFile('./config.ini')
 
