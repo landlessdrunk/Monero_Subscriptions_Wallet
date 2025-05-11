@@ -43,9 +43,7 @@ class HistoryViewTest(unittest.TestCase):
     def test_transaction_observer(self):
         self.assertEqual(len(self.app.views['history'].transactions_frame.transaction_frames), 5)
 
-    #When we switch to the view, there should be a thread that starts to poll the
-    #RPC Server and check for updates to to the transactions list and populate the
-    #list of transactions with the new ones.
+    #There should be an update to the transactions list every 5 seconds if there's a diff detected.
     def test_transaction_updates(self):
         new_transfers = mocked_transfers()
         for direction, transfers in self.default_transfers.items():
@@ -59,6 +57,7 @@ class HistoryViewTest(unittest.TestCase):
                 time.sleep(5)
                 self.app.update()
                 self.assertEqual(len(self.app.views['history'].transactions_frame.transaction_frames), 10)
+
 
     @classmethod
     def tearDownClass(cls):

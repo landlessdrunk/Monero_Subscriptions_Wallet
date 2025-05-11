@@ -122,8 +122,8 @@ class CreatePaymentRequestView(View):
 
 
         # Submit button
-        create_button = self.add(ctk.CTkButton(self.content_frame, text="Create Payment Request", corner_radius=15, command=self.create_button))
-        create_button.grid(row=7, column=0, columnspan=10, padx=120, pady=10, sticky="ew")
+        self.create_button = self.add(ctk.CTkButton(self.content_frame, text="Create Payment Request", corner_radius=15, command=self.create_button))
+        self.create_button.grid(row=7, column=0, columnspan=10, padx=120, pady=10, sticky="ew")
 
         self._app.update_idletasks()
         return self

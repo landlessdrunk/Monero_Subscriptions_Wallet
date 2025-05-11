@@ -113,8 +113,8 @@ class ReceiveView(View):
         get_monero.grid(row=5, column=0, columnspan=4, padx=10, pady=((5 + 15), 0), sticky="ew")  # The extra is just so they line up
 
         # Create Payment Request
-        create_payment_request_button = self.add(ctk.CTkButton(right_frame, text="Create Payment Request", corner_radius=15, command=self.open_create_payment_request))
-        create_payment_request_button.grid(row=6, column=0, columnspan=4, padx=20, pady=(0, 5), sticky="ew")
+        self.create_payment_request_button = self.add(ctk.CTkButton(right_frame, text="Create Payment Request", corner_radius=15, command=self.open_create_payment_request))
+        self.create_payment_request_button.grid(row=6, column=0, columnspan=4, padx=20, pady=(0, 5), sticky="ew")
 
         return self
 

@@ -40,8 +40,8 @@ class CopyPaymentRequestView(View):
         copy_request_button.grid(row=0, column=2, padx=(5, 10), pady=0, sticky="ew")
 
         # Next button
-        next_button = self.add(ctk.CTkButton(self._app, text="Finished", corner_radius=15, command=self.open_main))
-        next_button.grid(row=5, column=0, columnspan=3, padx=120, pady=(10, 15), sticky="ew")
+        self.next_button = self.add(ctk.CTkButton(self._app, text="Finished", corner_radius=15, command=self.open_main))
+        self.next_button.grid(row=5, column=0, columnspan=3, padx=120, pady=(10, 15), sticky="ew")
 
         return self
 
