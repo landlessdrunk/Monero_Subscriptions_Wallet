@@ -4,19 +4,33 @@ from src.wallet import Wallet
 
 def rpc_server_test(wallet_name='test_wallet'):
     with patch('config.stagenet', return_value=True):
-        server = rpc_server_setup(wallet_name)
+        context = RPCServerContextManager()
+        context.server_setup(wallet_name)
         yield
-        rpc_server_teardown(server)
+        context.server_teardown()
 
-def rpc_server_setup(wallet_name='test_wallet'):
-    with patch('config.stagenet', return_value=True):
+class RPCServerContextManager():
+    def server_setup(self, wallet_name='test_wallet'):
+        self.stagenet_patch = patch('config.stagenet', return_value=True)
+        self.stagenet_patch.start()
         wallet = Wallet('test_wallet')
-        rpc_server = RPCServer.get(wallet)
-        rpc_server.start()
-    return rpc_server
+        self.rpc_server = RPCServer.get(wallet)
+        self.server_patch = patch('src.rpc_server.RPCServer.get', return_value=self.rpc_server)
+        self.server_patch.start()
+        self.rpc_server.start()
+        return self.rpc_server
 
-def rpc_server_teardown(rpc_server):
-    rpc_server.kill()
+    def server_ready(self):
+        self.rpc_server.ready()
+
+    def server_wallet(self):
+        return self.rpc_server.wallet
+
+    def server_teardown(self):
+        RPCServer._wallet_servers = {}
+        self.rpc_server.kill()
+        self.stagenet_patch.stop()
+        self.server_patch.stop()
 
 '''
 What is this for?

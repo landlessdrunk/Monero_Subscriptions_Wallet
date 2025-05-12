@@ -1,19 +1,20 @@
 import unittest
 from datetime import date, timedelta
-from test.utils.rpc_server_helper import rpc_server_setup, rpc_server_teardown
+from test.utils.rpc_server_helper import RPCServerContextManager
 from src.clients.rpc import RPCClient
 from gui import App
 
 class TestCreatePaymentRequest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.rpc_server = rpc_server_setup()
+        cls.context = RPCServerContextManager()
+        cls.context.server_setup()
         with unittest.mock.patch('gui.rpc', return_value='False'):
             with unittest.mock.patch('gui.cfg.subscriptions', return_value='[]'):
                 with unittest.mock.patch('src.views.history.RPCClient.get_transfers', return_value=[]):
                     cls.app = App()
                     cls.app.update()
-                    cls.rpc_server.ready()
+                    cls.context.server_ready()
 
     def setUp(self):
         with unittest.mock.patch('src.views.history.RPCClient.get_transfers', return_value=[]):
@@ -68,8 +69,7 @@ class TestCreatePaymentRequest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        rpc_server_teardown(cls.rpc_server)
+        cls.context.server_teardown()
         cls.app.destroy()
         cls.app._app = None
-        cls.rpc_server = None
         RPCClient._instance = None

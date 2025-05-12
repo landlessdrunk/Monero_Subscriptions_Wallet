@@ -1,6 +1,7 @@
 import unittest
 import clipboard
-from test.utils.rpc_server_helper import rpc_server_setup, rpc_server_teardown
+import vcr
+from test.utils.rpc_server_helper import RPCServerContextManager
 from test.utils.config import config_mock, clear_test_config
 from src.clients.rpc import RPCClient
 from gui import App
@@ -11,12 +12,13 @@ class TestPay(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         with config_mock():
-            cls.rpc_server = rpc_server_setup()
+            cls.context = RPCServerContextManager()
+            cls.context.server_setup()
             with unittest.mock.patch('gui.rpc', return_value='False'):
                 with unittest.mock.patch('gui.cfg.subscriptions', return_value='[]'):
                     cls.app = App()
                     cls.app.update()
-                    cls.rpc_server.ready()
+                    cls.context.server_ready()
 
     def test_pay_monero_request_no_clip(self):
         with config_mock():
@@ -93,7 +95,10 @@ class TestPay(unittest.TestCase):
             self.assertEqual(self.app.current_view, self.app.views['review_send'])
             self.assertEqual(self.app.current_view.label.cget('text'), 'Send Payment?')
             self.assertEqual(self.app.current_view.sending_to.cget('text'), '1 USD worth of XMR to: 59fhP...AMFKC')
-            self.app.current_view.confirm_button._canvas.event_generate('<Button-1>')
+            with vcr.use_cassette('test/fixtures/cassettes/pay_address_no_clip.yaml'):
+                self.app.current_view.confirm_button._canvas.event_generate('<Button-1>')
+                self.app.update()
+                self.assertEqual(self.app.current_view, self.app.views['main'])
             #TODO: Check that the payment request happened/went through. Not sure the best way to do that.
             #Probably should be a VCR request.
 
@@ -103,8 +108,7 @@ class TestPay(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        rpc_server_teardown(cls.rpc_server)
+        cls.context.server_teardown()
         cls.app.destroy()
         cls.app._app = None
-        cls.rpc_server = None
         RPCClient._instance = None

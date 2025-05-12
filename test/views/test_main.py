@@ -1,6 +1,6 @@
 import unittest
 from gui import App
-from test.utils.rpc_server_helper import rpc_server_setup, rpc_server_teardown
+from test.utils.rpc_server_helper import RPCServerContextManager
 from src.clients.rpc import RPCClient
 
 class MainViewTest(unittest.TestCase):
@@ -11,8 +11,9 @@ class MainViewTest(unittest.TestCase):
             with unittest.mock.patch('gui.cfg.subscriptions', return_value='[]'):
                 cls.app = App()
                 cls.app.update()
-                cls.rpc_server = rpc_server_setup()
-                cls.rpc_server.ready()
+                cls.context = RPCServerContextManager()
+                cls.context.server_setup()
+                cls.context.server_ready()
 
     def setUp(self):
         self.app.switch_view('main')
@@ -54,8 +55,7 @@ class MainViewTest(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         print('MainViewTest tearDownClass')
-        rpc_server_teardown(cls.rpc_server)
-        cls.rpc_server = None
+        cls.context.server_teardown()
         cls.app.quit()
         cls.app.destroy()
         cls.app._app = None

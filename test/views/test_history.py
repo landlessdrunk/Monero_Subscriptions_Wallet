@@ -2,7 +2,7 @@ import unittest
 import time
 from dataclasses import asdict
 from gui import App
-from test.utils.rpc_server_helper import rpc_server_setup, rpc_server_teardown
+from test.utils.rpc_server_helper import RPCServerContextManager
 from src.clients.rpc import RPCClient
 from test.factories.transaction import TransactionFactory
 
@@ -21,15 +21,16 @@ class HistoryViewTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.default_transfers = mocked_transfers()
-        cls.rpc_server = rpc_server_setup()
+        cls.context = RPCServerContextManager()
+        cls.context.server_setup()
         with unittest.mock.patch('src.views.history.RPCClient.get_transfers', return_value=cls.default_transfers):
-            with unittest.mock.patch('src.views.history.Wallet', return_value=cls.rpc_server.wallet):
+            with unittest.mock.patch('src.views.history.Wallet', return_value=cls.context.server_wallet()):
                 with unittest.mock.patch('gui.rpc', return_value='False'):
                     with unittest.mock.patch('gui.cfg.subscriptions', return_value='[]'):
                         with unittest.mock.patch('src.views.history.Transaction.notes', return_value='Test'):
                             cls.app = App()
                             cls.app.update()
-                            cls.rpc_server.ready()
+                            cls.context.server_ready()
 
     def setUp(self):
         with unittest.mock.patch('src.views.history.RPCClient.get_transfers', return_value=self.default_transfers):
@@ -61,8 +62,7 @@ class HistoryViewTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        rpc_server_teardown(cls.rpc_server)
+        cls.context.server_teardown()
         cls.app.destroy()
         cls.app._app = None
-        cls.rpc_server = None
         RPCClient._instance = None

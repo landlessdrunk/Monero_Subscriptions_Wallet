@@ -69,7 +69,7 @@ class ReviewSendView(View):
         # Send the payment
 
         # Confirm if it worked or not (if not, let them retry)
-        if RPCClient.get().transfer(cfg.SEND_TO_WALLET, cfg.CURRENT_SEND_AMOUNT):
+        if RPCClient.get().transfer(cfg.SEND_TO_WALLET, float(cfg.CURRENT_SEND_AMOUNT)):
             clear_temp_payment_info()
             self.open_main()
         else:
