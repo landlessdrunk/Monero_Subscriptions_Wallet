@@ -28,16 +28,12 @@ class AmountView(View):
         # TODO: Currently this is a visual and nothing else. Review!
         # Currency Selector
         selected_currency = ctk.StringVar(value=default_currency())
-        currency_selector = self.add(ctk.CTkOptionMenu(center_frame, values=Exchange.options(), corner_radius=15, command=selected_currency_callback, variable=selected_currency))
-        currency_selector.grid(row=0, column=3, padx=(5, 10), pady=0, sticky="ew")
+        self.currency_selector = self.add(ctk.CTkOptionMenu(center_frame, values=Exchange.options(), corner_radius=15, command=selected_currency_callback, variable=selected_currency))
+        self.currency_selector.grid(row=0, column=3, padx=(5, 10), pady=0, sticky="ew")
 
         # Send button
-        send_button = self.add(ctk.CTkButton(self._app, text="Send", corner_radius=15, command=self.send_button))
-        send_button.grid(row=2, column=0, columnspan=3, padx=120, pady=(5, 0), sticky="ew")
-
-        # Wallet
-        wallet = self.add(ctk.CTkLabel(self._app, text=f'To Wallet: {util.shortened_wallet(wallet=cfg.SEND_TO_WALLET)}'))  # TODO: Make it so that they can click the wallet to go back to "pay" view
-        wallet.grid(row=3, column=0, columnspan=3, padx=10, pady=15, sticky="ew")
+        self.send_button = self.add(ctk.CTkButton(self._app, text="Send", corner_radius=15, command=self.send_button))
+        self.send_button.grid(row=2, column=0, columnspan=3, padx=120, pady=(5, 0), sticky="ew")
 
         self._app.update_idletasks()
         return self
@@ -45,6 +41,12 @@ class AmountView(View):
     def activation(self):
         self._app.geometry(styles.AMOUNT_VIEW_GEOMETRY)
         return self
+
+    def reactivate(self):
+        super().reactivate()
+        # Wallet
+        self.wallet = self.add(ctk.CTkLabel(self._app, text=f'To Wallet: {util.shortened_wallet(wallet=cfg.SEND_TO_WALLET)}'))  # TODO: Make it so that they can click the wallet to go back to "pay" view
+        self.wallet.grid(row=3, column=0, columnspan=3, padx=10, pady=15, sticky="ew")
 
     def open_main(self):
         self._app.switch_view('main')
