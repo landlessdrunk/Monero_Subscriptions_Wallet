@@ -4,6 +4,7 @@ import config as cfg
 import styles
 from monerorequest import Check
 from src.clients.rpc import RPCClient
+from src.exchange import Exchange
 
 def clear_temp_payment_info():
     cfg.CURRENT_PAYMENT_REQUEST = ''
@@ -69,7 +70,7 @@ class ReviewSendView(View):
         # Send the payment
 
         # Confirm if it worked or not (if not, let them retry)
-        if RPCClient.get().transfer(cfg.SEND_TO_WALLET, float(cfg.CURRENT_SEND_AMOUNT)):
+        if RPCClient.get().transfer(cfg.SEND_TO_WALLET, Exchange.to_atomic_units(cfg.CURRENT_SEND_CURRENCY, cfg.CURRENT_SEND_AMOUNT)):
             clear_temp_payment_info()
             self.open_main()
         else:
