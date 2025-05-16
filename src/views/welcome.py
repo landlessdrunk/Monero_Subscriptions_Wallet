@@ -7,9 +7,8 @@ class WelcomeView(View):
     def build(self):
         def selected_currency_callback(choice):
             cfg.CURRENT_SEND_CURRENT_AMOUNT = choice
-        # Title
-        label = self.add(ctk.CTkLabel(self._app, text='Welcome to the Subscriptions Wallet!', font=styles.HEADINGS_FONT_SIZE))
-        label.grid(row=0, column=0, columnspan=3, padx=10, pady=(15, 0), sticky="ew")
+
+        self.header('Welcome to the Subscriptions Wallet!')
 
         # To make this look better, I am adding spaces after to get the lines to line up
         info_text = '''

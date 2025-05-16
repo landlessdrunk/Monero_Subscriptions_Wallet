@@ -7,7 +7,7 @@ from src.interfaces.view import View
 from config import default_currency, stagenet
 import config as cfg
 import styles
-import clipboard
+import clipman
 from monerorequest import make_random_payment_id, make_monero_payment_request
 from monerorequest.check import Check
 from monerorequest.request_v2 import RequestV2
@@ -39,23 +39,12 @@ class CreatePaymentRequestView(View):
         self.schedule_row = 4
         self.wallet_row = 5
 
-        self.heading_frame = self.add(ctk.CTkFrame(self._app))
-        self.heading_frame.columnconfigure([0, 1, 2], weight=1)
+        # self.heading_frame = self.add(ctk.CTkFrame(self._app))
+        # self.heading_frame.columnconfigure([0, 1, 2], weight=1)
         # self.heading_frame.pack(fill='x', padx=0, pady=0)
 
-        # Back Button
-        back_image = ctk.CTkImage(styles.Image.open(styles.back_icon), size=(24, 24))
-        back_button = self.add(ctk.CTkButton(self.heading_frame, image=back_image, text='', fg_color='transparent', width=35, height=30, corner_radius=7, command=self.open_main))
-        back_button.grid(row=self.heading_row, column=0, padx=10, pady=(10, 0), sticky="w")
-
-        # Title
-        label = self.add(ctk.CTkLabel(self.heading_frame, text='Create Payment Request:', font=styles.HEADINGS_FONT_SIZE))
-        label.grid(row=self.heading_row, column=1, padx=10, pady=(10, 0), sticky="ew")
-
-        # TODO: Doing this to get it to display properly. There is probably a better way to do this.
-        spacer = self.add(ctk.CTkLabel(self.heading_frame, text=''))
-        spacer.grid(row=self.heading_row, column=3, padx=10, pady=(10, 0), sticky="e")
-
+        self.header('Create Payment Request:')
+        self.back_button()
 
 
         self.content_frame = self.add(ctk.CTkFrame(self._app))
@@ -184,7 +173,8 @@ class CreatePaymentRequestView(View):
         )
 
         if payment_request.valid():
-            clipboard.copy(payment_request.encode())
+            clipman.init()
+            clipman.copy(payment_request.encode())
             self._app.switch_view('copy_payment_request')
         else:
             errors_text = ' '.join([' '.join((k.split('_'))).capitalize() + ' ' + ' and '.join(v) + '.' for k,v in payment_request.errors.items()])

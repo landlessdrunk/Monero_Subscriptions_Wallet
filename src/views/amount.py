@@ -13,8 +13,8 @@ class AmountView(View):
         def selected_currency_callback(choice):
             cfg.CURRENT_SEND_CURRENCY = choice
 
-        # Back button and title
-        styles.back_and_title(self, ctk, cfg, title='How Much:')
+        self.header('How Much:')
+        self.back_button()
 
         # Frame to hold buttons
         center_frame = self.add(ctk.CTkFrame(self._app, ))

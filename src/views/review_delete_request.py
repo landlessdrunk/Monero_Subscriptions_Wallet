@@ -7,9 +7,8 @@ import styles
 class ReviewDeleteRequestView(View):
     def build(self):
         # Title
-        label = self.add(ctk.CTkLabel(self._app, text='Cancel Subscription?', font=styles.HEADINGS_FONT_SIZE))
-        label.grid(row=0, column=0, columnspan=3, padx=10, pady=(50, 5), sticky="ew")
-
+        self.header('Cancel Subscription?')
+        self.back_button()
         # Frame to hold buttons
         center_frame = self.add(ctk.CTkFrame(self._app, ))
         center_frame.grid(row=1, column=0, columnspan=3, padx=0, pady=15, sticky="nsew")

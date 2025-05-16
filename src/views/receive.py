@@ -3,7 +3,7 @@ import customtkinter as ctk
 import util
 from src.interfaces.view import View
 import qrcode
-import clipboard
+import clipman
 from PIL import Image
 import config as cfg
 from config import rpc
@@ -46,8 +46,8 @@ def generate_monero_qr(wallet_address):
 
 class ReceiveView(View):
     def build(self):
-        # Back button and title
-        styles.back_and_title(self, ctk, cfg, title='Your Wallet:', pad_bottom=0)
+        self.header('Your Wallet:')
+        self.back_button()
 
         # Plus Button
         #add_image = ctk.CTkImage(Image.open("plus_icon.png"), size=(24, 24))
@@ -137,7 +137,8 @@ class ReceiveView(View):
         self._app.switch_view('create_payment_request')
 
     def copy_wallet_address(self):
-        clipboard.copy(self.wallet_address)
+        clipman.init()
+        clipman.copy(self.wallet_address)
         self._app.switch_view('main')
 
     @staticmethod

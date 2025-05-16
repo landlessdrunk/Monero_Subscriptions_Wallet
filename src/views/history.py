@@ -29,7 +29,10 @@ class HistoryView(View):
 
     def build(self):
         # Back button and title
-        styles.back_and_title(self, ctk, cfg, title='Transaction History:', pad_bottom=10)
+        # styles.back_and_title(self, ctk, cfg, title='Transaction History:', pad_bottom=10)
+
+        self.header('Transaction History:')
+        self.back_button()
 
         # Plus Button
         #add_image = ctk.CTkImage(Image.open(styles.plus_icon), size=(24, 24))

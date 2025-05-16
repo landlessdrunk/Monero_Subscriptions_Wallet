@@ -9,8 +9,8 @@ from src.views.mouse_scrollable_frame import MouseScrollableFrame
 
 class SubscriptionsView(View):
     def build(self):
-        # Back button and title
-        styles.back_and_title(self, ctk, cfg, title='Manage Subscriptions:', pad_bottom=10)
+        self.header('Manage Subscriptions:')
+        self.back_button()
 
         # Plus Button
         add_image = ctk.CTkImage(Image.open(styles.plus_icon), size=(24, 24))

@@ -35,6 +35,7 @@ class App(ctk.CTk):
         self.transactions_queue = queue.Queue()
         self.subscriptions_queue = queue.Queue()
         self.define_all_views()
+        self.last_views = []
         self.spawn_appropriate_initial_window()
         self.start_rpc_server_if_appropriate()
         self.schedule_payments()
@@ -79,9 +80,19 @@ class App(ctk.CTk):
             'copy_payment_request': CopyPaymentRequestView(self),
             'history': HistoryView(self)
         }
+
         for view in self.views.values():
             view.build()
             view.deactivate()
+
+    def view_name(self, check_view):
+        for name, view in self.views.items():
+            if view == check_view:
+                return name
+
+    def switch_view_last(self):
+        last_view = self.last_views.pop()
+        self.switch_view(self.view_name(last_view), True)
 
     def spawn_appropriate_initial_window(self):
         if is_first_launch() == 'True':
@@ -95,9 +106,12 @@ class App(ctk.CTk):
             self.rpc_server.start()
             self.rpc_server.check_readiness()
 
-    def switch_view(self, view_name: str):
+    def switch_view(self, view_name: str, back=False):
         if self.current_view:
             self.current_view.deactivate()
+            if not back:
+                self.last_views.append(self.current_view)
+
         self.views[view_name].reactivate()
         if not self.views[view_name].activated:
             self.views[view_name].activate()

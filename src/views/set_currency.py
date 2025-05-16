@@ -16,8 +16,8 @@ class SetCurrencyView(View):
             cfg.config_file.set(section='subscriptions', option='secondary_currency', value=choice)
             cfg.config_file.write()
 
-        # Back button and title
-        styles.back_and_title(self, ctk, cfg, title=' Set Currency:')
+        self.header('Set Currency:')
+        self.back_button()
 
         # Labels
         label1 = self.add(ctk.CTkLabel(self._app, text='Default:'))

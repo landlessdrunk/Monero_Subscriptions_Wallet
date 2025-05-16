@@ -4,7 +4,7 @@ from src.interfaces.view import View
 from config import stagenet
 import config as cfg
 import styles
-import clipboard
+import clipman
 from monerorequest import Check, Decode
 from src.wallet import Wallet
 
@@ -50,22 +50,8 @@ def input_is_valid_monero_request(input_string):
 
 class PayView(View):
     def build(self):
-        # Back button and title
-        styles.back_and_title(self, ctk, cfg, title='Pay To:')
-
-        # TODO: Can we set the border color through the theme file instead?
-        # Input box
-        self.payment_input = tkinter.StringVar(self._app, name='payment_input')
-        clipboard_contents = clipboard.paste()
-        if input_is_valid(input_string=clipboard_contents) and clipboard_contents != Wallet().address:
-            self.payment_input.set(clipboard_contents)
-
-            # TODO: refactor this to be better?
-            self.input_box_for_wallet_or_request = self.add(ctk.CTkEntry(self._app, textvariable=self.payment_input, font=(styles.font, 12), corner_radius=15, border_color=styles.monero_orange))
-        else:
-            self.input_box_for_wallet_or_request = self.add(ctk.CTkEntry(self._app, placeholder_text="Enter a monero payment request or wallet address...", font=(styles.font, 12), corner_radius=15, border_color=styles.monero_orange))
-
-        self.input_box_for_wallet_or_request.grid(row=1, column=0, columnspan=3, padx=70, pady=(27.5, 0), sticky="ew")
+        self.header('Pay To:')
+        self.back_button()
 
         # Next button
         self.next_button = self.add(ctk.CTkButton(self._app, text="Continue", corner_radius=15, command=self.next_button_action))
@@ -75,20 +61,25 @@ class PayView(View):
         return self
 
     def activation(self):
-        cb = clipboard.paste()
-        if input_is_valid(input_string=cb) and cb != Wallet().address:
-            self.payment_input.set(cb)
-            self.input_box_for_wallet_or_request.configure(textvariable=self.payment_input, placeholder_text=None)
-
         self._app.geometry(styles.PAY_VIEW_GEOMETRY)
         return self
 
     def reactivate(self):
         super().reactivate()
-        cb = clipboard.paste()
-        if input_is_valid(input_string=cb) and cb != Wallet().address:
-            self.payment_input.set(cb)
-            self.input_box_for_wallet_or_request.configure(textvariable=self.payment_input)
+        # TODO: Can we set the border color through the theme file instead?
+        # Input box
+        self.payment_input = tkinter.StringVar(self._app, name='payment_input')
+        clipman.init()
+        clipman_contents = clipman.paste()
+        if input_is_valid(input_string=clipman_contents) and clipman_contents != Wallet().address:
+            self.payment_input.set(clipman_contents)
+
+            # TODO: refactor this to be better?
+            self.input_box_for_wallet_or_request = self.add(ctk.CTkEntry(self._app, textvariable=self.payment_input, font=(styles.font, 12), corner_radius=15, border_color=styles.monero_orange))
+        else:
+            self.input_box_for_wallet_or_request = self.add(ctk.CTkEntry(self._app, placeholder_text="Enter a monero payment request or wallet address...", font=(styles.font, 12), corner_radius=15, border_color=styles.monero_orange))
+
+        self.input_box_for_wallet_or_request.grid(row=1, column=0, columnspan=3, padx=70, pady=(27.5, 0), sticky="ew")
 
     def open_main(self):
         self._app.switch_view('main')

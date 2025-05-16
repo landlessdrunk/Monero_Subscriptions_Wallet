@@ -53,8 +53,8 @@ def check_if_node_works(node):
 
 class NodeSelectionView(View):
     def build(self):
-        # Back button and title
-        styles.back_and_title(self, ctk, cfg, title=' Set Node:')
+        self.header('Set Node:')
+        self.back_button()
 
         self.node = ctk.StringVar(self._app, cfg.config_file.get('rpc', 'node_url'))
         self.node_selection = self.add(ctk.CTkEntry(self._app, textvariable=self.node, corner_radius=15, placeholder_text='xmr-node.cakewallet.com:18081'))

@@ -21,8 +21,8 @@ class SettingsView(View):
         BUTTONS_PADY = 5
         BUTTONS_STICKY = "ew"
 
-        # Back button and title
-        styles.back_and_title(self, ctk, cfg, title=' Settings:')
+        self.header('Settings:')
+        self.back_button()
 
         node_selection_button = self.add(ctk.CTkButton(self._app, text="Set Node", corner_radius=15, command=self.open_node_selection))
         node_selection_button.grid(row=1, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=(10, BUTTONS_PADY), sticky=BUTTONS_STICKY)

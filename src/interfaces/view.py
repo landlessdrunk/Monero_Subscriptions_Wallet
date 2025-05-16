@@ -2,12 +2,17 @@ from abc import ABC, abstractmethod
 import logging
 import logging.config
 from src.logging import config as logging_config
+import customtkinter as ctk
+import styles
+from PIL import Image
 
 class View(ABC):
     def __init__(self, app):
         self._app = app
         self._elements = []
         self._activated = False
+        self._header = None
+        self._back_button = None
         logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(self.__module__)
 
@@ -43,3 +48,19 @@ class View(ABC):
     @property
     def activated(self):
         return self._activated
+
+    def header(self, text):
+        if not self._header:
+            self._header = self.add(ctk.CTkLabel(self._app, text=text, font=styles.HEADINGS_FONT_SIZE))
+        return self._header
+
+    def back_button(self):
+        # Back Button
+        if not self._back_button:
+            back_image = ctk.CTkImage(Image.open(styles.back_icon), size=(24, 24))
+            self._back_button = self.add(ctk.CTkButton(self._app, image=back_image, text='', fg_color='transparent', width=35, height=30, corner_radius=7, command=self.last_page))
+            self._back_button.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="w")
+        return self._back_button
+
+    def last_page(self):
+        self._app.switch_view_last()

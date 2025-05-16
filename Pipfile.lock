@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9ba086968cf5f3371647b4313041439392d1fbadf461cc4c9111f65e4096f848"
+            "sha256": "a996df1a398425cf42a67ef39c7ab2b14d35ee33a4b7422305112500b024bcb1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -137,12 +137,14 @@
             "markers": "python_version >= '3.7'",
             "version": "==3.4.2"
         },
-        "clipboard": {
+        "clipman": {
             "hashes": [
-                "sha256:a72a78e9c9bf68da1c3f29ee022417d13ec9e3824b511559fd2b702b1dd5b817"
+                "sha256:1f33ce83f6da162c068016db03e6230800f58b83cf3362fa1220fe55736b0a1f",
+                "sha256:cb2ad1a7ec5795b805ae521952ed733b35a499a33d512236a439a64fd58add50"
             ],
             "index": "pypi",
-            "version": "==0.0.4"
+            "markers": "python_version >= '3.9'",
+            "version": "==3.3.1"
         },
         "cron-descriptor": {
             "hashes": [
@@ -176,6 +178,14 @@
             "markers": "python_version >= '3.6'",
             "version": "==0.8.0"
         },
+        "dbus-next": {
+            "hashes": [
+                "sha256:58948f9aff9db08316734c0be2a120f6dc502124d9642f55e90ac82ffb16a18b",
+                "sha256:f4eae26909332ada528c0a3549dda8d4f088f9b365153952a408e28023a626a5"
+            ],
+            "markers": "python_full_version >= '3.6.0'",
+            "version": "==0.2.3"
+        },
         "factory-boy": {
             "hashes": [
                 "sha256:1c39e3289f7e667c4285433f305f8d506efc2fe9c73aaea4151ebd5cdea394fc",
@@ -187,11 +197,11 @@
         },
         "faker": {
             "hashes": [
-                "sha256:ad9dc66a3b84888b837ca729e85299a96b58fdaef0323ed0baace93c9614af06",
-                "sha256:dc2f730be71cb770e9c715b13374d80dbcee879675121ab51f9683d262ae9a1c"
+                "sha256:48c94daa16a432f2d2bc803c7ff602509699fca228d13e97e379cd860a7e216e",
+                "sha256:77b79e7a2228d57175133af0bbcdd26dc623df81db390ee52f5104d46c010f2f"
             ],
             "markers": "python_version >= '3.9'",
-            "version": "==37.1.0"
+            "version": "==37.3.0"
         },
         "idna": {
             "hashes": [
@@ -349,12 +359,7 @@
             "version": "==1.16.3"
         },
         "monero-usd-price": {
-            "hashes": [
-                "sha256:1b0b310d1d532eb862c0ddb35d07f6b53be32aea1e800bca7555731475125b98",
-                "sha256:abab7c30e6b7bf841352cafbd996249502186da6847ed787b2eccecc75713a3c"
-            ],
-            "index": "pypi",
-            "version": "==1.3.0"
+            "file": "../Monero-USD-Price"
         },
         "monerorequest": {
             "hashes": [
@@ -710,12 +715,6 @@
             "markers": "python_version >= '3.8'",
             "version": "==2025.4"
         },
-        "pyperclip": {
-            "hashes": [
-                "sha256:b7de0142ddc81bfc5c7507eea19da920b92252b548b96186caf94a5e2527d310"
-            ],
-            "version": "==1.9.0"
-        },
         "pyqt5": {
             "hashes": [
                 "sha256:6cd75628f6e732b1ffcfe709ab833a0716c0445d7aec8046a48d5843352becb6",
@@ -886,11 +885,11 @@
         },
         "setuptools": {
             "hashes": [
-                "sha256:5a78f61820bc088c8e4add52932ae6b8cf423da2aff268c23f813cfbb13b4006",
-                "sha256:6cdc8cb9a7d590b237dbe4493614a9b75d0559b888047c1f67d49ba50fc3edb2"
+                "sha256:ca5cc1069b85dc23070a6628e6bcecb3292acac802399c7f8edc0100619f9009",
+                "sha256:f6ffc5f0142b1bd8d0ca94ee91b30c0ca862ffd50826da1ea85258a06fd94552"
             ],
             "markers": "python_version >= '3.9'",
-            "version": "==80.4.0"
+            "version": "==80.7.1"
         },
         "six": {
             "hashes": [

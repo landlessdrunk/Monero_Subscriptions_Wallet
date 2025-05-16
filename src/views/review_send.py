@@ -32,8 +32,8 @@ class ReviewSendView(View):
         # if send_amount is <= wallet_balance
 
         # Title
-        self.label = self.add(ctk.CTkLabel(self._app, text='Send Payment?', font=styles.HEADINGS_FONT_SIZE))
-        self.label.grid(row=0, column=0, columnspan=3, padx=10, pady=(45, 5), sticky="ew")
+        self.header('Send Payment?')
+        self._header.grid(row=0, column=0, columnspan=3, padx=10, pady=(45, 5), sticky="ew")
 
         # Frame to hold buttons
         center_frame = self.add(ctk.CTkFrame(self._app, ))

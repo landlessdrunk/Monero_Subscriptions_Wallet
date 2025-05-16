@@ -3,7 +3,7 @@ import customtkinter as ctk
 from src.interfaces.view import View
 import config as cfg
 import styles
-import clipboard
+import clipman
 from monerorequest import decode_monero_payment_request
 
 
@@ -18,6 +18,9 @@ class CopyPaymentRequestView(View):
     def build(self):
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title='Payment Request Created:')
+
+        self.header('Payment Request Created:')
+        self.back_button()
 
         # TODO: Can we set the border color through the theme file instead?
 
@@ -46,8 +49,9 @@ class CopyPaymentRequestView(View):
         return self
 
     def activation(self):
+        clipman.init()
         self._app.geometry(styles.COPY_PAYMENT_REQUEST_VIEW_GEOMETRY)
-        self.payment_request = decode_monero_payment_request(clipboard.paste())
+        self.payment_request = decode_monero_payment_request(clipman.paste())
         self.payment_request_payment_id = self.payment_request["payment_id"]
         self.third_text = self.add(ctk.CTkLabel(self._app, text=f"Only you can see the payment ID: {self.payment_request_payment_id}", font=styles.BODY_FONT_SIZE))
         self.third_text.grid(row=3, column=0, columnspan=3, padx=10, pady=0, sticky='ew')
@@ -58,8 +62,8 @@ class CopyPaymentRequestView(View):
 
     def copy_payment_request(self):
         print('Copied Payment Request!')
-        clipboard.copy(self.payment_request)
+        clipman.copy(self.payment_request)
 
     def copy_payment_id(self):
-        clipboard.copy(self.payment_request_payment_id)
+        clipman.copy(self.payment_request_payment_id)
         print('Copied Payment ID!')

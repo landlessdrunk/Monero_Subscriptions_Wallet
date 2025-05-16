@@ -92,7 +92,7 @@ class RPCServer(Notifier):
 
             if not self.failed_to_start:
                 self.status_message = 'RPC Server: Ready'
-                if not rpc_client.open_wallet():
+                if not rpc_client.open_wallet(self.wallet.name):
                     self.status_message = 'RPC Server: Failed to Open Wallet'
                 self.logger.debug(rpc_client.refresh())
                 self._started = True
