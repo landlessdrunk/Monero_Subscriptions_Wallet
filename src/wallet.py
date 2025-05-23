@@ -2,12 +2,12 @@ from os import path, getcwd
 import platform
 import logging
 import logging.config
-from config import node_url, wallet_dir
+from config import node_url, wallet_dir, wallet_name
 from src.clients.rpc import RPCClient
 from src.logging import config as logging_config
 
 class Wallet():
-    def __init__(self, filename='subscriptions_wallet'):
+    def __init__(self, filename=wallet_name()):
         self.name = filename
         self.path = self._get_path()
         self._block_height = 0

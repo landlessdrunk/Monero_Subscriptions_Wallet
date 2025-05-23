@@ -51,6 +51,11 @@ class Exchange():
             converted = Decimal(amount)
         return str(cls._round(converted, to_sym))
 
+    '''
+    This function gets the atomic units from the monero exchange.
+    We want to be able to convert from one currency to another.
+    We do not need to convert to USD if it is already USD, or if it is already XMR.
+    '''
     @classmethod
     def to_atomic_units(cls, from_sym: str, amount: Decimal):
         if from_sym != 'XMR':
@@ -60,7 +65,11 @@ class Exchange():
                 sym_value = xe_scrape(from_sym)
             usd_value = Decimal(sym_value) * Decimal(amount)
             xmr_value = usd_value / Decimal(cls.US_EXCHANGE)
-        else:
+        #We don't need to convert to USD if it is already USD
+        elif from_sym == 'USD':
+            xmr_value = usd_value / Decimal(cls.US_EXCHANGE)
+        #We don't need to convert to XMR if it is already XMR
+        elif from_sym == 'XMR':
             xmr_value = Decimal(amount)
         return calculate_atomic_units_from_monero(Decimal(xmr_value))
 

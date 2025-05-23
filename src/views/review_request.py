@@ -20,12 +20,12 @@ class ReviewRequestView(View):
         '''
 
         # Frame to hold buttons
-        center_frame = self.add(ctk.CTkFrame(self._app, ))
-        center_frame.grid(row=6, column=0, columnspan=3, padx=0, pady=10, sticky="nsew")
-        center_frame.columnconfigure([0, 1], weight=1)  # Frame will span 3 columns but contain two columns (0 and 1)
+        self.center_frame = self.add(ctk.CTkFrame(self._app, ))
+        self.center_frame.grid(row=6, column=0, columnspan=3, padx=0, pady=10, sticky="nsew")
+        self.center_frame.columnconfigure([0, 1], weight=1)  # Frame will span 3 columns but contain two columns (0 and 1)
 
         # Cancel button
-        cancel_button = self.add(ctk.CTkButton(center_frame, text="No Thanks", corner_radius=15, command=self.cancel_button))
+        cancel_button = self.add(ctk.CTkButton(self.center_frame, text="No Thanks", corner_radius=15, command=self.cancel_button))
         cancel_button.grid(row=0, column=0, padx=(10, 5), pady=(0, 10), sticky="ew")
 
         return self
@@ -50,7 +50,7 @@ class ReviewRequestView(View):
         self.sellers_wallet_label.grid(row=4, column=0, columnspan=3, padx=10, pady=0, sticky="ew")
 
         # Confirm button
-        self.confirm_button = self.add(ctk.CTkButton(center_frame, text=self.confirm_button_text(), corner_radius=15,  command=self.confirm_button))
+        self.confirm_button = self.add(ctk.CTkButton(self.center_frame, text=self.confirm_button_text(), corner_radius=15,  command=self.confirm_button))
         self.confirm_button.grid(row=0, column=1, padx=(5, 10), pady=(0, 10), sticky="ew")
         return self
 

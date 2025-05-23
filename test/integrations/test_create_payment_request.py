@@ -36,7 +36,7 @@ class TestCreatePaymentRequest(unittest.TestCase):
             number_of_payments = 1
             schedule = 'Daily'
             start_date = date.today()+timedelta(days=1)
-            sellers_wallet = '59fhPNhFLEx3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEKpAMFKC'
+            sellers_wallet = '54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq'
             #Fill out the payment request creation form.
             self.app.current_view.custom_label_input.insert(0, custom_label)
             self.app.current_view.amount_input.insert(0, amount)
@@ -70,6 +70,6 @@ class TestCreatePaymentRequest(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.context.server_teardown()
-        cls.app.destroy()
+        cls.app.shutdown_steps()
         cls.app._app = None
         RPCClient._instance = None

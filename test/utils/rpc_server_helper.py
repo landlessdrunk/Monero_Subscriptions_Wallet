@@ -1,11 +1,14 @@
 from unittest.mock import patch
 from src.rpc_server import RPCServer
 from src.wallet import Wallet
+from contextlib import contextmanager
 
+@contextmanager
 def rpc_server_test(wallet_name='test_wallet'):
     with patch('config.stagenet', return_value=True):
         context = RPCServerContextManager()
         context.server_setup(wallet_name)
+        context.server_ready()
         yield
         context.server_teardown()
 

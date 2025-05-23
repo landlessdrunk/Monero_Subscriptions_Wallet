@@ -6,6 +6,9 @@ from datetime import datetime
 from src.subscription import Subscription
 from src.exchange import Exchange
 from test.factories.subscription import SubscriptionFactory
+from test.utils.rpc_server_helper import rpc_server_test
+from decimal import Decimal
+
 class TestSubscription(unittest.TestCase):
     @time_machine.travel('2024-05-16 12:00:00')
     def test_relative_payment_time(self):
@@ -67,8 +70,11 @@ class TestSubscription(unittest.TestCase):
         )
         with payment_vcr.use_cassette('test/fixtures/cassettes/make_payment.yaml'):
             with patch('src.subscription.send_payments', return_value=True):
-                Exchange.XMR_UNLOCKED = 1000
-                subscription = SubscriptionFactory(payment_id='c2c9f284c33a4903', sellers_wallet='59fhPNhFLEx3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEKpAMFKC')
+                Exchange.LAST_REFRESHED = datetime.now()
+                Exchange.US_EXCHANGE = Decimal('381.55')
+                Exchange.XMR_TOTAL = Decimal('10')
+                Exchange.XMR_UNLOCKED = Decimal('10')
+                subscription = SubscriptionFactory(payment_id='c2c9f284c33a4903', sellers_wallet='54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq')
                 nop = subscription.number_of_payments
                 self.assertEqual(subscription.make_payment(), True)
                 self.assertEqual(subscription.number_of_payments, nop - 1)
@@ -76,7 +82,6 @@ class TestSubscription(unittest.TestCase):
     def test_payable(self):
         with vcr.use_cassette('test/fixtures/cassettes/payable.yaml'):
             with patch('src.exchange.Exchange.refresh_prices', return_value=True):
-                Exchange.XMR_UNLOCKED = 1000
                 subscription = SubscriptionFactory(number_of_payments=1)
                 self.assertEqual(subscription.payable(), True)
                 invalid_subscription = SubscriptionFactory(number_of_payments=-1)

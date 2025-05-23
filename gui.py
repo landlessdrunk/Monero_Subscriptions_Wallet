@@ -20,6 +20,7 @@ from src.subscription import Subscription
 from PIL import Image, ImageDraw
 import sys
 import queue
+import time
 
 ctk.set_default_color_theme(path.abspath(path.join(path.dirname(__file__), "monero_theme.json")))
 
@@ -29,6 +30,8 @@ class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.current_view = None
+        self.stop_subscriptions = False
+        self.rpc_server = None
         logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(self.__module__)
         self._qt_app = QApplication(sys.argv)
@@ -124,12 +127,14 @@ class App(ctk.CTk):
             sub.queue()
 
     def scheduler_thread(self):
-        sched_thread = threading.Thread(target=self.run_scheduler)
-        sched_thread.daemon = True
-        sched_thread.start()
+        self.sched_thread = threading.Thread(target=self.run_scheduler)
+        self.sched_thread.daemon = True
+        self.sched_thread.start()
 
     def run_scheduler(self):
-        Subscription.schedul.run()
+        while not self.stop_subscriptions:
+            Subscription.schedul.run(blocking=False)
+            time.sleep(1)
 
     def destroy(self):
         for key, view in self.views.items():
@@ -137,10 +142,39 @@ class App(ctk.CTk):
         super().destroy()
 
     def shutdown_steps(self):
-        self.destroy()
-        # self.icon.stop()
-        if rpc() == 'True':
+        self.after_cancel(self.process_tx_queue)
+        self.after_cancel(self.process_sub_queue)
+        self.after_cancel(self.process_qt_events)
+
+        self.empty_tk_queue(self.transactions_queue)
+        self.empty_tk_queue(self.subscriptions_queue)
+
+        for event in Subscription.schedul.queue:
+            Subscription.schedul.cancel(event)
+
+        self.stop_subscriptions = True
+        self.sched_thread.join(timeout=2)
+
+        if rpc() == 'True' and self.rpc_server:
             self.rpc_server.kill()
+
+        if hasattr(self, 'tray_icon') and self.tray_icon:
+            self.tray_icon.hide()
+            self.tray_icon.deleteLater()
+        self.qt_app.processEvents()
+        self.qt_app.quit()
+        del self._qt_app
+
+        self.destroy()
+
+
+    def empty_tk_queue(self, queue):
+        while not queue.empty():
+            try:
+                queue.get_nowait()
+                queue.task_done()
+            except queue.Empty:
+                break
 
     # PyQt5 System Tray Setup
     def create_tray_icon(self):
@@ -209,7 +243,6 @@ class App(ctk.CTk):
 
     def signal_handler(self, sig, frame):
         self.shutdown_steps()
-        self.qt_app.quit()
         sys.exit(0)
 
     @property

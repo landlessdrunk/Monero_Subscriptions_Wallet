@@ -62,5 +62,5 @@ class AmountView(View):
 
         # TODO: Validate that amount is valid.
         cfg.CURRENT_SEND_AMOUNT = Decimal(self.input_box_for_amount.get().strip())
-
+        self.input_box_for_amount.delete(0, len(self.input_box_for_amount.get()))
         self._app.switch_view('review_send')

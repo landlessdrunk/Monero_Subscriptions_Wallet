@@ -19,8 +19,8 @@ interactions:
   response:
     body:
       string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
-        \   \"address\": \"59fhPNhFLEx3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEKpAMFKC\",\r\n
-        \   \"addresses\": [{\r\n      \"address\": \"59fhPNhFLEx3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEKpAMFKC\",\r\n
+        \   \"address\": \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \   \"addresses\": [{\r\n      \"address\": \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
         \     \"address_index\": 0,\r\n      \"label\": \"Primary account\",\r\n      \"used\":
         true\r\n    }]\r\n  }\r\n}"
     headers:
@@ -31,7 +31,7 @@ interactions:
       Content-Type:
       - application/json
       Last-Modified:
-      - Thu, 01 Aug 2024 03:52:25 GMT
+      - Fri, 23 May 2025 02:49:04 GMT
       Server:
       - Epee-based
     status:

@@ -56,7 +56,6 @@ class MainViewTest(unittest.TestCase):
     def tearDownClass(cls):
         print('MainViewTest tearDownClass')
         cls.context.server_teardown()
-        cls.app.quit()
-        cls.app.destroy()
+        cls.app.shutdown_steps()
         cls.app._app = None
         RPCClient._instance = None

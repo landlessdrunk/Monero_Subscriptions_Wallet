@@ -46,7 +46,6 @@ class CreatePaymentRequestView(View):
         self.header('Create Payment Request:')
         self.back_button()
 
-
         self.content_frame = self.add(ctk.CTkFrame(self._app))
         # self.content_frame.pack(fill='both', expand=True, padx=0, pady=0)
         # Configure the grid layout to have 100 columns with equal size

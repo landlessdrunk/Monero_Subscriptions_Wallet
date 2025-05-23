@@ -1,7 +1,8 @@
 import requests
 import json
 import logging
-from config import local_rpc_url, daemon_url
+import logging.config
+from config import local_rpc_url, daemon_url, wallet_name
 from src.logging import config as logging_config
 from src.interfaces.observer import Observer
 from src.interfaces.notifier import Notifier
@@ -75,14 +76,14 @@ class RPCClient(Notifier):
             "method": "refresh"
         }
 
-    def create_wallet(self, filename='subscriptions_wallet'):
+    def create_wallet(self, filename=wallet_name()):
         try:
             return self.post(self._create_wallet(filename))['result']
         except requests.exceptions.ConnectionError as e:
             self.logger.debug(str(e))
             return False
 
-    def _create_wallet(self, filename='subscriptions_wallet'):
+    def _create_wallet(self, filename=wallet_name()):
         return {
             "jsonrpc": "2.0",
             "id": "0",
@@ -93,7 +94,7 @@ class RPCClient(Notifier):
             }
         }
 
-    def open_wallet(self, filename='subscriptions_wallet'):
+    def open_wallet(self, filename=wallet_name()):
         try:
             request_result = self.post(self._open_wallet(filename))
             if request_result.get('error'):
@@ -105,7 +106,7 @@ class RPCClient(Notifier):
             self.logger.debug(str(e))
             return False
 
-    def _open_wallet(self, filename='subscriptions_wallet'):
+    def _open_wallet(self, filename=wallet_name()):
         return {
             "jsonrpc": "2.0",
             "id": "0",

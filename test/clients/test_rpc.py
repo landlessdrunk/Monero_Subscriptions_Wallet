@@ -13,7 +13,7 @@ class testRPCClient(unittest.TestCase):
         with vcr.use_cassette('test/fixtures/cassettes/address.yaml'):
             client = RPCClient()
             address = client.get_address()
-        self.assertEqual(address, '59fhPNhFLEx3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEKpAMFKC')
+        self.assertEqual(address, '54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq')
 
     def test_get_balance(self):
         with vcr.use_cassette('test/fixtures/cassettes/get_balance.yaml'):
@@ -24,7 +24,7 @@ class testRPCClient(unittest.TestCase):
     def test_make_integrated_address(self):
         with vcr.use_cassette('test/fixtures/cassettes/integrated_address.yaml'):
             client = RPCClient()
-            address = '59fhPNhFLEx3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEKpAMFKC'
+            address = '54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq'
             payment_id = '075eed614ebea072'
             integrated_address = client.make_integrated_address(address, payment_id)
         self.assertEqual(integrated_address['integrated_address'], '5KNNQBWjwWU3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEUmgrwoxBZLKDt8PcKB')
@@ -32,7 +32,7 @@ class testRPCClient(unittest.TestCase):
     def test_transfer(self):
         with vcr.use_cassette('test/fixtures/cassettes/transfer.yaml'):
             client = RPCClient()
-            address = '59fhPNhFLEx3zP16ZAPaeHXsPoNczVaGo245CgDSW9WpiMxvP1N7WdxX1RA4vob6ABGGBxUgjcCN2LjeSGPiH8AEKpAMFKC'
+            address = '54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq'
             result = client.transfer(address, 1000)
         self.assertEqual(result['amount'], 1000)
 

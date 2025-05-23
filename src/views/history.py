@@ -87,7 +87,6 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
         self._app.transactions_queue.put(self.update_txs)
 
     def render_txs(self):
-        # breakpoint()
         if self.transactions:
             for direction, txs in self.transactions.items():
                 txs.sort(reverse=True, key=lambda t: t['timestamp'])

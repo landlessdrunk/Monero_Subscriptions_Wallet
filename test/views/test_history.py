@@ -63,6 +63,6 @@ class HistoryViewTest(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.context.server_teardown()
-        cls.app.destroy()
+        cls.app.shutdown_steps()
         cls.app._app = None
         RPCClient._instance = None

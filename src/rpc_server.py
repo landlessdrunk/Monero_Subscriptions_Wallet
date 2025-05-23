@@ -49,7 +49,7 @@ class RPCServer(Notifier):
     def _start_rpc(self):
         cmd = f'stdbuf -oL {rpc_executable()} --password "" --wallet-dir {wallet_dir()}'
         cmd += f' --rpc-bind-port {rpc_bind_port()} --disable-rpc-login --confirm-external-bind'
-        cmd += f' --daemon-address {self._daemon_address()}'
+        cmd += f' --daemon-address {self._daemon_address()} --log-level 2'
         if stagenet():
             cmd += ' --stagenet'
 
@@ -62,7 +62,13 @@ class RPCServer(Notifier):
         for observer in self._observers:
             self.detach(observer)
         self._started = False
-        self.process.kill()
+        self.process.terminate()
+        try:
+            self.process.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            print('Process did not terminate in time, forcing kill. Wallet may be corrupted.')
+            self.process.kill()
+            self.process.wait()
 
     def ready(self):
         rpc_client = RPCClient.get()
@@ -120,3 +126,5 @@ class RPCServer(Notifier):
     @property
     def started(self):
         return self._started
+
+#/home/ra/Projects/Monero_Subscriptions_Wallet/monero-wallet-rpc --password "" --wallet-dir /home/ra/Projects/Monero_Subscriptions_Wallet/wallets --rpc-bind-port 18088 --disable-rpc-login --confirm-external-bind --daemon-address 127.0.0.1:38081 --stagenet
