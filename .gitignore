@@ -11,3 +11,4 @@ wallet_qr_code.png
 build/
 dist/
 monero-wallet-rpc
+*.log*

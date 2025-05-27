@@ -7,7 +7,7 @@ name = "pypi"
 customtkinter = "*"
 tkcalendar = "*"
 requests = "*"
-monero_usd_price = {file='../Monero-USD-Price'}
+monero_usd_price = "*"
 lxml = "*"
 clipman = "*"
 qrcode = "*"

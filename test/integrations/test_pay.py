@@ -6,7 +6,6 @@ from test.utils.config import config_mock, clear_test_config
 from src.clients.rpc import RPCClient
 from gui import App
 from monerorequest import decode_monero_payment_request
-from datetime import datetime, timedelta
 
 class TestPay(unittest.TestCase):
     @classmethod
@@ -103,8 +102,6 @@ class TestPay(unittest.TestCase):
                 self.app.current_view.confirm_button._canvas.event_generate('<Button-1>')
                 self.app.update()
                 self.assertEqual(self.app.current_view, self.app.views['main'])
-            #TODO: Check that the payment request happened/went through. Not sure the best way to do that.
-            #Probably should be a VCR request.
 
     def test_pay_monero_address_clip(self):
         with config_mock():
