@@ -6,7 +6,6 @@ from src.clients.rpc import RPCClient
 class MainViewTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        print('MainViewTest setUpClass')
         with unittest.mock.patch('gui.rpc', return_value='False'):
             with unittest.mock.patch('gui.cfg.subscriptions', return_value='[]'):
                 cls.app = App()

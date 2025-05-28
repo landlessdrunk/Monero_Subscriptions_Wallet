@@ -24,6 +24,7 @@ macholib = "*"
 cron-descriptor = "*"
 pyqt5 = "*"
 monerorequest = "*"
+coverage = "*"
 
 [dev-packages]
 

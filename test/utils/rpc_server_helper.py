@@ -5,16 +5,17 @@ from contextlib import contextmanager
 
 @contextmanager
 def rpc_server_test(wallet_name='test_wallet'):
-    with patch('config.stagenet', return_value=True):
-        context = RPCServerContextManager()
-        context.server_setup(wallet_name)
-        context.server_ready()
-        yield
-        context.server_teardown()
+    context = RPCServerContextManager()
+    context.server_setup(wallet_name)
+    context.server_ready()
+    yield
+    context.server_teardown()
 
 class RPCServerContextManager():
     def server_setup(self, wallet_name='test_wallet'):
         self.stagenet_patch = patch('config.stagenet', return_value=True)
+        self.write_patch = patch('config.config_file.write', return_value=None)
+        self.write_patch.start()
         self.stagenet_patch.start()
         wallet = Wallet('test_wallet')
         self.rpc_server = RPCServer.get(wallet)
@@ -32,6 +33,7 @@ class RPCServerContextManager():
     def server_teardown(self):
         RPCServer._wallet_servers = {}
         self.rpc_server.kill()
+        self.write_patch.stop()
         self.stagenet_patch.stop()
         self.server_patch.stop()
 

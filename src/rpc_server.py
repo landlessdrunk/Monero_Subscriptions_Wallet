@@ -66,7 +66,7 @@ class RPCServer(Notifier):
         try:
             self.process.wait(timeout=10)
         except subprocess.TimeoutExpired:
-            print('Process did not terminate in time, forcing kill. Wallet may be corrupted.')
+            self.logger.debug('Process did not terminate in time, forcing kill. Wallet may be corrupted.')
             self.process.kill()
             self.process.wait()
 
