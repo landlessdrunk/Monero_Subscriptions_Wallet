@@ -52,7 +52,7 @@ class ConfigFile():
 
         if self.exists():
             self.read()
-        else:
+        else: # pragma: no cover
             self.create()
 
     def read(self):
@@ -92,6 +92,10 @@ class ConfigFile():
         self.write()
         return True
 
+    def subscription_exists(self, subscriptions):
+        subs = json.loads(self.get('subscriptions', 'subscriptions'))
+        return subscriptions.json_friendly() in subs
+
     def remove_subscription(self, subscription):
         subs = [sub for sub in json.loads(self.get('subscriptions', 'subscriptions')) if sub != subscription.json_friendly()]
         self.set('subscriptions', 'subscriptions', json.dumps(subs))
@@ -110,7 +114,7 @@ class ConfigFile():
                    sub.get('sellers_wallet') != subscription.sellers_wallet
         ]
         updated_subs = []
-        for sub in update_subs:
+        for sub in update_subs: # pragma: no cover
             updated_subs.append(subscription.json_friendly())
         self.set('subscriptions', 'subscriptions', json.dumps(same_subs + updated_subs))
         return True
@@ -127,7 +131,8 @@ class ConfigFile():
     def clear(self):
         self.create()
 
-config_file = ConfigFile('./config.ini')
+config_file_path = './config.ini'
+config_file = ConfigFile(config_file_path)
 
 def variable_value(section, option):
     value = None
@@ -136,11 +141,11 @@ def variable_value(section, option):
         value = config_file.get(section, option)
 
     # Get From Environment
-    if value is None:
+    if value is None: # pragma: no cover
         value = environ.get(option.upper())
 
     # Get Default Value
-    if value is None:
+    if value is None: # pragma: no cover
         value = config_options[section][option]
 
     return value
@@ -153,9 +158,9 @@ for section, options in config_options.items():
 
 def get_platform(os=platform.system()):
     os = os.lower()
-    if os == 'darwin':
+    if os == 'darwin': # pragma: no cover
         return 'Mac'
-    if os == 'windows':
+    if os == 'windows': # pragma: no cover
         return 'Windows'
     else:
         return 'Linux'

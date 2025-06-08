@@ -1,0 +1,310 @@
+interactions:
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "get_version"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '54'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:18088/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \   \"release\": true,\r\n    \"version\": 65563\r\n  }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 30 May 2025 03:24:11 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "open_wallet", "params": {"filename":
+      "test_wallet"}}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '93'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:18088/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \ }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '59'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 30 May 2025 03:24:12 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "refresh"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '50'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:18088/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \   \"blocks_fetched\": 0,\r\n    \"received_money\": false\r\n  }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '114'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 30 May 2025 03:24:12 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=usd
+  response:
+    body:
+      string: '{"monero":{"usd":336.04}}'
+    headers:
+      Age:
+      - '25'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 947b1e042e8f358d-DFW
+      Cache-Control:
+      - max-age=30, public, must-revalidate, s-maxage=60
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 30 May 2025 03:24:12 GMT
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      access-control-allow-headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      access-control-allow-methods:
+      - POST, PUT, DELETE, GET, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - link, per-page, total
+      access-control-request-method:
+      - '*'
+      alt-svc:
+      - h3=":443"; ma=86400
+      alternate-protocol:
+      - 443:npn-spdy/2
+      etag:
+      - W/"dee0c58e0be7b35ab60a36153e9e9ae1"
+      referrer-policy:
+      - strict-origin-when-cross-origin
+      strict-transport-security:
+      - max-age=15724800; includeSubdomains
+      vary:
+      - Accept-Encoding, Origin
+      x-content-type-options:
+      - nosniff
+      x-download-options:
+      - noopen
+      x-frame-options:
+      - SAMEORIGIN
+      x-permitted-cross-domain-policies:
+      - none
+      x-request-id:
+      - ba7a31eb-a9bb-4c96-bcbc-a14a0cc38c3c
+      x-runtime:
+      - '0.004065'
+      x-xss-protection:
+      - '0'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "get_balance"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '54'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:18088/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \   \"balance\": 13039663900554,\r\n    \"blocks_to_unlock\": 0,\r\n    \"multisig_import_needed\":
+        false,\r\n    \"per_subaddress\": [{\r\n      \"account_index\": 0,\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"address_index\": 0,\r\n      \"balance\": 13039663900554,\r\n      \"blocks_to_unlock\":
+        0,\r\n      \"label\": \"Primary account\",\r\n      \"num_unspent_outputs\":
+        6,\r\n      \"time_to_unlock\": 0,\r\n      \"unlocked_balance\": 13039663900554\r\n
+        \   }],\r\n    \"time_to_unlock\": 0,\r\n    \"unlocked_balance\": 13039663900554\r\n
+        \ }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '631'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 30 May 2025 03:24:13 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "get_balance"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '54'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:18088/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \   \"balance\": 13039663900554,\r\n    \"blocks_to_unlock\": 0,\r\n    \"multisig_import_needed\":
+        false,\r\n    \"per_subaddress\": [{\r\n      \"account_index\": 0,\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"address_index\": 0,\r\n      \"balance\": 13039663900554,\r\n      \"blocks_to_unlock\":
+        0,\r\n      \"label\": \"Primary account\",\r\n      \"num_unspent_outputs\":
+        6,\r\n      \"time_to_unlock\": 0,\r\n      \"unlocked_balance\": 13039663900554\r\n
+        \   }],\r\n    \"time_to_unlock\": 0,\r\n    \"unlocked_balance\": 13039663900554\r\n
+        \ }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '631'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 30 May 2025 03:24:13 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "get_balance"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '54'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:18088/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \   \"balance\": 13039663900554,\r\n    \"blocks_to_unlock\": 0,\r\n    \"multisig_import_needed\":
+        false,\r\n    \"per_subaddress\": [{\r\n      \"account_index\": 0,\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"address_index\": 0,\r\n      \"balance\": 13039663900554,\r\n      \"blocks_to_unlock\":
+        0,\r\n      \"label\": \"Primary account\",\r\n      \"num_unspent_outputs\":
+        6,\r\n      \"time_to_unlock\": 0,\r\n      \"unlocked_balance\": 13039663900554\r\n
+        \   }],\r\n    \"time_to_unlock\": 0,\r\n    \"unlocked_balance\": 13039663900554\r\n
+        \ }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '631'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 30 May 2025 03:24:13 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+version: 1

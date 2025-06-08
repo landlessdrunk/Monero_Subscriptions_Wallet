@@ -1,7 +1,6 @@
 import tkinter as tk
 import config as cfg
 from os import path
-import styles
 
 def make_centered_geometry(window_resolution):
     window_resolution = window_resolution.split('x')
@@ -16,7 +15,7 @@ def make_centered_geometry(window_resolution):
 
 
 # TODO: Work in progress
-def center_window_x(app, to_geometry):
+def center_window_x(app, to_geometry): # pragma: no cover
     from_width = app.winfo_width()
 
     to_width = int(to_geometry.split('x')[0])
@@ -88,7 +87,7 @@ settings_icon = settings_sliders_icon
 # =====================
 # Platform-Dependent Configurations
 # =====================
-if cfg.platform == 'Windows':
+if cfg.platform == 'Windows': # pragma: no cover
     # Views
     MAIN_VIEW_GEOMETRY = '500x215'
     PAY_VIEW_GEOMETRY = '500x215'
@@ -108,7 +107,7 @@ if cfg.platform == 'Windows':
     SUBSCRIPTIONS_SMALL_VIEW_GEOMETRY = '500x215'
 
 
-elif cfg.platform == 'Mac':
+elif cfg.platform == 'Mac': # pragma: no cover
     # Views
     MAIN_VIEW_GEOMETRY = '500x200'
     PAY_VIEW_GEOMETRY = '500x200'
@@ -148,7 +147,8 @@ elif cfg.platform == 'Linux':
     SUBSCRIPTIONS_SMALL_VIEW_GEOMETRY = '500x205'
 
 
-else:  # Not sure if we even need this
+else: # pragma: no cover
+    # Not sure if we even need this 
     # Views
     MAIN_VIEW_GEOMETRY = '500x195'
     PAY_VIEW_GEOMETRY = '500x195'

@@ -1,6 +1,9 @@
 import unittest
 import vcr
 from src.clients.rpc import RPCClient
+import requests
+from test.utils.config import config_mock
+from test.utils.rpc_server_helper import rpc_server_test
 
 class testRPCClient(unittest.TestCase):
     def test_version(self):
@@ -42,11 +45,50 @@ class testRPCClient(unittest.TestCase):
             result = client.create_wallet('test_wallet_2')
         self.assertEqual(result, {})
 
+    def test_set_tx_notes(self):
+        with vcr.use_cassette('test/fixtures/cassettes/set_tx_notes.yaml'):
+            client = RPCClient()
+            transfers = client.get_transfers()
+            client.set_tx_notes([transfers['out'][0]['txid']], ['test_note'])
+            tx_notes_get_result = client.get_tx_notes([transfers['out'][0]['txid']])
+            self.assertEqual(tx_notes_get_result, ['test_note'])
+
     def test_open_wallet(self):
         with vcr.use_cassette('test/fixtures/cassettes/open_wallet.yaml'):
             client = RPCClient()
             result = client.open_wallet('test_wallet_2')
         self.assertEqual(result, True)
+
+    def test_open_wallet_error(self):
+        with unittest.mock.patch('src.clients.rpc.RPCClient.post', return_value={'error': {'message': 'error'}}):
+            client = RPCClient()
+            self.assertEqual(client.open_wallet('test_wallet_2'), False)
+
+    def test_post_error_message(self):
+        response = requests.models.Response()
+        response.status_code = 500
+        response._content = b'{"error": {"message": "error"}}'
+        with unittest.mock.patch('requests.post', return_value=response):
+            client = RPCClient()
+            self.assertEqual(client.get_address(), {'error': {'message': 'error'}})
+
+    def test_post_exception(self):
+        with unittest.mock.patch('requests.post', side_effect=requests.exceptions.ConnectionError('error')):
+            client = RPCClient()
+            self.assertEqual(client.get_address(), {'exception': 'error'})
+
+    def test_daemon_post_error_message(self):
+        response = requests.models.Response()
+        response.status_code = 500
+        response._content = b'{"error": {"message": "error"}}'
+        with unittest.mock.patch('requests.post', return_value=response):
+            client = RPCClient()
+            self.assertEqual(client.current_block_height(), {'error': {'message': 'error'}})
+
+    def test_daemon_post_exception(self):
+        with unittest.mock.patch('requests.post', side_effect=requests.exceptions.ConnectionError('error')):
+            client = RPCClient()
+            self.assertEqual(client.current_block_height(), {'exception': 'error'})
 
 '''
 To create a new test with the wallet rpc server started use

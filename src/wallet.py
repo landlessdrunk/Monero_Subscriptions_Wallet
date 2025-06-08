@@ -5,7 +5,7 @@ import logging.config
 from config import node_url, wallet_dir, wallet_name
 from src.clients.rpc import RPCClient
 from src.logging import config as logging_config
-
+from urllib import parse
 class Wallet():
     def __init__(self, filename=wallet_name()):
         self.name = filename
@@ -27,8 +27,8 @@ class Wallet():
         return RPCClient.get().current_block_height()
 
     def _daemon_address(self):
-        node = node_url().split(':')
-        return f'{node[0]}:{node[1]}'
+        node = parse.urlparse(node_url())
+        return node.geturl()
 
     @property
     def block_height(self):
@@ -49,10 +49,9 @@ class Wallet():
             self._address = RPCClient.get().get_address()
         return self._address
 
-
     def exists(self):
         return path.isfile(f'{path.abspath(path.join(path.dirname(__file__), '../', wallet_dir()))}/{self.name}.keys') or \
                path.isfile(f'{path.abspath(path.join(path.dirname(__file__), '../', wallet_dir()))}/{self.name}')
 
     def create(self):
-        RPCClient.get().create_wallet(self.name)
+        return RPCClient.get().create_wallet(self.name)

@@ -58,20 +58,29 @@ class Exchange():
     '''
     @classmethod
     def to_atomic_units(cls, from_sym: str, amount: Decimal):
-        if from_sym != 'XMR':
+        if from_sym == 'USD':
+            xmr_value = amount / Decimal(cls.US_EXCHANGE)
+        #We don't need to convert to XMR if it is already XMR
+        elif from_sym == 'XMR':
+            xmr_value = Decimal(amount)
+        elif from_sym != 'XMR':
             if from_sym == 'XGB':
                 sym_value = goldback_scrape()
             else:
                 sym_value = xe_scrape(from_sym)
-            usd_value = Decimal(sym_value) * Decimal(amount)
+            usd_value = cls._dec_round(cls._dec_round((1/Decimal(sym_value)), from_sym) * Decimal(amount), 'USD')
             xmr_value = usd_value / Decimal(cls.US_EXCHANGE)
-        #We don't need to convert to USD if it is already USD
-        elif from_sym == 'USD':
-            xmr_value = usd_value / Decimal(cls.US_EXCHANGE)
-        #We don't need to convert to XMR if it is already XMR
-        elif from_sym == 'XMR':
-            xmr_value = Decimal(amount)
+
         return calculate_atomic_units_from_monero(Decimal(xmr_value))
+
+    @classmethod
+    def _dec_round(cls, value: Decimal, to_sym: str):
+        if to_sym not in cls.ROUNDING.keys():
+            final_rounded = value.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        else:
+            rounding_spec = Decimal('1.' + ('0' * cls.ROUNDING[to_sym]))
+            final_rounded = value.quantize(rounding_spec, rounding=ROUND_HALF_UP)
+        return final_rounded
 
     @classmethod
     def _round(cls, value: Decimal, to_sym: str):

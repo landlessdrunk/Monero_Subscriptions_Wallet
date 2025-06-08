@@ -6,6 +6,10 @@ from test.utils.config import config_mock, clear_test_config
 from src.clients.rpc import RPCClient
 from gui import App
 from monerorequest import decode_monero_payment_request
+import config as cfg
+from src.views.pay import input_is_valid_monero_request, input_is_valid_monero_wallet, input_is_valid
+import time
+import customtkinter as ctk
 
 class TestPay(unittest.TestCase):
     @classmethod
@@ -14,15 +18,16 @@ class TestPay(unittest.TestCase):
             cls.context = RPCServerContextManager()
             cls.context.server_setup()
             with unittest.mock.patch('gui.rpc', return_value='False'):
-                with unittest.mock.patch('gui.cfg.subscriptions', return_value='[]'):
-                    cls.app = App()
-                    cls.app.update()
-                    cls.context.server_ready()
+                clipman.init()
+                clipman.copy('')
+                cls.app = App()
+                cls.app.update()
+                cls.context.server_ready()
 
     def setUp(self):
         clipman.init()
         clipman.copy('')
-
+    
     def test_pay_monero_request_no_clip(self):
         with config_mock():
             self.app.switch_view('main')
@@ -30,8 +35,10 @@ class TestPay(unittest.TestCase):
             self.app.current_view.pay_button._canvas.event_generate('<Button-1>')
             self.app.update()
             self.assertEqual(self.app.current_view, self.app.views['pay'])
+            #Clear out input from other tests
+            self.app.views['pay'].input_box_for_wallet_or_request.delete(0, ctk.END)
             monero_request = 'monero-request:2:H4sIAAAAAAAC/y1O246CMBD9FdPHjW5aBBTeEBUTlZBFF+NLU0q5GKCkFBc1++/bms1MMjm3zHkB0vChlcAFCEwBLUlbMFy1WUWJ5AIPolaSVgYhWEsfCp3j9ZvoJW9wTVKmLSfWS8W2Q5MygXmOO/JoWCt74KIp+Ae4ypTVntPlwoHURKYDzTxXsZ6WLBtqplQ4gZMPPZpmdc1Ej3+Iurqj5eRlFJbbw2acPyNkX72IsN2lj3hIn98k4IZp+cU6Tpykq47jPULhIsnGC/ryzDtPbW8VBKvxXNyoHxqHG4uDqNotvc2+847bva9fSiIkzojUXQxoWDNozRA6Qei+9xNCeAW/f49op5Q4AQAA'
-            self.app.current_view.payment_input.set(monero_request)
+            self.app.current_view.input_box_for_wallet_or_request.insert(0, monero_request)
             self.app.update()
             self.app.current_view.next_button._canvas.event_generate('<Button-1>')
             self.app.update()
@@ -46,6 +53,7 @@ class TestPay(unittest.TestCase):
             seller_text = f"Paying To: {decoded_request["sellers_wallet"][:5]}...{decoded_request["sellers_wallet"][-5:]}"
             self.assertEqual(review_view.sellers_wallet_label.cget('text'), seller_text)
             review_view.confirm_button._canvas.event_generate('<Button-1>')
+            time.sleep(.1)
             self.app.update()
             self.assertEqual(self.app.current_view, self.app.views['subscriptions'])
             self.assertEqual(len(self.app.current_view.sub_frame.sub_frames), 1)
@@ -79,20 +87,25 @@ class TestPay(unittest.TestCase):
 
     def test_pay_monero_address_no_clip(self):
         with config_mock():
+            clipman.init()
+            clipman.copy('invalid')
             self.app.switch_view('main')
             self.app.update()
             self.app.current_view.pay_button._canvas.event_generate('<Button-1>')
             self.app.update()
             self.assertEqual(self.app.current_view, self.app.views['pay'])
+            self.assertEqual(self.app.current_view.input_box_for_wallet_or_request.get(), '')
             monero_address = '5B9PgE8kH6GPTamHY9WdXEbNr66PtiJfuU8nMvR2b7bsPLtUtjbwfNPBuFxNgCwAyg299LGt9xdZUizZ4whTHA7K614k9va'
-            self.app.current_view.payment_input.set(monero_address)
+            self.app.current_view.input_box_for_wallet_or_request.insert(0, monero_address)
             self.app.update()
+            self.assertEqual(self.app.current_view.input_box_for_wallet_or_request.get(), monero_address)
             self.app.current_view.next_button._canvas.event_generate('<Button-1>')
             self.app.update()
             self.assertEqual(self.app.current_view, self.app.views['amount'])
             self.app.current_view.input_box_for_amount.insert(0, '1')
             self.assertEqual(self.app.current_view.wallet.cget('text'), 'To Wallet: 5B9Pg...4k9va')
             self.app.update()
+            cfg.CURRENT_SEND_CURRENCY = None
             self.app.current_view.send_button._canvas.event_generate('<Button-1>')
             self.app.update()
             self.assertEqual(self.app.current_view, self.app.views['review_send'])
@@ -115,6 +128,10 @@ class TestPay(unittest.TestCase):
             self.app.current_view.next_button._canvas.event_generate('<Button-1>')
             self.app.update()
             self.assertEqual(self.app.current_view, self.app.views['amount'])
+            self.app.current_view.currency_selector._dropdown_menu.invoke(0)
+            self.app.update()
+            self.app.current_view.currency_selector._dropdown_menu.invoke(5)
+            self.app.update()
             self.app.current_view.input_box_for_amount.delete(0, -1)
             self.app.current_view.input_box_for_amount.insert(0, '1')
             self.assertEqual(self.app.current_view.wallet.cget('text'), 'To Wallet: 5B9Pg...4k9va')
@@ -139,3 +156,16 @@ class TestPay(unittest.TestCase):
         cls.app.shutdown_steps()
         cls.app._app = None
         RPCClient._instance = None
+
+class TestPayFunctions(unittest.TestCase):
+    def test_input_is_valid_monero_request(self):
+        self.assertTrue(input_is_valid_monero_request('monero-request:2:H4sIAAAAAAAC/y1O246CMBD9FdPHjW5aBBTeEBUTlZBFF+NLU0q5GKCkFBc1++/bms1MMjm3zHkB0vChlcAFCEwBLUlbMFy1WUWJ5AIPolaSVgYhWEsfCp3j9ZvoJW9wTVKmLSfWS8W2Q5MygXmOO/JoWCt74KIp+Ae4ypTVntPlwoHURKYDzTxXsZ6WLBtqplQ4gZMPPZpmdc1Ej3+Iurqj5eRlFJbbw2acPyNkX72IsN2lj3hIn98k4IZp+cU6Tpykq47jPULhIsnGC/ryzDtPbW8VBKvxXNyoHxqHG4uDqNotvc2+847bva9fSiIkzojUXQxoWDNozRA6Qei+9xNCeAW/f49op5Q4AQAA'))
+        self.assertFalse(input_is_valid_monero_request('invalid'))
+    
+    def test_input_is_valid_monero_wallet(self):
+        self.assertTrue(input_is_valid_monero_wallet('5B9PgE8kH6GPTamHY9WdXEbNr66PtiJfuU8nMvR2b7bsPLtUtjbwfNPBuFxNgCwAyg299LGt9xdZUizZ4whTHA7K614k9va'))
+        self.assertFalse(input_is_valid_monero_wallet('invalid'))
+
+    def test_input_is_valid(self):
+        self.assertTrue(input_is_valid('monero-request:2:H4sIAAAAAAAC/y1O246CMBD9FdPHjW5aBBTeEBUTlZBFF+NLU0q5GKCkFBc1++/bms1MMjm3zHkB0vChlcAFCEwBLUlbMFy1WUWJ5AIPolaSVgYhWEsfCp3j9ZvoJW9wTVKmLSfWS8W2Q5MygXmOO/JoWCt74KIp+Ae4ypTVntPlwoHURKYDzTxXsZ6WLBtqplQ4gZMPPZpmdc1Ej3+Iurqj5eRlFJbbw2acPyNkX72IsN2lj3hIn98k4IZp+cU6Tpykq47jPULhIsnGC/ryzDtPbW8VBKvxXNyoHxqHG4uDqNotvc2+847bva9fSiIkzojUXQxoWDNozRA6Qei+9xNCeAW/f49op5Q4AQAA'))
+        self.assertFalse(input_is_valid('invalid'))

@@ -28,14 +28,14 @@ class SetCurrencyView(View):
 
         # TODO: Without selected_currency commented out, the buttons don't work on subsequest frames.
         # Default Currency
-        selected_currency = ctk.StringVar(value=default_currency())
-        currency_selector = self.add(ctk.CTkOptionMenu(self._app, values=Exchange.options(), corner_radius=15, command=default_currency_selector_callback, variable=selected_currency))
-        currency_selector.grid(row=3, column=0, columnspan=1, padx=(120, 20), pady=(5, 35))
+        self.default_currency_var = ctk.StringVar(value=default_currency())
+        self.default_currency = self.add(ctk.CTkOptionMenu(self._app, values=Exchange.options(), corner_radius=15, command=default_currency_selector_callback, variable=self.default_currency_var))
+        self.default_currency.grid(row=3, column=0, columnspan=1, padx=(120, 20), pady=(5, 35))
 
         # Secondary Currency
-        selected_currency = ctk.StringVar(value=secondary_currency())
-        currency_selector = self.add(ctk.CTkOptionMenu(self._app, values=Exchange.options(), corner_radius=15, command=secondary_currency_selector_callback, variable=selected_currency))
-        currency_selector.grid(row=3, column=1, columnspan=1, padx=(20, 120), pady=(5, 35))
+        self.secondary_currency_var = ctk.StringVar(value=secondary_currency())
+        self.secondary_currency = self.add(ctk.CTkOptionMenu(self._app, values=Exchange.options(), corner_radius=15, command=secondary_currency_selector_callback, variable=self.secondary_currency_var))
+        self.secondary_currency.grid(row=3, column=1, columnspan=1, padx=(20, 120), pady=(5, 35))
 
         return self
 
@@ -43,5 +43,3 @@ class SetCurrencyView(View):
         self._app.geometry(styles.SET_CURRENCY_VIEW_GEOMETRY)
         return self
 
-    def open_main(self):
-        self._app.switch_view('main')

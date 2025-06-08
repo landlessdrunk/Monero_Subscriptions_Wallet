@@ -1,0 +1,39 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Ocp-Apim-Subscription-Key:
+      - 14b8cd90c80149a888d9986e22dbfb95
+      User-Agent:
+      - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like
+        Gecko) Chrome/58.0.3029.110 Safari/537.3
+    method: GET
+    uri: https://gbcapi.gbdomainapi.xyz/GBCalculatorSettingsAPICSharpProdV1/CurrencyRates
+  response:
+    body:
+      string: '{"success":true,"terms":"https://currencylayer.com/terms","privacy":"https://currencylayer.com/privacy","timestamp":1748439305,"source":"USD","quotes":{"USDAED":24.3149290,"USDAUD":10.32116918,"USDCAD":9.1613518,"USDCNY":47.69247262,"USDEUR":5.8561182,"USDGBP":4.91882550,"USDJPY":959.00299662,"USDMXN":127.6103638,"USDUSD":6.62}}'
+    headers:
+      Cache-Control:
+      - private
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 29 May 2025 02:55:48 GMT
+      Request-Context:
+      - appId=cid-v1:82e2e015-37f9-45cf-9033-6a2a4ef0dc13
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

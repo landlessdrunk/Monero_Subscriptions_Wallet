@@ -48,14 +48,9 @@ class AmountView(View):
         self.wallet = self.add(ctk.CTkLabel(self._app, text=f'To Wallet: {util.shortened_wallet(wallet=cfg.SEND_TO_WALLET)}'))  # TODO: Make it so that they can click the wallet to go back to "pay" view
         self.wallet.grid(row=3, column=0, columnspan=3, padx=10, pady=15, sticky="ew")
 
-    def open_main(self):
-        self._app.switch_view('main')
-
     def send_button(self):
         # TODO: Make sure we are getting the wallet the right way
         # Send function
-        wallet = cfg.SEND_TO_WALLET
-
         # TODO: consider setting this immedialtly, so we dont need this line, and clearing out all temp values on back to main view.
         if not cfg.CURRENT_SEND_CURRENCY:
             cfg.CURRENT_SEND_CURRENCY = default_currency()

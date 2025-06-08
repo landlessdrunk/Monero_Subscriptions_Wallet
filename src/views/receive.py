@@ -64,8 +64,8 @@ class ReceiveView(View):
         self.left_frame.grid(row=0, column=0, padx=(10, 5), pady=(0, 5), sticky="nsew")
         self.left_frame.columnconfigure([0], weight=1)
 
-        copy_wallet_button = self.add(ctk.CTkButton(self.left_frame, text="Copy Wallet", corner_radius=15, command=self.copy_wallet_address))
-        copy_wallet_button.grid(row=2, column=0, padx=40, pady=10, sticky="ew")
+        self.copy_wallet_button = self.add(ctk.CTkButton(self.left_frame, text="Copy Wallet", corner_radius=15, command=self.copy_wallet_address))
+        self.copy_wallet_button.grid(row=2, column=0, padx=40, pady=10, sticky="ew")
 
 
 
@@ -91,20 +91,20 @@ class ReceiveView(View):
         get_monero.grid(row=0, column=0, columnspan=4, padx=10, pady=(25, 0), sticky="ew")
 
         # Buy Monero
-        buy_monero = self.add(ctk.CTkButton(right_frame, text="Buy Monero", corner_radius=15, command=self.buy_monero))
-        buy_monero.grid(row=1, column=0, columnspan=4, padx=40, pady=(0, 5), sticky="ew")
+        self.buy_monero = self.add(ctk.CTkButton(right_frame, text="Buy Monero", corner_radius=15, command=self.buy_monero))
+        self.buy_monero.grid(row=1, column=0, columnspan=4, padx=40, pady=(0, 5), sticky="ew")
 
         # Earn Monero
-        earn_monero = self.add(ctk.CTkButton(right_frame, text="Earn Monero", corner_radius=15, command=self.earn_monero))
-        earn_monero.grid(row=2, column=0, columnspan=4, padx=40, pady=5, sticky="ew")
+        self.earn_monero = self.add(ctk.CTkButton(right_frame, text="Earn Monero", corner_radius=15, command=self.earn_monero))
+        self.earn_monero.grid(row=2, column=0, columnspan=4, padx=40, pady=5, sticky="ew")
 
         # Sell Stuff For Monero
-        sell_for_monero = self.add(ctk.CTkButton(right_frame, text="Sell for Monero", corner_radius=15, command=self.sell_for_monero))
-        sell_for_monero.grid(row=3, column=0, columnspan=4, padx=40, pady=5, sticky="ew")
+        self.sell_for_monero = self.add(ctk.CTkButton(right_frame, text="Sell for Monero", corner_radius=15, command=self.sell_for_monero))
+        self.sell_for_monero.grid(row=3, column=0, columnspan=4, padx=40, pady=5, sticky="ew")
 
         # Swap For Monero
-        swap_for_monero = self.add(ctk.CTkButton(right_frame, text="Swap for Monero", corner_radius=15, command=self.swap_for_monero))
-        swap_for_monero.grid(row=4, column=0, columnspan=4, padx=40, pady=(5, 0), sticky="ew")
+        self.swap_for_monero = self.add(ctk.CTkButton(right_frame, text="Swap for Monero", corner_radius=15, command=self.swap_for_monero))
+        self.swap_for_monero.grid(row=4, column=0, columnspan=4, padx=40, pady=(5, 0), sticky="ew")
 
 
 
@@ -130,9 +130,6 @@ class ReceiveView(View):
         self._app.geometry(styles.RECEIVE_VIEW_GEOMETRY)
         return self
 
-    def open_main(self):
-        self._app.switch_view('main')
-
     def open_create_payment_request(self):
         self._app.switch_view('create_payment_request')
 
@@ -148,6 +145,7 @@ class ReceiveView(View):
     @staticmethod
     def earn_monero():
         webbrowser.open("https://monezon.com/register")
+
     @staticmethod
     def sell_for_monero():
         webbrowser.open("https://moneromarket.io/")

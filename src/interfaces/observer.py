@@ -6,7 +6,7 @@ class Observer(ABC):
     """
 
     @abstractmethod
-    def update(self, subject) -> None:
+    def update(self, subject) -> None: # pragma: no cover
         """
         Receive update from subject.
         """

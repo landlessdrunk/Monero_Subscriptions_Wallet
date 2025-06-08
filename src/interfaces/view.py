@@ -26,7 +26,7 @@ class View(ABC):
         self._elements = []
 
     @abstractmethod
-    def build(self):
+    def build(self): # pragma: no cover
         pass
 
     def activate(self):
@@ -34,7 +34,7 @@ class View(ABC):
         self._activated = True
 
     @abstractmethod
-    def activation(self):
+    def activation(self): # pragma: no cover
         pass
 
     def deactivate(self):

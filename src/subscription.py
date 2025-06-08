@@ -135,4 +135,4 @@ class Subscription:
 
     def transactions(self):
         txs = RPCClient.get().get_transfers()
-        return [Transaction(**tx) for tx in txs if tx['payment_id'] == self.payment_id]
+        return [Transaction(**(tx | {'direction': 'out'}))for tx in txs['out'] if tx['payment_id'] == self.payment_id]

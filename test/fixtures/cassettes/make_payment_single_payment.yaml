@@ -1,0 +1,164 @@
+{
+    "version": 1,
+    "interactions": [
+        {
+            "request": {
+                "method": "POST",
+                "uri": "http://127.0.0.1:18088/json_rpc",
+                "body": "{\"jsonrpc\": \"2.0\", \"id\": \"0\", \"method\": \"make_integrated_address\", \"params\": {\"standard_address\": \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\", \"payment_id\": \"c2c9f284c33a4903\"}}",
+                "headers": {
+                    "User-Agent": [
+                        "python-requests/2.32.3"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "*/*"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Content-Length": [
+                        "231"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "Ok"
+                },
+                "headers": {
+                    "Last-Modified": [
+                        "Fri, 06 Jun 2025 01:57:49 GMT"
+                    ],
+                    "Content-Length": [
+                        "234"
+                    ],
+                    "Accept-Ranges": [
+                        "bytes"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Server": [
+                        "Epee-based"
+                    ]
+                },
+                "body": {
+                    "string": "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n    \"integrated_address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n    \"payment_id\": \"c2c9f284c33a4903\"\r\n  }\r\n}"
+                }
+            }
+        },
+        {
+            "request": {
+                "method": "POST",
+                "uri": "http://127.0.0.1:18088/json_rpc",
+                "body": "{\"jsonrpc\": \"2.0\", \"id\": \"0\", \"method\": \"transfer\", \"params\": {\"destinations\": [{\"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\", \"amount\": 26208884811}]}}",
+                "headers": {
+                    "User-Agent": [
+                        "python-requests/2.32.3"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "*/*"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Content-Length": [
+                        "227"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "Ok"
+                },
+                "headers": {
+                    "Last-Modified": [
+                        "Fri, 06 Jun 2025 01:57:55 GMT"
+                    ],
+                    "Content-Length": [
+                        "588"
+                    ],
+                    "Accept-Ranges": [
+                        "bytes"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Server": [
+                        "Epee-based"
+                    ]
+                },
+                "body": {
+                    "string": "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n    \"amount\": 26208884811,\r\n    \"amounts_by_dest\": {\r\n      \"amounts\": [26208884811]\r\n    },\r\n    \"fee\": 74910000,\r\n    \"multisig_txset\": \"\",\r\n    \"spent_key_images\": {\r\n      \"key_images\": [\"db2a84e92c46beed554808966073a424e6632b1473055b6d070b266dac4b6bfd\",\"297c07bf09f38f4ad2f70f9d4580ab052d10c5ca607363e0ce6a07bfd7d29082\"]\r\n    },\r\n    \"tx_blob\": \"\",\r\n    \"tx_hash\": \"11c699b2a89de7d8c89d8d431a2b16b3ea40a5abba6675f2b2dce100a9bb1d80\",\r\n    \"tx_key\": \"\",\r\n    \"tx_metadata\": \"\",\r\n    \"unsigned_txset\": \"\",\r\n    \"weight\": 2203\r\n  }\r\n}"
+                }
+            }
+        },
+        {
+            "request": {
+                "method": "POST",
+                "uri": "http://127.0.0.1:18088/json_rpc",
+                "body": "{\"jsonrpc\": \"2.0\", \"id\": \"0\", \"method\": \"set_tx_notes\", \"params\": {\"notes\": [\"Subscription 0\"], \"txids\": [\"11c699b2a89de7d8c89d8d431a2b16b3ea40a5abba6675f2b2dce100a9bb1d80\"]}}",
+                "headers": {
+                    "User-Agent": [
+                        "python-requests/2.32.3"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "*/*"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Content-Length": [
+                        "175"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "Ok"
+                },
+                "headers": {
+                    "Last-Modified": [
+                        "Fri, 06 Jun 2025 01:57:55 GMT"
+                    ],
+                    "Content-Length": [
+                        "59"
+                    ],
+                    "Accept-Ranges": [
+                        "bytes"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Server": [
+                        "Epee-based"
+                    ]
+                },
+                "body": {
+                    "string": "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n  }\r\n}"
+                }
+            }
+        }
+    ]
+}

@@ -42,7 +42,7 @@ class HistoryViewTest(unittest.TestCase):
     #The view will update the history as soon as the RPC Server starts
     #so when we switch to the view, the history should already be in the view.
     def test_transaction_observer(self):
-        self.assertEqual(len(self.app.views['history'].transactions_frame.transaction_frames), 5)
+        self.assertEqual(len(self.app.views['history'].transactions_frame.transaction_frames), 10)
 
     #There should be an update to the transactions list every 5 seconds if there's a diff detected.
     def test_transaction_updates(self):
@@ -57,8 +57,56 @@ class HistoryViewTest(unittest.TestCase):
             with unittest.mock.patch('src.views.history.Transaction.notes', return_value='Test'):
                 time.sleep(5)
                 self.app.update()
-                self.assertEqual(len(self.app.views['history'].transactions_frame.transaction_frames), 10)
+                self.assertEqual(len(self.app.views['history'].transactions_frame.transaction_frames), 15)        
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.context.server_teardown()
+        cls.app.shutdown_steps()
+        cls.app._app = None
+        RPCClient._instance = None
+
+class HistoryViewTestNoTransactions(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.default_transfers = mocked_transfers()
+        cls.context = RPCServerContextManager()
+        cls.context.server_setup()
+        with unittest.mock.patch('src.views.history.RPCClient.get_transfers', return_value=[]):
+            with unittest.mock.patch('src.views.history.Wallet', return_value=cls.context.server_wallet()):
+                with unittest.mock.patch('gui.rpc', return_value='False'):
+                    with unittest.mock.patch('gui.cfg.subscriptions', return_value='[]'):
+                        with unittest.mock.patch('src.views.history.Transaction.notes', return_value='Test'):
+                            cls.app = App()
+                            cls.app.update()
+                            cls.context.server_ready()
+
+    def setUp(self):
+        with unittest.mock.patch('src.views.history.RPCClient.get_transfers', return_value=self.default_transfers):
+            with unittest.mock.patch('src.views.history.Transaction.notes', return_value='Test'):
+                self.app.switch_view('history')
+                self.app.update()
+
+    #There should be an update to the transactions list every 5 seconds if there's a diff detected.
+    def test_transaction_updates(self):
+        #No transactions
+        with unittest.mock.patch('src.views.history.RPCClient.get_transfers', return_value=[]):
+            self.app.update()
+            self.assertEqual(self.app.current_view.transactions_frame.no_tx_text.cget('text'), 'No transactions yet.')
+
+        new_transfers = mocked_transfers()
+        for direction, transfers in self.default_transfers.items():
+            for trnfr in transfers:
+                if not new_transfers.get(direction):
+                    new_transfers[direction] = [trnfr]
+                else:
+                    new_transfers[direction].append(trnfr)
+
+        with unittest.mock.patch('src.views.history.RPCClient.get_transfers', return_value=new_transfers):
+            with unittest.mock.patch('src.views.history.Transaction.notes', return_value='Test'):
+                time.sleep(5)
+                self.app.update()
+                self.assertEqual(len(self.app.current_view.transactions_frame.transaction_frames), 10)        
 
     @classmethod
     def tearDownClass(cls):

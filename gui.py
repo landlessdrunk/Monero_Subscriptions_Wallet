@@ -14,7 +14,10 @@ import customtkinter as ctk
 import styles
 from src.rpc_server import RPCServer
 from config import rpc, is_first_launch
-from src.views import *
+from src.views import MainView, ReceiveView, PayView, SubscriptionsView, SettingsView, SetCurrencyView,\
+                      NodeSelectionView, AmountView, ReviewRequestView, ReviewSendView,\
+                      ReviewDeleteRequestView, WelcomeView, CreatePaymentRequestView, CopyPaymentRequestView,\
+                      HistoryView
 import config as cfg
 from src.subscription import Subscription
 from PIL import Image, ImageDraw
@@ -52,7 +55,7 @@ class App(ctk.CTk):
             task = self.transactions_queue.get_nowait()
             task()
             self.transactions_queue.task_done()
-        except queue.Empty:
+        except queue.Empty: # pragma: no cover
             pass
         self.after(5000, self.process_tx_queue)
 
@@ -68,7 +71,7 @@ class App(ctk.CTk):
     def define_all_views(self):
         self.views = {
             'main': MainView(self),
-            'recieve': ReceiveView(self),
+            'receive': ReceiveView(self),
             'pay': PayView(self),
             'subscriptions': SubscriptionsView(self),
             'settings': SettingsView(self),
@@ -104,7 +107,7 @@ class App(ctk.CTk):
             self.switch_view('main')
 
     def start_rpc_server_if_appropriate(self):
-        if rpc() == 'True':
+        if rpc() == 'True': # pragma: no cover
             self.rpc_server = RPCServer.get()
             self.rpc_server.start()
             self.rpc_server.check_readiness()
@@ -114,10 +117,12 @@ class App(ctk.CTk):
             self.current_view.deactivate()
             if not back:
                 self.last_views.append(self.current_view)
-
-        self.views[view_name].reactivate()
+        
         if not self.views[view_name].activated:
             self.views[view_name].activate()
+
+        self.views[view_name].reactivate()
+
         self.current_view = self.views[view_name]
 
     def schedule_payments(self):
@@ -155,10 +160,10 @@ class App(ctk.CTk):
         self.stop_subscriptions = True
         self.sched_thread.join(timeout=2)
 
-        if rpc() == 'True' and self.rpc_server:
+        if rpc() == 'True' and self.rpc_server: # pragma: no cover
             self.rpc_server.kill()
 
-        if hasattr(self, 'tray_icon') and self.tray_icon:
+        if hasattr(self, 'tray_icon') and self.tray_icon: # pragma: no cover
             self.tray_icon.hide()
             self.tray_icon.deleteLater()
         self.qt_app.processEvents()
@@ -173,11 +178,11 @@ class App(ctk.CTk):
             try:
                 queue.get_nowait()
                 queue.task_done()
-            except queue.Empty:
+            except queue.Empty: # pragma: no cover
                 break
 
     # PyQt5 System Tray Setup
-    def create_tray_icon(self):
+    def create_tray_icon(self): # pragma: no cover
         # Create a 32x32 red square pixmap
         pixmap = QPixmap(32, 32)
         pixmap.fill(QColor(255, 0, 0))  # Red
@@ -202,22 +207,22 @@ class App(ctk.CTk):
         self.tray_icon.show()
         return self.tray_icon
 
-    def hide_to_tray(self):
+    def hide_to_tray(self): # pragma: no cover
         # Minimize to tray instead of closing
         self.withdraw()  # Hide the window
         self.tray_icon.show()
 
-    def handle_tray_click(self, reason):
+    def handle_tray_click(self, reason): # pragma: no cover
         if reason == QSystemTrayIcon.Trigger:
             self.toggle_window()
 
-    def toggle_window(self):
+    def toggle_window(self): # pragma: no cover
         if self.winfo_viewable():
             self.hide_to_tray()
         else:
             self.show_window()
 
-    def show_window(self):
+    def show_window(self): # pragma: no cover
         # Restore the window
         self.deiconify()
         self.lift()
@@ -228,7 +233,7 @@ class App(ctk.CTk):
         self.qt_app.processEvents()
         self.after(50, self.process_qt_events)  # Call again after 50ms
 
-    def create_image(self, width, height, color1, color2):
+    def create_image(self, width, height, color1, color2): # pragma: no cover
         # Generate an image and draw a pattern
         image = Image.new('RGB', (width, height), color1)
         dc = ImageDraw.Draw(image)
@@ -241,7 +246,7 @@ class App(ctk.CTk):
 
         return image
 
-    def signal_handler(self, sig, frame):
+    def signal_handler(self, sig, frame): # pragma: no cover
         self.shutdown_steps()
         sys.exit(0)
 
@@ -251,7 +256,7 @@ class App(ctk.CTk):
 
 #Need to make this work with Windows.
 #https://stackoverflow.com/questions/3425294/how-to-detect-the-os-default-language-in-python
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     locale.setlocale(locale.LC_ALL, environ['LANG'])
 
     app = App()

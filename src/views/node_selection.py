@@ -87,9 +87,6 @@ class NodeSelectionView(View):
 
         return self
 
-    def open_main(self):
-        self._app.switch_view('main')
-
     def set_node(self):
         node = self.node_selection.get()
         rpc_server = RPCServer.get()

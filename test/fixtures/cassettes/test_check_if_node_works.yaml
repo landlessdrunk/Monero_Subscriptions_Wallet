@@ -1,0 +1,55 @@
+interactions:
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "get_info", "params": {}}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '65'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://xmr-de.boldsuck.org:18081/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \   \"adjusted_time\": 1748647083,\r\n    \"alt_blocks_count\": 0,\r\n    \"block_size_limit\":
+        600000,\r\n    \"block_size_median\": 300000,\r\n    \"block_weight_limit\":
+        600000,\r\n    \"block_weight_median\": 300000,\r\n    \"bootstrap_daemon_address\":
+        \"\",\r\n    \"busy_syncing\": false,\r\n    \"credits\": 0,\r\n    \"cumulative_difficulty\":
+        463432558407890724,\r\n    \"cumulative_difficulty_top64\": 0,\r\n    \"database_size\":
+        246960619520,\r\n    \"difficulty\": 592004034839,\r\n    \"difficulty_top64\":
+        0,\r\n    \"free_space\": 18446744073709551615,\r\n    \"grey_peerlist_size\":
+        0,\r\n    \"height\": 3423304,\r\n    \"height_without_bootstrap\": 0,\r\n
+        \   \"incoming_connections_count\": 0,\r\n    \"mainnet\": true,\r\n    \"nettype\":
+        \"mainnet\",\r\n    \"offline\": false,\r\n    \"outgoing_connections_count\":
+        0,\r\n    \"restricted\": true,\r\n    \"rpc_connections_count\": 0,\r\n    \"stagenet\":
+        false,\r\n    \"start_time\": 0,\r\n    \"status\": \"OK\",\r\n    \"synchronized\":
+        true,\r\n    \"target\": 120,\r\n    \"target_height\": 0,\r\n    \"testnet\":
+        false,\r\n    \"top_block_hash\": \"efbd1d44f26f1f953d4ca25f9827f67970ec983a079aeb6da7a09de793c015d4\",\r\n
+        \   \"top_hash\": \"\",\r\n    \"tx_count\": 51792539,\r\n    \"tx_pool_size\":
+        20,\r\n    \"untrusted\": false,\r\n    \"update_available\": false,\r\n    \"version\":
+        \"\",\r\n    \"was_bootstrap_ever_used\": false,\r\n    \"white_peerlist_size\":
+        0,\r\n    \"wide_cumulative_difficulty\": \"0x66e7174dd40b724\",\r\n    \"wide_difficulty\":
+        \"0x89d630b117\"\r\n  }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1434'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 30 May 2025 23:29:47 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+version: 1

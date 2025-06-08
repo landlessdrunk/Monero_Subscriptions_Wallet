@@ -15,22 +15,6 @@ def clear_temp_payment_info():
 
 class ReviewSendView(View):
     def build(self):
-        # TODO: wrap this whole thing in a try?
-        wallet = cfg.SEND_TO_WALLET
-        wallet_is_valid = Check.wallet(wallet_address=wallet, allow_standard=True, allow_integrated_address=True, allow_subaddress=True)
-        amount_is_valid = True
-        currency_is_valid = True
-
-        # TODO: Finish writing all this stuff to validate what we are trying to send & calculate the amount based on currency
-        if wallet_is_valid and amount_is_valid and currency_is_valid:
-            pass
-
-            # Calculate the amount of Monero that translates to the value of the currency that they want to send in.
-
-            send_amount_of_xmr = 1
-
-        # if send_amount is <= wallet_balance
-
         # Title
         self.header('Send Payment?')
         self._header.grid(row=0, column=0, columnspan=3, padx=10, pady=(45, 5), sticky="ew")
@@ -41,8 +25,8 @@ class ReviewSendView(View):
         center_frame.columnconfigure([0, 1, 2, 3, 4, 5], weight=1)
 
         # Cancel button
-        cancel_button = self.add(ctk.CTkButton(center_frame, text="Cancel", corner_radius=15, command=self.cancel_button))
-        cancel_button.grid(row=0, column=2, padx=(10, 5), pady=0, sticky="e")
+        self.cancel_button = self.add(ctk.CTkButton(center_frame, text="Cancel", corner_radius=15, command=self.cancel_button))
+        self.cancel_button.grid(row=0, column=2, padx=(10, 5), pady=0, sticky="e")
 
         # Confirm button
         self.confirm_button = self.add(ctk.CTkButton(center_frame, text="Send", corner_radius=15, command=self.confirm_button))

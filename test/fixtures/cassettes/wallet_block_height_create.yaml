@@ -1,0 +1,55 @@
+interactions:
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "get_info"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '51'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:38081/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \   \"adjusted_time\": 1748569673,\r\n    \"alt_blocks_count\": 3,\r\n    \"block_size_limit\":
+        600000,\r\n    \"block_size_median\": 300000,\r\n    \"block_weight_limit\":
+        600000,\r\n    \"block_weight_median\": 300000,\r\n    \"bootstrap_daemon_address\":
+        \"\",\r\n    \"busy_syncing\": false,\r\n    \"credits\": 0,\r\n    \"cumulative_difficulty\":
+        503500325618,\r\n    \"cumulative_difficulty_top64\": 0,\r\n    \"database_size\":
+        14212145152,\r\n    \"difficulty\": 360066,\r\n    \"difficulty_top64\": 0,\r\n
+        \   \"free_space\": 19796299776,\r\n    \"grey_peerlist_size\": 1079,\r\n
+        \   \"height\": 1871937,\r\n    \"height_without_bootstrap\": 1871937,\r\n
+        \   \"incoming_connections_count\": 0,\r\n    \"mainnet\": false,\r\n    \"nettype\":
+        \"stagenet\",\r\n    \"offline\": false,\r\n    \"outgoing_connections_count\":
+        12,\r\n    \"restricted\": false,\r\n    \"rpc_connections_count\": 2,\r\n
+        \   \"stagenet\": true,\r\n    \"start_time\": 1748144572,\r\n    \"status\":
+        \"OK\",\r\n    \"synchronized\": true,\r\n    \"target\": 120,\r\n    \"target_height\":
+        0,\r\n    \"testnet\": false,\r\n    \"top_block_hash\": \"70a123e5000bbb024a64531946d96b6944a383e4ebf556492ec5c98fa176abb7\",\r\n
+        \   \"top_hash\": \"\",\r\n    \"tx_count\": 1960349,\r\n    \"tx_pool_size\":
+        0,\r\n    \"untrusted\": false,\r\n    \"update_available\": false,\r\n    \"version\":
+        \"0.18.4.0-release\",\r\n    \"was_bootstrap_ever_used\": false,\r\n    \"white_peerlist_size\":
+        132,\r\n    \"wide_cumulative_difficulty\": \"0x753af542f2\",\r\n    \"wide_difficulty\":
+        \"0x57e82\"\r\n  }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1439'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 30 May 2025 01:57:49 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+version: 1

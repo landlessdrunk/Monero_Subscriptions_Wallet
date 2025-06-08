@@ -15,12 +15,12 @@ class ReviewDeleteRequestView(View):
         center_frame.columnconfigure([0, 1, 2, 3, 4, 5], weight=1)
 
         # No Button
-        no_button = self.add(ctk.CTkButton(center_frame, text="No", corner_radius=15, command=self.open_main))
-        no_button.grid(row=0, column=2, padx=(10, 5), pady=0, sticky="ew")
+        self.no_button = self.add(ctk.CTkButton(center_frame, text="No", corner_radius=15, command=self.open_main))
+        self.no_button.grid(row=0, column=2, padx=(10, 5), pady=0, sticky="ew")
 
         # Yes Button
-        yes_button = self.add(ctk.CTkButton(center_frame, text="Yes", corner_radius=15, command=self.cancel_action))
-        yes_button.grid(row=0, column=3, padx=(5, 10), pady=0, sticky="ew")
+        self.yes_button = self.add(ctk.CTkButton(center_frame, text="Yes", corner_radius=15, command=self.cancel_action))
+        self.yes_button.grid(row=0, column=3, padx=(5, 10), pady=0, sticky="ew")
 
         return self
 
@@ -35,4 +35,5 @@ class ReviewDeleteRequestView(View):
         cfg.config_file.remove_subscription(cfg.SELECTED_SUBSCRIPTION)
         cfg.SELECTED_SUBSCRIPTION.deschedule()
         cfg.SELECTED_SUBSCRIPTION = ''
+        self._app.subscriptions_queue.put(self._app.views['subscriptions'].update_subscriptions)
         self._app.switch_view('subscriptions')

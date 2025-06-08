@@ -1,7 +1,6 @@
 import logging
 import customtkinter as ctk
 from src.interfaces.view import View
-import config as cfg
 import styles
 from src.logging import config as logging_config
 from src.clients.rpc import RPCClient
@@ -12,15 +11,6 @@ from src.rpc_server import RPCServer
 from src.observers.rpc_readiness_observer import RPCReadinessObserver
 from src.views.mouse_scrollable_frame import MouseScrollableFrame
 from monero_usd_price import calculate_monero_from_atomic_units
-
-def center_string(s):
-    # Trim the string to 50 characters if it's longer
-    trimmed_string = s[:50]
-
-    # Center the string within 50 characters, padding with spaces
-    centered_string = trimmed_string.center(50)
-
-    return centered_string
 
 class HistoryView(View):
     def __init__(self, app):
@@ -55,9 +45,6 @@ class HistoryView(View):
         #     self._app.geometry(styles.HISTORY_SMALL_VIEW_GEOMETRY)
         return self
 
-    def open_main(self):
-        self._app.switch_view('main')
-
     def destroy(self):
         self._app.grid_rowconfigure(1, weight=0)
         self._tx_thread = None
@@ -77,9 +64,6 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
         self.transaction_frames = []
         self._observers = []
 
-    def open_main(self):
-        self._app.switch_view('main')
-
     def _add_tx(self, tx, row):
         self.transaction_frames.append(TransactionFrame(self, tx, row))
 
@@ -94,10 +78,10 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
                     try:
                         transaction = Transaction(**tx, direction=direction)
                         self._add_tx(transaction, i)
-                    except (TypeError, UnboundLocalError, RuntimeError) as e:
+                    except (TypeError, UnboundLocalError, RuntimeError) as e: # pragma: no cover
                         self.logger.debug(str(e))
         else:
-            self.no_tx_text = ctk.CTkLabel(self, text="     No transactions yet.")
+            self.no_tx_text = ctk.CTkLabel(self, text="No transactions yet.")
             self.no_tx_text.grid(row=1, column=1, padx=10, pady=(50, 0))
 
 
@@ -110,10 +94,10 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
             'out': [],
             'pending': []
         }
+        old_tx_ids = {'in': [], 'out': [], 'pending': []}
         if self.transactions:
             for new_dir, new_txs in new_transactions.items():
                 for new_tx in new_txs:
-                    old_tx_ids = {'in': [], 'out': [], 'pending': []}
                     for old_dir, old_txs in self.transactions.items():
                         for old_tx in old_txs:
                             if not old_tx_ids.get(old_dir):
@@ -121,6 +105,8 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
                             old_tx_ids[old_dir].append(old_tx['txid'])
                     if new_tx['txid'] not in old_tx_ids[new_dir]:
                         diff_transactions[new_dir].append(new_tx)
+        elif new_transactions:
+            diff_transactions = new_transactions
 
         if getattr(self, 'no_tx_text', None) and any([diff for diffs in diff_transactions.values() for diff in diffs]):
             self.no_tx_text.destroy()
@@ -132,7 +118,7 @@ class TransactionsScrollableFrame(MouseScrollableFrame):
                 try:
                     transaction = Transaction(**tx, direction=direction)
                     self._add_tx(transaction, i+len(old_tx_ids[direction]))
-                except (TypeError, UnboundLocalError, RuntimeError) as e:
+                except (TypeError, UnboundLocalError, RuntimeError) as e: # pragma: no cover
                     self.logger.debug(str(e))
         self.transactions = new_transactions
         self.schedule_tx_update()

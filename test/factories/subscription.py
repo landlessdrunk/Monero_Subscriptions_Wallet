@@ -12,6 +12,6 @@ class SubscriptionFactory(factory.Factory):
     currency = 'USD'
     amount = '10'
     payment_id = make_random_payment_id()
-    start_date = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+    start_date = factory.LazyAttribute(lambda _: datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z')
     schedule = '0 0 1 * *'
     number_of_payments = 10

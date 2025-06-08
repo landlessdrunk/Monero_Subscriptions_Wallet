@@ -25,14 +25,14 @@ class ReviewRequestView(View):
         self.center_frame.columnconfigure([0, 1], weight=1)  # Frame will span 3 columns but contain two columns (0 and 1)
 
         # Cancel button
-        cancel_button = self.add(ctk.CTkButton(self.center_frame, text="No Thanks", corner_radius=15, command=self.cancel_button))
-        cancel_button.grid(row=0, column=0, padx=(10, 5), pady=(0, 10), sticky="ew")
+        self.cancel_button = self.add(ctk.CTkButton(self.center_frame, text="No Thanks", corner_radius=15, command=self.cancel_button))
+        self.cancel_button.grid(row=0, column=0, padx=(10, 5), pady=(0, 10), sticky="ew")
 
         return self
 
     def activation(self):
         self._app.geometry(styles.REVIEW_REQUEST_PROMPT_VIEW_GEOMETRY)
-        self.decoded_request = decode_monero_payment_request(self._app.views['pay'].payment_input.get())
+        self.decoded_request = decode_monero_payment_request(self._app.views['pay'].input_box_for_wallet_or_request.get())
         # Custom Label
         self.custom_label = self.add(ctk.CTkLabel(self._app, text=self.custom_label_text(), font=styles.SUBHEADING_FONT_SIZE))
         self.custom_label.grid(row=1, column=0, columnspan=3, padx=10, pady=(10, 0), sticky="ew")
@@ -54,10 +54,10 @@ class ReviewRequestView(View):
         self.confirm_button.grid(row=0, column=1, padx=(5, 10), pady=(0, 10), sticky="ew")
         return self
 
-    def reactivation(self):
-        super().reactivation()
+    def reactivate(self):
+        super().reactivate()
         self._app.geometry(styles.REVIEW_REQUEST_PROMPT_VIEW_GEOMETRY)
-        self.decoded_request = decode_monero_payment_request(self._app.views['pay'].payment_input.get())
+        self.decoded_request = decode_monero_payment_request(self._app.views['pay'].input_box_for_wallet_or_request.get())
         # Custom Label
         self.custom_label.configure(text=self.custom_label_text())
         self.amount_label.configure(text=self.amount_label_text())
@@ -65,43 +65,31 @@ class ReviewRequestView(View):
         self.sellers_wallet_label.configure(text=self.sellers_wallet_label_text())
         self.confirm_button.configure(text=self.confirm_button_text())
 
-
     def custom_label_text(self):
         if self.decoded_request:
             label_text = f'{self.decoded_request["custom_label"][:80]}:'
-        else:
-            label_text = ''
-        return label_text
+        return label_text or ''
 
     def amount_label_text(self):
         if self.decoded_request:
             worth_of_xmr_text = ' worth of XMR' if self.decoded_request["currency"].upper() != 'XMR' else ''
             label_text = f'{self.decoded_request["amount"]} {self.decoded_request["currency"]}{worth_of_xmr_text} billed {get_description(self.decoded_request["schedule"]).lower()}'
-        else:
-            label_text = ''
-        return label_text
-
+        return label_text or ''
 
     def starting_on_text(self):
         if self.decoded_request:
             label_text = f'First payment due: {datetime.strptime(self.decoded_request["start_date"].split("T")[0], "%Y-%m-%d").strftime("%B %-d, %Y")}'
-        else:
-            label_text = ''
-        return label_text
+        return label_text or ''
 
     def sellers_wallet_label_text(self):
         if self.decoded_request:
             label_text = f'Paying To: {self.decoded_request["sellers_wallet"][:5]}...{self.decoded_request["sellers_wallet"][-5:]}'
-        else:
-            label_text = ''
-        return label_text
+        return label_text or ''
 
     def confirm_button_text(self):
         if self.decoded_request:
             label_text = "Pay Now" if self.decoded_request["number_of_payments"] == 1 else "Subscribe"
-        else:
-            label_text = ''
-        return label_text
+        return label_text or ''
 
     def open_main(self):
         self._app.switch_view('main')
@@ -110,9 +98,10 @@ class ReviewRequestView(View):
         self.open_main()
 
     def confirm_button(self):
-        sub = Subscription(**Subscription.decode(self._app.views['pay'].payment_input.get()))
-        cfg.config_file.add_subscription(sub)
-        sub.queue()
-        #TODO: Adding subscription doesn't seem to start the scheduled payments.
-        #TODO: Adding subscription doesn't seem to add the subscription to the view.
+        sub = Subscription(**Subscription.decode(self._app.views['pay'].input_box_for_wallet_or_request.get()))
+        if not cfg.config_file.subscription_exists(sub):
+            cfg.config_file.add_subscription(sub)
+            sub.queue()
+            self._app.subscriptions_queue.put(self._app.views['subscriptions'].update_subscriptions)
+        #TODO: Some kind of messaging for a duplicate subscription?
         self._app.switch_view('subscriptions')

@@ -25,11 +25,15 @@ class MainViewTest(unittest.TestCase):
         self.app.update()
         amount_text = self.app.current_view.amount.cget('text')
         self.assertIn('XMR', amount_text)
+        self.app.current_view.amount._canvas.event_generate('<Button-1>')
+        self.app.update()
+        amount_text = self.app.current_view.amount.cget('text')
+        self.assertIn('USD', amount_text)
 
     def test_receive_button(self):
         self.app.current_view.receive_button._canvas.event_generate('<Button-1>')
         self.app.update()
-        self.assertEqual(self.app.current_view, self.app.views['recieve'])
+        self.assertEqual(self.app.current_view, self.app.views['receive'])
 
     def test_pay_button(self):
         self.app.current_view.pay_button._canvas.event_generate('<Button-1>')

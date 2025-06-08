@@ -6,9 +6,8 @@ from datetime import datetime
 from src.subscription import Subscription
 from src.exchange import Exchange
 from test.factories.subscription import SubscriptionFactory
-from test.utils.rpc_server_helper import rpc_server_test
 from decimal import Decimal
-
+from test.utils.config import config_mock
 class TestSubscription(unittest.TestCase):
     @time_machine.travel('2024-05-16 12:00:00')
     def test_relative_payment_time(self):
@@ -68,16 +67,50 @@ class TestSubscription(unittest.TestCase):
             record_mode='once',
             match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'body'],
         )
-        with payment_vcr.use_cassette('test/fixtures/cassettes/make_payment.yaml'):
-            with patch('src.subscription.send_payments', return_value=True):
-                Exchange.LAST_REFRESHED = datetime.now()
-                Exchange.US_EXCHANGE = Decimal('381.55')
-                Exchange.XMR_TOTAL = Decimal('10')
-                Exchange.XMR_UNLOCKED = Decimal('10')
-                subscription = SubscriptionFactory(payment_id='c2c9f284c33a4903', sellers_wallet='54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq')
-                nop = subscription.number_of_payments
-                self.assertEqual(subscription.make_payment(), True)
-                self.assertEqual(subscription.number_of_payments, nop - 1)
+        with config_mock():
+            with payment_vcr.use_cassette('test/fixtures/cassettes/make_payment.yaml'):
+                with patch('src.subscription.RPCClient.set_tx_notes', return_value=True):
+                    with patch('src.subscription.send_payments', return_value=True):
+                        Exchange.LAST_REFRESHED = datetime.now()
+                        Exchange.US_EXCHANGE = Decimal('381.55')
+                        Exchange.XMR_TOTAL = Decimal('10')
+                        Exchange.XMR_UNLOCKED = Decimal('10')
+                        subscription = SubscriptionFactory(payment_id='c2c9f284c33a4903', sellers_wallet='54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq')
+                        nop = subscription.number_of_payments
+                        self.assertEqual(subscription.make_payment(), True)
+                        self.assertEqual(subscription.number_of_payments, nop - 1)
+                        subscription.deschedule()
+
+    def test_make_payment_single_payment(self):
+        payment_vcr = vcr.VCR(
+            serializer='json',
+            record_mode='once',
+            match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'body'],
+        )
+        with config_mock():
+            with payment_vcr.use_cassette('test/fixtures/cassettes/make_payment_single_payment.yaml'):
+                with patch('src.subscription.RPCClient.set_tx_notes', return_value=True):
+                    with patch('src.subscription.send_payments', return_value=True):
+                        Exchange.LAST_REFRESHED = datetime.now()
+                        Exchange.US_EXCHANGE = Decimal('381.55')
+                        Exchange.XMR_TOTAL = Decimal('10')
+                        Exchange.XMR_UNLOCKED = Decimal('10')
+                        subscription = SubscriptionFactory(number_of_payments=1, payment_id='c2c9f284c33a4903', sellers_wallet='54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq')
+                        self.assertEqual(subscription.make_payment(), True)
+                        self.assertEqual(subscription.number_of_payments, -1)
+                        subscription.deschedule()
+
+    def test_make_payments_not_payable(self):
+        with unittest.mock.patch('src.subscription.Subscription.payable', return_value=False):
+            subscription = SubscriptionFactory()
+            self.assertEqual(subscription.make_payment(), False)
+            subscription.deschedule()
+
+    def test_make_payment_no_send_payments(self):
+        with unittest.mock.patch('src.subscription.send_payments', return_value=False):
+            subscription = SubscriptionFactory()
+            self.assertEqual(subscription.make_payment(), False)
+            subscription.deschedule()
 
     def test_payable(self):
         with vcr.use_cassette('test/fixtures/cassettes/payable.yaml'):
@@ -86,6 +119,37 @@ class TestSubscription(unittest.TestCase):
                 self.assertEqual(subscription.payable(), True)
                 invalid_subscription = SubscriptionFactory(number_of_payments=-1)
                 self.assertEqual(invalid_subscription.payable(), False)
+
+    def test_transactions(self):
+        transaction_vcr = vcr.VCR(
+            serializer='json',
+            record_mode='once',
+            match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'body'],
+        )
+        with transaction_vcr.use_cassette('test/fixtures/cassettes/transactions.yaml'):
+            subscription = SubscriptionFactory(payment_id='c2c9f284c33a4903', 
+                sellers_wallet='54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq')
+            self.assertEqual(len(subscription.transactions()), 8)
+
+    def test_queue(self):
+        with vcr.use_cassette('test/fixtures/cassettes/queue.yaml'):
+            subscription = SubscriptionFactory(payment_id='c2c9f284c33a4903', 
+                sellers_wallet='54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq')
+            subscription.queue()
+            self.assertEqual(len(Subscription.schedul.queue), 1)
+            subscription.deschedule()
+            self.assertEqual(len(Subscription.schedul.queue), 0)
+    
+    def test_next_payment_time(self):
+        with time_machine.travel('2024-05-16 12:00:00'):
+            subscription = SubscriptionFactory(payment_id='c2c9f284c33a4903', 
+            sellers_wallet='54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq')
+            self.assertEqual(subscription.next_payment_time().replace(microsecond=0), datetime(2024, 6, 1, 0, 0, 0))
+
+    def test_default_time(self):
+        with time_machine.travel('2024-05-16 12:00:00'):
+            subscription = SubscriptionFactory(start_date='asd')
+            self.assertEqual(subscription.start_date, datetime(2024, 5, 16, 12, 0, 0))
 
 if __name__ == '__main__':
     unittest.main()

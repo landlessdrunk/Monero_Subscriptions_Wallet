@@ -5,7 +5,7 @@ from config import stagenet
 import config as cfg
 import styles
 import clipman
-from monerorequest import Check, Decode
+from monerorequest import Check, Decode, RequestV2
 from src.wallet import Wallet
 
 def input_is_valid(input_string):
@@ -21,32 +21,18 @@ def input_is_valid_monero_wallet(input_string):
 def input_is_valid_monero_request(input_string):
     if 'monero-request:' in input_string:
         # Decode it
-        decoded_request = Decode.monero_payment_request_from_code(monero_payment_request=input_string)
+        request_attrs = Decode.monero_payment_request_from_code(monero_payment_request=input_string)
+        del request_attrs['version']
+        decoded_request = RequestV2(**request_attrs)
+        decoded_request.allow_standard = True
+        decoded_request.allow_integrated_address = True
+        decoded_request.allow_subaddress = True
+        decoded_request.allow_stagenet = stagenet()
 
-        print(decoded_request)
-        # Validate fields
-        if not Check.name(decoded_request["custom_label"]):
-            return False
-        if not Check.wallet(decoded_request["sellers_wallet"], allow_standard=True, allow_integrated_address=True, allow_subaddress=True, allow_stagenet=stagenet()):
-            return False
-        if not Check.amount(decoded_request["amount"]):
-            return False
-        if not Check.payment_id(decoded_request["payment_id"]):
-            return False
-        if not Check.start_date(decoded_request["start_date"]):
-            return False
-        if not Check.schedule(decoded_request["schedule"]):
-            return False
-        if not Check.number_of_payments(decoded_request["number_of_payments"]):
-            return False
-        if not Check.change_indicator_url(decoded_request["change_indicator_url"]):
-            return False
-
-        return True
+        return decoded_request.valid()
 
     else:
         return False
-
 
 class PayView(View):
     def build(self):
@@ -81,9 +67,6 @@ class PayView(View):
 
         self.input_box_for_wallet_or_request.grid(row=1, column=0, columnspan=3, padx=70, pady=(27.5, 0), sticky="ew")
 
-    def open_main(self):
-        self._app.switch_view('main')
-
     def wallet_or_request_logic(self, input_string):
         if 'monero-request:' in input_string:
             self._app.switch_view('review_request')
@@ -96,5 +79,6 @@ class PayView(View):
         input_string = self.input_box_for_wallet_or_request.get().strip()
         if input_is_valid(input_string=input_string):
             self.wallet_or_request_logic(input_string=input_string)
-        else:
+        else: # pragma: no cover
+            #TODO: Add error message
             print('Not a Monero Payment Request or wallet address')

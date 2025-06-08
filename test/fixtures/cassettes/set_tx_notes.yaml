@@ -1,0 +1,227 @@
+interactions:
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "get_transfers", "params": {"in":
+      true, "out": true, "pending": true, "failed": false, "all_accounts": true}}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '149'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:18088/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \   \"in\": [{\r\n      \"address\": \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 13106880157220,\r\n      \"amounts\": [13106880157220],\r\n
+        \     \"confirmations\": 12995,\r\n      \"double_spend_seen\": false,\r\n
+        \     \"fee\": 123830000,\r\n      \"height\": 1864550,\r\n      \"locked\":
+        false,\r\n      \"note\": \"\",\r\n      \"payment_id\": \"0000000000000000\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"suggested_confirmations_threshold\":
+        13,\r\n      \"timestamp\": 1747616645,\r\n      \"txid\": \"b5b69cf871860fffaeeec86eb02978103136097df7861a723ada2836482cbd81\",\r\n
+        \     \"type\": \"in\",\r\n      \"unlock_time\": 0\r\n    }],\r\n    \"out\":
+        [{\r\n      \"address\": \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 0,\r\n      \"confirmations\": 11204,\r\n      \"destinations\":
+        [{\r\n        \"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n
+        \       \"amount\": 25155334188\r\n      }],\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 53200000,\r\n      \"height\": 1866341,\r\n      \"locked\":
+        false,\r\n      \"note\": \"Subscription 3\",\r\n      \"payment_id\": \"c2c9f284c33a4903\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"timestamp\": 1747869938,\r\n
+        \     \"txid\": \"6cc5b6046bf654447a71c6c3c856ecce71c50f80cf5890f8b1ad991a3050b7e8\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    },{\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 0,\r\n      \"confirmations\": 11188,\r\n      \"destinations\":
+        [{\r\n        \"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n
+        \       \"amount\": 25400695979\r\n      }],\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 53200000,\r\n      \"height\": 1866357,\r\n      \"locked\":
+        false,\r\n      \"note\": \"Subscription 3\",\r\n      \"payment_id\": \"c2c9f284c33a4903\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"timestamp\": 1747872834,\r\n
+        \     \"txid\": \"d9e196808b5cd6f12677df02d87783948cbc1a1247bf2cd0750eedacc1438803\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    },{\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 0,\r\n      \"confirmations\": 10478,\r\n      \"destinations\":
+        [{\r\n        \"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n
+        \       \"amount\": 26223317774\r\n      }],\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 53130000,\r\n      \"height\": 1867067,\r\n      \"locked\":
+        false,\r\n      \"note\": \"Subscription 3\",\r\n      \"payment_id\": \"c2c9f284c33a4903\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"timestamp\": 1747961571,\r\n
+        \     \"txid\": \"24846998aa020bff4b0c53731025f4bd9f950637291341d217ac30ff39bf2841\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    },{\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 0,\r\n      \"confirmations\": 10513,\r\n      \"destinations\":
+        [{\r\n        \"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n
+        \       \"amount\": 25625912923\r\n      }],\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 76720000,\r\n      \"height\": 1867032,\r\n      \"locked\":
+        false,\r\n      \"note\": \"Subscription 3\",\r\n      \"payment_id\": \"c2c9f284c33a4903\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"timestamp\": 1747957793,\r\n
+        \     \"txid\": \"3e7791a46f081c503fbff11160e85b14eccfec800dc1cd03b320f7ae21b34356\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    },{\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 0,\r\n      \"confirmations\": 10515,\r\n      \"destinations\":
+        [{\r\n        \"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n
+        \       \"amount\": 25543436613\r\n      }],\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 53240000,\r\n      \"height\": 1867030,\r\n      \"locked\":
+        false,\r\n      \"note\": \"Subscription 3\",\r\n      \"payment_id\": \"c2c9f284c33a4903\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"timestamp\": 1747957162,\r\n
+        \     \"txid\": \"e03c2a2895f1251d2b461b548a2a26cd9395008f5c2cff8f6e3c97d5cdd0e0c4\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    },{\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 0,\r\n      \"confirmations\": 10454,\r\n      \"destinations\":
+        [{\r\n        \"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n
+        \       \"amount\": 26208884811\r\n      }],\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 76790000,\r\n      \"height\": 1867091,\r\n      \"locked\":
+        false,\r\n      \"note\": \"Subscription 3\",\r\n      \"payment_id\": \"c2c9f284c33a4903\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"timestamp\": 1747965650,\r\n
+        \     \"txid\": \"c64aa0eee54a48753b48294a449cc96b46a7be3fbf7495cd5586817913b47c50\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    },{\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 66666666666,\r\n      \"confirmations\": 12580,\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 53240000,\r\n      \"height\": 1864965,\r\n      \"locked\":
+        false,\r\n      \"note\": \"\",\r\n      \"payment_id\": \"0000000000000000\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"suggested_confirmations_threshold\":
+        1,\r\n      \"timestamp\": 1747707745,\r\n      \"txid\": \"72c9515bbc1b7a0d64182d14435d1f70c6ea340c2c678176874dc1b6339287bd\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    },{\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 0,\r\n      \"confirmations\": 11145,\r\n      \"destinations\":
+        [{\r\n        \"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n
+        \       \"amount\": 25407795111\r\n      }],\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 76900000,\r\n      \"height\": 1866400,\r\n      \"locked\":
+        false,\r\n      \"note\": \"Subscription 3\",\r\n      \"payment_id\": \"c2c9f284c33a4903\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"timestamp\": 1747878995,\r\n
+        \     \"txid\": \"1f13755cb759706dbe217819b409c1fc1f181c4e5ba83479865b73c66a9fae4f\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    },{\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 0,\r\n      \"confirmations\": 641,\r\n      \"destinations\":
+        [{\r\n        \"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n
+        \       \"amount\": 26208884811\r\n      }],\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 74910000,\r\n      \"height\": 1876904,\r\n      \"locked\":
+        false,\r\n      \"note\": \"Subscription 0\",\r\n      \"payment_id\": \"c2c9f284c33a4903\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"timestamp\": 1749175288,\r\n
+        \     \"txid\": \"11c699b2a89de7d8c89d8d431a2b16b3ea40a5abba6675f2b2dce100a9bb1d80\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    },{\r\n      \"address\":
+        \"54NGcidS2BnhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jMX6g9Tq\",\r\n
+        \     \"amount\": 0,\r\n      \"confirmations\": 11139,\r\n      \"destinations\":
+        [{\r\n        \"address\": \"5E4wdXSvdTJhEMDdZEBdPdKQQRfh1QXHra7HQzXCwrwgWfxkCmSXfWi5tQ8qc2nFTPVNBsfc7cRwWL59xYiN8S5jXQJtJfAaXNQ1RUSys8\",\r\n
+        \       \"amount\": 25341476394\r\n      }],\r\n      \"double_spend_seen\":
+        false,\r\n      \"fee\": 53170000,\r\n      \"height\": 1866406,\r\n      \"locked\":
+        false,\r\n      \"note\": \"Subscription 3\",\r\n      \"payment_id\": \"c2c9f284c33a4903\",\r\n
+        \     \"subaddr_index\": {\r\n        \"major\": 0,\r\n        \"minor\":
+        0\r\n      },\r\n      \"subaddr_indices\": [{\r\n        \"major\": 0,\r\n
+        \       \"minor\": 0\r\n      }],\r\n      \"timestamp\": 1747879630,\r\n
+        \     \"txid\": \"89a79d76997cd6fa02961169bc4082b5d355d227f8e9207de72cb77d70b75c9b\",\r\n
+        \     \"type\": \"out\",\r\n      \"unlock_time\": 0\r\n    }]\r\n  }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '9462'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 06 Jun 2025 23:06:18 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "set_tx_notes", "params": {"notes":
+      ["test_note"], "txids": ["6cc5b6046bf654447a71c6c3c856ecce71c50f80cf5890f8b1ad991a3050b7e8"]}}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '170'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:18088/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \ }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '59'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 06 Jun 2025 23:06:18 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: '{"jsonrpc": "2.0", "id": "0", "method": "get_tx_notes", "params": {"txids":
+      ["6cc5b6046bf654447a71c6c3c856ecce71c50f80cf5890f8b1ad991a3050b7e8"]}}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '146'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+    method: POST
+    uri: http://127.0.0.1:18088/json_rpc
+  response:
+    body:
+      string: "{\r\n  \"id\": \"0\",\r\n  \"jsonrpc\": \"2.0\",\r\n  \"result\": {\r\n
+        \   \"notes\": [\"test_note\"]\r\n  }\r\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '87'
+      Content-Type:
+      - application/json
+      Last-Modified:
+      - Fri, 06 Jun 2025 23:06:18 GMT
+      Server:
+      - Epee-based
+    status:
+      code: 200
+      message: Ok
+version: 1

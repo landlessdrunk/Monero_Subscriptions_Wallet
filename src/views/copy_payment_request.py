@@ -6,14 +6,6 @@ import styles
 import clipman
 from monerorequest import decode_monero_payment_request
 
-
-def insert_newlines(input_string, characters_per_line):
-    result = ''
-    for i in range(0, len(input_string), characters_per_line):
-        result += input_string[i:i+characters_per_line] + '\n'
-    return result
-
-
 class CopyPaymentRequestView(View):
     def build(self):
         # Back button and title
@@ -36,11 +28,11 @@ class CopyPaymentRequestView(View):
         center_frame.grid(row=4, column=0, columnspan=3, padx=0, pady=(10, 0), sticky="nsew")
         center_frame.columnconfigure([0, 1, 2, 3], weight=1)
 
-        copy_payment_id_button = self.add(ctk.CTkButton(center_frame, text="Copy Payment ID", corner_radius=15, command=self.copy_payment_id))
-        copy_payment_id_button.grid(row=0, column=1, padx=(10, 5), pady=0, sticky="ew")
+        self.copy_payment_id_button = self.add(ctk.CTkButton(center_frame, text="Copy Payment ID", corner_radius=15, command=self.copy_payment_id))
+        self.copy_payment_id_button.grid(row=0, column=1, padx=(10, 5), pady=0, sticky="ew")
 
-        copy_request_button = self.add(ctk.CTkButton(center_frame, text="Copy Payment Request", corner_radius=15, command=self.copy_payment_request))
-        copy_request_button.grid(row=0, column=2, padx=(5, 10), pady=0, sticky="ew")
+        self.copy_request_button = self.add(ctk.CTkButton(center_frame, text="Copy Payment Request", corner_radius=15, command=self.copy_payment_request))
+        self.copy_request_button.grid(row=0, column=2, padx=(5, 10), pady=0, sticky="ew")
 
         # Next button
         self.next_button = self.add(ctk.CTkButton(self._app, text="Finished", corner_radius=15, command=self.open_main))

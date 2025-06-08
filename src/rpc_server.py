@@ -65,7 +65,7 @@ class RPCServer(Notifier):
         self.process.terminate()
         try:
             self.process.wait(timeout=10)
-        except subprocess.TimeoutExpired:
+        except subprocess.TimeoutExpired: # pragma: no cover
             self.logger.debug('Process did not terminate in time, forcing kill. Wallet may be corrupted.')
             self.process.kill()
             self.process.wait()
@@ -73,7 +73,7 @@ class RPCServer(Notifier):
     def ready(self):
         rpc_client = RPCClient.get()
         while True:
-            while not rpc_client.local_healthcheck() and not self.failed_to_start:
+            while not rpc_client.local_healthcheck() and not self.failed_to_start: #pragma: no cover
                 output = self.process.stdout.readline()
                 self.logger.debug(output.strip())
                 status = self.process.poll()
@@ -93,12 +93,12 @@ class RPCServer(Notifier):
 
                 time.sleep(0.1)
 
-            if not self.wallet.exists():
+            if not self.wallet.exists(): # pragma: no cover
                 self.wallet.create()
 
             if not self.failed_to_start:
                 self.status_message = 'RPC Server: Ready'
-                if not rpc_client.open_wallet(self.wallet.name):
+                if not rpc_client.open_wallet(self.wallet.name): # pragma: no cover
                     self.status_message = 'RPC Server: Failed to Open Wallet'
                 self.logger.debug(rpc_client.refresh())
                 self._started = True
@@ -106,17 +106,17 @@ class RPCServer(Notifier):
                 rpc_client.get_balance()
                 self.notify()
 
-            if self.failed_to_start:
+            if self.failed_to_start: # pragma: no cover
                 self.status_message = 'RPC Server: Failed To Start'
                 self.notify()
 
-            if not rpc() == 'True':
+            if not rpc() == 'True': # pragma: no cover
                 self.status_message = "( Test Mode )"
                 self.notify()
 
             break
 
-    def check_readiness(self):
+    def check_readiness(self): #pragma: no cover
         self.logger.debug('Checking if RPC Ready')
         threading.Thread(target=self.ready).start()
 

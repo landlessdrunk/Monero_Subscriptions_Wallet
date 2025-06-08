@@ -24,17 +24,17 @@ class SettingsView(View):
         self.header('Settings:')
         self.back_button()
 
-        node_selection_button = self.add(ctk.CTkButton(self._app, text="Set Node", corner_radius=15, command=self.open_node_selection))
-        node_selection_button.grid(row=1, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=(10, BUTTONS_PADY), sticky=BUTTONS_STICKY)
+        self.node_selection_button = self.add(ctk.CTkButton(self._app, text="Set Node", corner_radius=15, command=self.open_node_selection))
+        self.node_selection_button.grid(row=1, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=(10, BUTTONS_PADY), sticky=BUTTONS_STICKY)
 
-        set_currency_button = self.add(ctk.CTkButton(self._app, text="Set Currency", corner_radius=15, command=self.open_set_currency))
-        set_currency_button.grid(row=2, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
+        self.set_currency_button = self.add(ctk.CTkButton(self._app, text="Set Currency", corner_radius=15, command=self.open_set_currency))
+        self.set_currency_button.grid(row=2, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
 
-        import_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Import Subscriptions File", corner_radius=15, command=self.load_file_dialog))
-        import_subscriptions_file.grid(row=3, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
+        self.import_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Import Subscriptions File", corner_radius=15, command=self.load_file_dialog))
+        self.import_subscriptions_file.grid(row=3, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
 
-        export_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Export Subscriptions File", corner_radius=15, command=self.open_file_dialog))
-        export_subscriptions_file.grid(row=4, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
+        self.export_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Export Subscriptions File", corner_radius=15, command=self.open_file_dialog))
+        self.export_subscriptions_file.grid(row=4, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
 
         # wallet too
 
@@ -44,17 +44,14 @@ class SettingsView(View):
         self._app.geometry(styles.SETTINGS_VIEW_GEOMETRY)
         return self
 
-    def open_main(self):
-        self._app.switch_view('main')
-
     def open_node_selection(self):
         self._app.switch_view('node_selection')
 
-    def open_welcome_message(self):
-        self._app.switch_view('welcome')
+    # def open_welcome_message(self):
+    #     self._app.switch_view('welcome')
 
-    def open_add_payment_request(self):
-        self._app.switch_view('payment_request')
+    # def open_add_payment_request(self):
+    #     self._app.switch_view('payment_request')
 
     def open_set_currency(self):
         self._app.switch_view('set_currency')

@@ -60,7 +60,7 @@ class MainView(View):
         center_frame.columnconfigure([0, 1], weight=1)  # Frame will span 3 columns but contain two columns (0 and 1)
 
         # Receive Button
-        self.receive_button = ctk.CTkButton(center_frame, text="Receive", corner_radius=15, command=self.open_recieve)
+        self.receive_button = ctk.CTkButton(center_frame, text="Receive", corner_radius=15, command=self.open_receive)
         self.receive_button.grid(row=0, column=0, padx=(10, 5), pady=(0, 10), sticky="ew")
 
         # Pay Button
@@ -103,8 +103,8 @@ class MainView(View):
     def open_subscriptions(self):
         self._app.switch_view('subscriptions')
 
-    def open_recieve(self):
-        self._app.switch_view('recieve')
+    def open_receive(self):
+        self._app.switch_view('receive')
 
     def open_pay(self):
         self._app.switch_view('pay')

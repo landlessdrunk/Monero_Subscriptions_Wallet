@@ -18,14 +18,6 @@ from textwrap import wrap
 
 class CreatePaymentRequestView(View):
     def build(self):
-        def on_date_click(event):
-            # This function can be used to handle any additional actions when the date is clicked
-            print("Date selected:", self.start_date_input.get())
-            self.start_date_input.focus_force()
-
-        def selected_currency_callback(choice):
-            cfg.CURRENT_CREATE_PAYMENT_REQUEST_CURRENCY = choice
-
         # TODO: Can we set the border color through the theme file instead?
         # Border Color
         bc = styles.monero_orange
@@ -63,7 +55,7 @@ class CreatePaymentRequestView(View):
         self.amount_input.grid(row=self.price_row, column=0, columnspan=2, padx=x, pady=y, sticky="ew")
 
         selected_currency = ctk.StringVar(value=default_currency())
-        self.currency_input = self.add(ctk.CTkOptionMenu(self.content_frame, values=Exchange.options(), corner_radius=15, command=selected_currency_callback, variable=selected_currency))
+        self.currency_input = self.add(ctk.CTkOptionMenu(self.content_frame, values=Exchange.options(), corner_radius=15, variable=selected_currency))
         self.currency_input.grid(row=self.price_row, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Pricing & Payments Section
@@ -126,15 +118,14 @@ class CreatePaymentRequestView(View):
         else:
             if getattr(self, 'custom_schedule'):
                 self.custom_schedule.destroy()
+                self._elements.remove(self.custom_schedule)
+                del self.custom_schedule
                 self.schedule.grid(row=self.schedule_row, column=0, columnspan=7)
 
     def add_custom_schedule(self):
         self.custom_schedule = self.add(ctk.CTkEntry(self.content_frame, placeholder_text='Custom Cron Syntax', height=20))
         self.schedule.grid(row=self.schedule_row, column=0, columnspan=1, pady=0)
         self.custom_schedule.grid(row=self.schedule_row, column=0, pady=40, padx=10, sticky='s')
-
-    def open_main(self):
-        self._app.switch_view('main')
 
     def create_button(self):
         # Pull in all info and process
@@ -180,8 +171,8 @@ class CreatePaymentRequestView(View):
             self.error_label('\n'.join(wrap(errors_text, width=70)))
 
     def error_label(self, text):
-        label = self.add(ctk.CTkLabel(self.heading_frame, text=text, height=20, fg_color=styles.red, padx=20))
-        label.grid(row=self.title_row, column=1, padx=10, pady=(10,0))
+        self.error_label_element = self.add(ctk.CTkLabel(self._header, text=text, height=20, fg_color=styles.red, padx=20))
+        self.error_label_element.grid(row=self.title_row, column=1, padx=10, pady=(10,0))
 
     def schedule_mapping(self, user_schedule, start_date):
         match user_schedule:

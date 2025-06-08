@@ -35,7 +35,7 @@ class RPCClient(Notifier):
 
     def current_block_height(self):
         result = self.daemon_post(self._current_block_height())
-        return result['result']['height']
+        return result.get("result", {}).get("height", False) or result
 
     def _current_block_height(self):
         return {
@@ -46,7 +46,7 @@ class RPCClient(Notifier):
 
     def get_version(self):
         result = self.post(self._get_version())
-        return result.get("result", {}).get("version", False)
+        return result.get("result", {}).get("version", False) or result
 
     def _get_version(self):
         return {
@@ -56,18 +56,10 @@ class RPCClient(Notifier):
         }
 
     def local_healthcheck(self):
-        try:
-            return isinstance(self.get_version(), int)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return False
+        return isinstance(self.get_version(), int)
 
     def refresh(self):
-        try:
-            return self.post(self._refresh())
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return False
+        return self.post(self._refresh())
 
     def _refresh(self):
         return {
@@ -77,11 +69,8 @@ class RPCClient(Notifier):
         }
 
     def create_wallet(self, filename=wallet_name()):
-        try:
-            return self.post(self._create_wallet(filename))['result']
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return False
+        return self.post(self._create_wallet(filename))['result']
+
 
     def _create_wallet(self, filename=wallet_name()):
         return {
@@ -95,16 +84,13 @@ class RPCClient(Notifier):
         }
 
     def open_wallet(self, filename=wallet_name()):
-        try:
-            request_result = self.post(self._open_wallet(filename))
-            if request_result.get('error'):
-                self.logger.debug(request_result['error'])
-                return False
-            else:
-                return True
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
+        request_result = self.post(self._open_wallet(filename))
+        if request_result.get('error'):
+            self.logger.debug(request_result['error'])
             return False
+        else:
+            return True
+
 
     def _open_wallet(self, filename=wallet_name()):
         return {
@@ -117,11 +103,8 @@ class RPCClient(Notifier):
         }
 
     def get_address(self):
-        try:
-            return self.post(self._get_address()).get('result', {}).get('address')
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return False
+        address_request = self.post(self._get_address())
+        return address_request.get('result', {}).get('address') or address_request
 
     def _get_address(self):
         return {
@@ -131,14 +114,10 @@ class RPCClient(Notifier):
         }
 
     def get_balance(self, which='balance'):
-        try:
-            request = self.post(self._get_balance())
-            self._balance = request.get('result', {}).get(which, '0')
-            self.notify()
-            return self._balance
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return False
+        request = self.post(self._get_balance())
+        self._balance = request.get('result', {}).get(which, '0')
+        self.notify()
+        return self._balance
 
     def _get_balance(self):
         return {
@@ -148,11 +127,7 @@ class RPCClient(Notifier):
         }
 
     def make_integrated_address(self, wallet, payment_id):
-        try:
-            return self.post(self._make_integrated_address(wallet, payment_id))['result']
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return False
+        return self.post(self._make_integrated_address(wallet, payment_id))['result']
 
     def _make_integrated_address(self, wallet, payment_id):
         return {
@@ -166,11 +141,7 @@ class RPCClient(Notifier):
         }
 
     def transfer(self, destination, amount):
-        try:
-            return self.post(self._transfer(destination, amount)).get('result')
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return False
+        return self.post(self._transfer(destination, amount)).get('result')
 
     def _transfer(self, destination, amount):
         return {
@@ -186,12 +157,8 @@ class RPCClient(Notifier):
         }
 
     def get_transfers(self):
-        try:
-            self._transfers = self.post(self._get_transfers())
-            return self._transfers['result']
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return {}
+        self._transfers = self.post(self._get_transfers())
+        return self._transfers['result']
 
     def _get_transfers(self):
         return {
@@ -208,11 +175,8 @@ class RPCClient(Notifier):
         }
 
     def set_tx_notes(self, tx_ids: list, notes: list):
-        try:
-            self.post(self._set_tx_notes(tx_ids, notes))
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return False
+        return self.post(self._set_tx_notes(tx_ids, notes))
+
 
     def _set_tx_notes(self, tx_ids: list[str], notes: list[str]):
         return {
@@ -226,11 +190,8 @@ class RPCClient(Notifier):
         }
 
     def get_tx_notes(self, tx_ids: list):
-        try:
-            return self.post(self._get_tx_notes(tx_ids)).get('result', {}).get('notes')
-        except requests.exceptions.ConnectionError as e:
-            self.logger.debug(str(e))
-            return False
+        return self.post(self._get_tx_notes(tx_ids)).get('result', {}).get('notes')
+
 
     def _get_tx_notes(self, tx_ids:list[str]):
         return {
@@ -249,15 +210,23 @@ class RPCClient(Notifier):
         return self._headers
 
     def post(self, data):
-        response = requests.post(local_rpc_url(), headers=self.headers, data=json.dumps(data))
-        result = response.json()
-        if 'error' in result:
-            self.logger.error('Error: %s', result['error']['message'])
-        return result
+        try:
+            response = requests.post(local_rpc_url(), headers=self.headers, data=json.dumps(data))
+            result = response.json()
+            if 'error' in result:
+                self.logger.error('Error: %s', result['error']['message'])
+            return result
+        except requests.exceptions.ConnectionError as e:
+            self.logger.debug(str(e))
+            return {'exception': str(e)}
 
     def daemon_post(self, data):
-        response = requests.post(daemon_url(), headers=self.headers, data=json.dumps(data))
-        result = response.json()
-        if 'error' in result:
-            self.logger.error('Error: %s', result['error']['message'])
-        return result
+        try:
+            response = requests.post(daemon_url(), headers=self.headers, data=json.dumps(data))
+            result = response.json()
+            if 'error' in result:
+                self.logger.error('Error: %s', result['error']['message'])
+            return result
+        except requests.exceptions.ConnectionError as e:
+            self.logger.debug(str(e))
+            return {'exception': str(e)}

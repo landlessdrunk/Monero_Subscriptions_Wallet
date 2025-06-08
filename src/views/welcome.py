@@ -5,9 +5,6 @@ import styles
 
 class WelcomeView(View):
     def build(self):
-        def selected_currency_callback(choice):
-            cfg.CURRENT_SEND_CURRENT_AMOUNT = choice
-
         self.header('Welcome to the Subscriptions Wallet!')
 
         # To make this look better, I am adding spaces after to get the lines to line up
@@ -39,8 +36,8 @@ class WelcomeView(View):
         info.grid(row=1, column=0, columnspan=3, padx=10, pady=0, sticky="ew")
 
         # Send button
-        ok_button = self.add(ctk.CTkButton(self._app, text="Okay", corner_radius=15, command=self.open_main))
-        ok_button.grid(row=2, column=0, columnspan=3, padx=120, pady=(5, 10), sticky="ew")
+        self.ok_button = self.add(ctk.CTkButton(self._app, text="Okay", corner_radius=15, command=self.open_main))
+        self.ok_button.grid(row=2, column=0, columnspan=3, padx=120, pady=(5, 10), sticky="ew")
 
         return self
 
@@ -49,7 +46,6 @@ class WelcomeView(View):
         return self
 
     def open_main(self):
-                 #config.set(section='rpc', option='node_url', value=node)
         cfg.config_file.set(section='DEFAULT', option='is_first_launch', value=str(False))
         cfg.config_file.write()
         self._app.switch_view('main')
