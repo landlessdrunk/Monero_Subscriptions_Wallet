@@ -52,6 +52,9 @@ class View(ABC):
     def header(self, text):
         if not self._header:
             self._header = self.add(ctk.CTkLabel(self._app, text=text, font=styles.HEADINGS_FONT_SIZE))
+            self._header.grid(row=0, column=1, padx=0, pady=10, sticky="nsew")
+            center_helper = self.add(ctk.CTkLabel(self._app, text='', font=styles.HEADINGS_FONT_SIZE))
+            center_helper.grid(row=0, column=2, padx=30, pady=0, sticky="e")
         return self._header
 
     def back_button(self):
@@ -59,7 +62,7 @@ class View(ABC):
         if not self._back_button:
             back_image = ctk.CTkImage(Image.open(styles.back_icon), size=(24, 24))
             self._back_button = self.add(ctk.CTkButton(self._app, image=back_image, text='', fg_color='transparent', width=35, height=30, corner_radius=7, command=self.last_page))
-            self._back_button.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="w")
+            self._back_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
         return self._back_button
 
     def last_page(self):

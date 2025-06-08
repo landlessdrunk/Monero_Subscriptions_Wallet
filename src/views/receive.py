@@ -130,6 +130,11 @@ class ReceiveView(View):
         self._app.geometry(styles.RECEIVE_VIEW_GEOMETRY)
         return self
 
+    def reactivate(self):
+        super().reactivate()
+        self._app.geometry(styles.RECEIVE_VIEW_GEOMETRY)
+        return self
+
     def open_create_payment_request(self):
         self._app.switch_view('create_payment_request')
 

@@ -123,7 +123,7 @@ class App(ctk.CTk):
 
         self.views[view_name].reactivate()
 
-        self.current_view = self.views[view_name]
+        self.current_view = self.views[view_name]        
 
     def schedule_payments(self):
         raw_subs = json.loads(cfg.subscriptions())
@@ -263,7 +263,7 @@ if __name__ == "__main__": # pragma: no cover
     app.title("Monero Subscriptions Wallet")
     app.iconphoto(True, PhotoImage(file=styles.icon))
     app.protocol("WM_DELETE_WINDOW", app.hide_to_tray)
-    app.resizable(False, False)  # Make the window non-resizable
+    app.resizable(True, True)  # Make the window resizable
     app.create_tray_icon()
 
     signal.signal(signal.SIGINT, app.signal_handler)

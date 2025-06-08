@@ -77,6 +77,11 @@ class MainView(View):
         self._app.geometry(self.make_appropriate_geometry())  # Centered on first launch only.
         return self
 
+    def reactivate(self):
+        super().reactivate()
+        self.activation()
+        return self
+
     def make_appropriate_geometry(self):
         if cfg.SHOULD_CENTER_WINDOW:
             cfg.SHOULD_CENTER_WINDOW = False
