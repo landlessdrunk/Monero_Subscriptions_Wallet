@@ -19,4 +19,5 @@ jobs:
         run: |
           pip install pipenv
           pipenv install
+          echo "initialize" | xclip -selection clipboard
           XDG_SESSION_TYPE=x11 xvfb-run --auto-servernum pipenv run tests
