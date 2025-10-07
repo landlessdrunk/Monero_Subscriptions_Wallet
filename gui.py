@@ -114,6 +114,7 @@ class App(ctk.CTk):
 
     def switch_view(self, view_name: str, back=False):
         if self.current_view:
+            self.current_view.set_geometry()
             self.current_view.deactivate()
             if not back:
                 self.last_views.append(self.current_view)
@@ -122,6 +123,7 @@ class App(ctk.CTk):
             self.views[view_name].activate()
 
         self.views[view_name].reactivate()
+        self.geometry(self.views[view_name].geometry)
 
         self.current_view = self.views[view_name]        
 

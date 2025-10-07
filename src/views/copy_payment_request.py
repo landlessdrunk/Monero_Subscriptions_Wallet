@@ -7,6 +7,12 @@ import clipman
 from monerorequest import decode_monero_payment_request
 
 class CopyPaymentRequestView(View):
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.COPY_PAYMENT_REQUEST_VIEW_GEOMETRY
+        return self._geometry
+
     def build(self):
         # Back button and title
         styles.back_and_title(self, ctk, cfg, title='Payment Request Created:')

@@ -52,6 +52,12 @@ def check_if_node_works(node):
 
 
 class NodeSelectionView(View):
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.NODE_VIEW_GEOMETRY
+        return self._geometry
+
     def build(self):
         self.header('Set Node:')
         self.back_button()
@@ -74,7 +80,7 @@ class NodeSelectionView(View):
     def reactivate(self):
         super().reactivate()
         self.node = ctk.StringVar(self._app, node_url())
-        self.node_selection = self.add(ctk.CTkEntry(self._app, textvariable=self.node, corner_radius=15, placeholder_text='xmr-node.cakewallet.com:18081'))
+        self.node_selection = self.add(ctk.CTkEntry(self._app, textvariable=self.node, placeholder_text='xmr-node.cakewallet.com:18081'))
         self.node_selection.grid(row=1, column=0, columnspan=3, padx=70, pady=(25, 10), sticky="ew")
 
         self._app.geometry(styles.NODE_VIEW_GEOMETRY)

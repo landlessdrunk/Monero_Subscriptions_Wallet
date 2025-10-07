@@ -8,6 +8,12 @@ from datetime import datetime
 from cron_descriptor import get_description
 
 class ReviewRequestView(View):
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.REVIEW_REQUEST_PROMPT_VIEW_GEOMETRY
+        return self._geometry
+
     def build(self):
         self.header('Add Payment Request?')
         self.back_button()
@@ -31,7 +37,6 @@ class ReviewRequestView(View):
         return self
 
     def activation(self):
-        self._app.geometry(styles.REVIEW_REQUEST_PROMPT_VIEW_GEOMETRY)
         self.decoded_request = decode_monero_payment_request(self._app.views['pay'].input_box_for_wallet_or_request.get())
         # Custom Label
         self.custom_label = self.add(ctk.CTkLabel(self._app, text=self.custom_label_text(), font=styles.SUBHEADING_FONT_SIZE))

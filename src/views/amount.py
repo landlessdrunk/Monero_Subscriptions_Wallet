@@ -9,6 +9,12 @@ from decimal import Decimal
 
 
 class AmountView(View):
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.AMOUNT_VIEW_GEOMETRY
+        return self._geometry
+
     def build(self):
         def selected_currency_callback(choice):
             cfg.CURRENT_SEND_CURRENCY = choice
@@ -39,7 +45,6 @@ class AmountView(View):
         return self
 
     def activation(self):
-        self._app.geometry(styles.AMOUNT_VIEW_GEOMETRY)
         return self
 
     def reactivate(self):

@@ -11,6 +11,12 @@ class SettingsView(View):
         self._app = app
         self.toplevel_window = None
 
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.SETTINGS_VIEW_GEOMETRY
+        return self._geometry
+
     def build(self):
         # Configure the main window grid for spacing and alignment
         #self._app.columnconfigure([0, 1, 2], weight=1)  # 3 columns 2 rows
@@ -24,24 +30,31 @@ class SettingsView(View):
         self.header('Settings:')
         self.back_button()
 
-        self.node_selection_button = self.add(ctk.CTkButton(self._app, text="Set Node", corner_radius=15, command=self.open_node_selection))
-        self.node_selection_button.grid(row=1, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=(10, BUTTONS_PADY), sticky=BUTTONS_STICKY)
+        self.button_frame = self.add(ctk.CTkFrame(self._app))
+        self.button_frame.grid_columnconfigure(0, weight=1)
+        self.button_frame.grid(row=1, column=BUTTONS_COL, columnspan=5, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky="new")
 
-        self.set_currency_button = self.add(ctk.CTkButton(self._app, text="Set Currency", corner_radius=15, command=self.open_set_currency))
-        self.set_currency_button.grid(row=2, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
+        self.node_selection_button = self.add(ctk.CTkButton(self.button_frame, text="Set Node", corner_radius=15, command=self.open_node_selection))
+        self.node_selection_button.grid(row=2, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
 
-        self.import_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Import Subscriptions File", corner_radius=15, command=self.load_file_dialog))
-        self.import_subscriptions_file.grid(row=3, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
+        self.set_currency_button = self.add(ctk.CTkButton(self.button_frame, text="Set Currency", corner_radius=15, command=self.open_set_currency))
+        self.set_currency_button.grid(row=3, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
 
-        self.export_subscriptions_file = self.add(ctk.CTkButton(self._app, text="Export Subscriptions File", corner_radius=15, command=self.open_file_dialog))
-        self.export_subscriptions_file.grid(row=4, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
+        self.import_subscriptions_file = self.add(ctk.CTkButton(self.button_frame, text="Import Subscriptions File", corner_radius=15, command=self.load_file_dialog))
+        self.import_subscriptions_file.grid(row=4, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
+
+        self.export_subscriptions_file = self.add(ctk.CTkButton(self.button_frame, text="Export Subscriptions File", corner_radius=15, command=self.open_file_dialog))
+        self.export_subscriptions_file.grid(row=5, column=BUTTONS_COL, columnspan=BUTTONS_COL_SPAN, padx=BUTTONS_PADX, pady=BUTTONS_PADY, sticky=BUTTONS_STICKY)
 
         # wallet too
 
         return self
 
     def activation(self):
-        self._app.geometry(styles.SETTINGS_VIEW_GEOMETRY)
+        return self
+
+    def reactivate(self):
+        super().reactivate()
         return self
 
     def open_node_selection(self):

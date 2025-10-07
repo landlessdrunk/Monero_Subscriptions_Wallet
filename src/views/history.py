@@ -17,6 +17,12 @@ class HistoryView(View):
         super().__init__(app)
         self._tx_thread = None
 
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.HISTORY_LARGE_VIEW_GEOMETRY
+        return self._geometry
+
     def build(self):
         # Back button and title
         # styles.back_and_title(self, ctk, cfg, title='Transaction History:', pad_bottom=10)

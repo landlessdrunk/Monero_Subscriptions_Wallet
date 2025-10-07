@@ -13,6 +13,7 @@ class View(ABC):
         self._activated = False
         self._header = None
         self._back_button = None
+        self._geometry = None
         logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(self.__module__)
 
@@ -44,6 +45,9 @@ class View(ABC):
     def reactivate(self):
         for element in self._elements:
             element.grid()
+
+    def set_geometry(self):
+        self._geometry = f'{self._app.winfo_width()}x{self._app.winfo_height()}'
 
     @property
     def activated(self):

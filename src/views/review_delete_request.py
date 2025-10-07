@@ -5,6 +5,12 @@ import styles
 
 
 class ReviewDeleteRequestView(View):
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.REVIEW_PROMPT_GEOMETRY
+        return self._geometry
+
     def build(self):
         # Title
         self.header('Cancel Subscription?')
@@ -25,7 +31,6 @@ class ReviewDeleteRequestView(View):
         return self
 
     def activation(self):
-        self._app.geometry(styles.REVIEW_PROMPT_GEOMETRY)
         return self
 
     def open_main(self):

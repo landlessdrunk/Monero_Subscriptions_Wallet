@@ -81,6 +81,7 @@ class TestPay(unittest.TestCase):
             seller_text = f"Paying To: {decoded_request["sellers_wallet"][:5]}...{decoded_request["sellers_wallet"][-5:]}"
             self.assertEqual(review_view.sellers_wallet_label.cget('text'), seller_text)
             review_view.confirm_button._canvas.event_generate('<Button-1>')
+            time.sleep(.1)
             self.app.update()
             self.assertEqual(self.app.current_view, self.app.views['subscriptions'])
             self.assertEqual(len(self.app.current_view.sub_frame.sub_frames), 1)

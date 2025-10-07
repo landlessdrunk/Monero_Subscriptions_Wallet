@@ -8,6 +8,12 @@ from src.subscription import Subscription
 from src.views.mouse_scrollable_frame import MouseScrollableFrame
 
 class SubscriptionsView(View):
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.SUBSCRIPTION_LARGE_VIEW_GEOMETRY
+        return self._geometry
+
     def build(self):
         self.header('Manage Subscriptions:')
         self.back_button()
@@ -26,7 +32,6 @@ class SubscriptionsView(View):
         return self
 
     def activation(self):
-        self._app.geometry(styles.SUBSCRIPTIONS_LARGE_VIEW_GEOMETRY)
         self._app.subscriptions_queue.put(self.update_subscriptions)
         return self
 

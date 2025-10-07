@@ -59,6 +59,7 @@ class RPCClient(Notifier):
         return isinstance(self.get_version(), int)
 
     def refresh(self):
+        #No-Op
         return self.post(self._refresh())
 
     def _refresh(self):
@@ -158,7 +159,7 @@ class RPCClient(Notifier):
 
     def get_transfers(self):
         self._transfers = self.post(self._get_transfers())
-        return self._transfers['result']
+        return self._transfers.get('result', [])
 
     def _get_transfers(self):
         return {

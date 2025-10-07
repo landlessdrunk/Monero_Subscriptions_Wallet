@@ -4,6 +4,12 @@ import config as cfg
 import styles
 
 class WelcomeView(View):
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.make_centered_geometry(styles.WELCOME_VIEW_GEOMETRY)
+        return self._geometry
+
     def build(self):
         self.header('Welcome to the Subscriptions Wallet!')
 
@@ -42,7 +48,6 @@ class WelcomeView(View):
         return self
 
     def activation(self):
-        self._app.geometry(styles.make_centered_geometry(styles.WELCOME_VIEW_GEOMETRY))
         return self
 
     def open_main(self):

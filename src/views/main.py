@@ -20,6 +20,12 @@ class MainView(View):
         self._element_observers = []
         self.toplevel_window = None
 
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = self.make_appropriate_geometry()
+        return self._geometry
+
     def build(self):
         # TODO: Work in progress
         # Configure the main window grid for spacing and alignment
@@ -74,7 +80,6 @@ class MainView(View):
         return self
 
     def activation(self):
-        self._app.geometry(self.make_appropriate_geometry())  # Centered on first launch only.
         return self
 
     def reactivate(self):

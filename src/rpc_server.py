@@ -3,6 +3,7 @@ import subprocess
 import time
 import logging
 import logging.config
+from urllib.parse import urlparse
 from config import node_url, rpc_bind_port, wallet_dir, rpc, stagenet, rpc_executable
 from src.clients.rpc import RPCClient
 from src.exchange import Exchange
@@ -43,8 +44,8 @@ class RPCServer(Notifier):
             observer.update(self)
 
     def _daemon_address(self):
-        node = node_url().split(':')
-        return f'{node[0]}:{node[1]}'
+        node = urlparse(node_url())
+        return f'{node.scheme}://{node.netloc}'
 
     def _start_rpc(self):
         cmd = f'stdbuf -oL {rpc_executable()} --password "" --wallet-dir {wallet_dir()}'

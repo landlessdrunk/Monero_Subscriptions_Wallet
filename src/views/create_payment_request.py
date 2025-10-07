@@ -17,14 +17,18 @@ from textwrap import wrap
 #monero-request:2:H4sIAAAAAAAC/y1OW2+CMBT+K0sfF11Kx0V4Q1RMVEKGDuNLU0q5GKCkLQ5d9t9XjDknOfluOd8vIC0fOgU8YIAZoBXpSobrLq8pUVzgQTRampRBCNbRu0anZPUkpOItbkjGJsuRSaXZbmgzJjAvcE/uLeuUBB6cgRfAda6tzgIVGSqobRHHMtxMxyStWD40TKvvb6+ZaNY0TEj8Q/SdOlpuUcVRtdmvx89HbNgXPyZse5Yxj+jjm4QcmVZQrpLUTfv6MN5iI3LSfDwbX75545ntL8NwOZ7KKw0itL+yJIzr7cJf73r/sNkF00tFhMI5UVMXBJE1h+YcLY4Qes/9gBBewN8/nE3d8TgBAAA=
 
 class CreatePaymentRequestView(View):
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.CREATE_PAYMENT_REQUEST_VIEW_GEOMETRY
+        return self._geometry
+
     def build(self):
         # TODO: Can we set the border color through the theme file instead?
         # Border Color
         bc = styles.monero_orange
         x = 10  # 70
         y = 5  # (27.5, 20)
-
-        self.heading_row = 0
         self.title_row = 1
         self.price_row = 2
         self.payments_row = 3
@@ -41,25 +45,24 @@ class CreatePaymentRequestView(View):
         self.content_frame = self.add(ctk.CTkFrame(self._app))
         # self.content_frame.pack(fill='both', expand=True, padx=0, pady=0)
         # Configure the grid layout to have 100 columns with equal size
-        for i in range(10):
-            self.content_frame.grid_columnconfigure(i, weight=1)
-
+        self.content_frame.grid_columnconfigure(0, weight=1)
+        self.content_frame.grid(row=1, column=0, columnspan=10, padx=10, pady=10, sticky="new")
         # Input Title Section
-        self.custom_label_input = self.add(ctk.CTkEntry(self.content_frame, placeholder_text="Title", corner_radius=15, border_color=bc))  # font=(styles.font, 12),
+        self.custom_label_input = self.add(ctk.CTkEntry(self.content_frame, placeholder_text="Title", border_color=bc))  # font=(styles.font, 12),
         self.custom_label_input.grid(row=self.title_row, column=0, columnspan=10, padx=x, pady=(10 + y, y), sticky="ew")
 
         payments_of = self.add(ctk.CTkLabel(self.content_frame, text="of", font=styles.BODY_FONT_SIZE))
         payments_of.grid(row=self.price_row, column=6, columnspan=2, padx=(x / 2), pady=y, sticky="ew")
 
-        self.amount_input = self.add(ctk.CTkEntry(self.content_frame, placeholder_text="Price", corner_radius=15, border_color=bc))  # font=(styles.font, 12),
+        self.amount_input = self.add(ctk.CTkEntry(self.content_frame, placeholder_text="Price", border_color=bc))  # font=(styles.font, 12),
         self.amount_input.grid(row=self.price_row, column=0, columnspan=2, padx=x, pady=y, sticky="ew")
 
         selected_currency = ctk.StringVar(value=default_currency())
-        self.currency_input = self.add(ctk.CTkOptionMenu(self.content_frame, values=Exchange.options(), corner_radius=15, variable=selected_currency))
+        self.currency_input = self.add(ctk.CTkOptionMenu(self.content_frame, values=Exchange.options(), variable=selected_currency))
         self.currency_input.grid(row=self.price_row, column=8, columnspan=2, padx=((x / 2), x), pady=y, sticky="ew")
 
         # Pricing & Payments Section
-        self.number_of_payments_input = self.add(ctk.CTkEntry(self.content_frame, placeholder_text="Defaults To Infinite", corner_radius=15, border_color=bc))  # font=(styles.font, 12),
+        self.number_of_payments_input = self.add(ctk.CTkEntry(self.content_frame, placeholder_text="Defaults To Infinite", border_color=bc))  # font=(styles.font, 12),
         self.number_of_payments_input.grid(row=self.payments_row, column=0, columnspan=4, padx=(x, (x / 2)), pady=y, sticky="ew")
 
         payments_label = self.add(ctk.CTkLabel(self.content_frame, text="Payments"))
@@ -67,7 +70,7 @@ class CreatePaymentRequestView(View):
 
         day_options = ['Daily', 'Weekly', 'Monthly', 'Custom']
         selected_number_of_days = ctk.StringVar(value=day_options[2])
-        self.schedule = self.add(ctk.CTkOptionMenu(self.content_frame, values=day_options, corner_radius=15, command=self.billing_frequency_callback, variable=selected_number_of_days))
+        self.schedule = self.add(ctk.CTkOptionMenu(self.content_frame, values=day_options, command=self.billing_frequency_callback, variable=selected_number_of_days))
         self.schedule.grid(row=self.schedule_row, column=0, padx=(x, (x / 2)), sticky="ew")
 
         starting_on = self.add(ctk.CTkLabel(self.content_frame, text="starting on", font=styles.BODY_FONT_SIZE))
@@ -83,7 +86,7 @@ class CreatePaymentRequestView(View):
         # self.start_date_input.bind("<Button-1>", on_date_click)
 
         # Sellers Wallet Section
-        self.sellers_wallet_input = self.add(ctk.CTkEntry(self.content_frame, placeholder_text="Sellers Wallet", corner_radius=15, border_color=bc))  # font=(styles.font, 12),
+        self.sellers_wallet_input = self.add(ctk.CTkEntry(self.content_frame, placeholder_text="Sellers Wallet", border_color=bc))  # font=(styles.font, 12),
         self.sellers_wallet_input.grid(row=self.wallet_row, column=0, columnspan=10, padx=x, pady=y, sticky="ew")
 
 
@@ -102,14 +105,13 @@ class CreatePaymentRequestView(View):
 
 
         # Submit button
-        self.create_button = self.add(ctk.CTkButton(self.content_frame, text="Create Payment Request", corner_radius=15, command=self.create_button))
+        self.create_button = self.add(ctk.CTkButton(self.content_frame, text="Create Payment Request", command=self.create_button))
         self.create_button.grid(row=7, column=0, columnspan=10, padx=120, pady=10, sticky="ew")
 
         self._app.update_idletasks()
         return self
 
     def activation(self):
-        self._app.geometry(styles.CREATE_PAYMENT_REQUEST_VIEW_GEOMETRY)
         return self
 
     def billing_frequency_callback(self, choice):

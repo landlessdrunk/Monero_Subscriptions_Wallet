@@ -14,6 +14,12 @@ def clear_temp_payment_info():
 
 
 class ReviewSendView(View):
+    @property
+    def geometry(self):
+        if not self._geometry:
+            self._geometry = styles.REVIEW_PROMPT_GEOMETRY
+        return self._geometry
+
     def build(self):
         # Title
         self.header('Send Payment?')
@@ -35,7 +41,6 @@ class ReviewSendView(View):
         return self
 
     def activation(self):
-        self._app.geometry(styles.REVIEW_PROMPT_GEOMETRY)
         return self
 
     def reactivate(self):
