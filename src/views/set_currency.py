@@ -3,6 +3,7 @@ import customtkinter as ctk
 import styles
 from src.interfaces.view import View
 from src.exchange import Exchange
+from src.interfaces.searchable_dropdown import SearchableDropdown
 import config as cfg
 from config import default_currency, secondary_currency
 
@@ -39,12 +40,12 @@ class SetCurrencyView(View):
         # TODO: Without selected_currency commented out, the buttons don't work on subsequest frames.
         # Default Currency
         self.default_currency_var = ctk.StringVar(value=default_currency())
-        self.default_currency = self.add(ctk.CTkOptionMenu(self.currency_frame, values=Exchange.options(), corner_radius=15, command=default_currency_selector_callback, variable=self.default_currency_var))
+        self.default_currency = self.add(SearchableDropdown(self.currency_frame, Exchange.options(), corner_radius=15, command=default_currency_selector_callback, variable=self.default_currency_var))
         self.default_currency.grid(row=3, column=0, columnspan=2, padx=(120, 20), pady=(5, 35))
 
         # Secondary Currency
         self.secondary_currency_var = ctk.StringVar(value=secondary_currency())
-        self.secondary_currency = self.add(ctk.CTkOptionMenu(self.currency_frame, values=Exchange.options(), corner_radius=15, command=secondary_currency_selector_callback, variable=self.secondary_currency_var))
+        self.secondary_currency = self.add(SearchableDropdown(self.currency_frame, Exchange.options(), corner_radius=15, command=secondary_currency_selector_callback, variable=self.secondary_currency_var))
         self.secondary_currency.grid(row=3, column=2, columnspan=2, padx=(20, 120), pady=(5, 35))
 
         return self

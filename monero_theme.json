@@ -101,7 +101,7 @@
     "text_color_disabled": ["gray50", "gray45"]
   },
   "CTkScrollbar": {
-    "corner_radius": 1000,
+    "corner_radius": 0,
     "border_spacing": 4,
     "fg_color": "transparent",
     "button_color": ["gray55", "gray41"],

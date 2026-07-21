@@ -97,7 +97,7 @@ class Subscription:
                 integrated_address = client.make_integrated_address(self.sellers_wallet, self.payment_id)['integrated_address']
                 atomic_amount = Exchange.to_atomic_units(self.currency, Decimal(self.amount))
                 transfer_result = client.transfer(integrated_address, atomic_amount)
-                client.set_tx_notes([transfer_result['tx_hash']], [self.custom_label])
+                client.set_tx_notes([transfer_result.get('tx_hash')], [self.custom_label])
                 self.logger.info('Sent %s %s', self.amount, self.currency)
                 Exchange.refresh_prices()
                 if self.number_of_payments == 1:
@@ -107,7 +107,7 @@ class Subscription:
                 self.logger.debug('Number of Payments Remaining %s', self.number_of_payments)
                 config_file.update_subscription(self)
                 config_file.write()
-                result = transfer_result['amount'] == atomic_amount
+                result = transfer_result.get('amount', 0) == atomic_amount
             else:
                 self.logger.info('Sending Funds Disabled')
         else:

@@ -25,6 +25,7 @@ cron-descriptor = "*"
 pyqt5 = "*"
 monerorequest = "*"
 coverage = "*"
+pycoingecko = "*"
 
 [dev-packages]
 

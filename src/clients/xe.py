@@ -8,4 +8,8 @@ def scrape(currency_ticker):
 
     response = requests.get(url)
     tree = html.fromstring(response.content)
-    return tree.xpath(main_xpath)[0].text_content().strip().split(' ')[0].replace(',', '')
+    tree_path = tree.xpath(main_xpath)
+    if tree_path:
+        return tree_path[0].text_content().strip().split(' ')[0].replace(',', '')
+    else:
+        return ''

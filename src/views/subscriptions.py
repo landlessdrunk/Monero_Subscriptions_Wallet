@@ -11,7 +11,7 @@ class SubscriptionsView(View):
     @property
     def geometry(self):
         if not self._geometry:
-            self._geometry = styles.SUBSCRIPTION_LARGE_VIEW_GEOMETRY
+            self._geometry = styles.SUBSCRIPTIONS_LARGE_VIEW_GEOMETRY
         return self._geometry
 
     def build(self):
@@ -20,7 +20,7 @@ class SubscriptionsView(View):
 
         # Plus Button
         add_image = ctk.CTkImage(Image.open(styles.plus_icon), size=(24, 24))
-        self.add_button = self.add(ctk.CTkButton(self._app, image=add_image, text='', fg_color='transparent', width=35, height=30, corner_radius=7, command=self.add_subscription))
+        self.add_button = self.add(ctk.CTkButton(self._app, image=add_image, text='', fg_color='transparent', width=35, height=30, command=self.add_subscription))
         self.add_button.grid(row=0, column=2, padx=10, pady=(10, 20), sticky="e")
         self.sub_frame = self.add(SubscriptionsScrollableFrame(master=self._app, corner_radius=0, fg_color="transparent"))
 

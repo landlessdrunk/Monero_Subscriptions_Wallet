@@ -142,7 +142,7 @@ class RPCClient(Notifier):
         }
 
     def transfer(self, destination, amount):
-        return self.post(self._transfer(destination, amount)).get('result')
+        return self.post(self._transfer(destination, amount)).get('result', {})
 
     def _transfer(self, destination, amount):
         return {

@@ -71,11 +71,13 @@ class SettingsView(View):
 
     def open_file_dialog(self):
         filepath = tkinter.filedialog.asksaveasfilename(initialfile='subscriptions.json', defaultextension='json')
-        cfg.config_file.export_subscriptions(filepath)
+        if filepath:
+            cfg.config_file.export_subscriptions(filepath)
 
     def load_file_dialog(self):
         filepath = tkinter.filedialog.askopenfilename(filetypes=[('json', '*.json')])
-        cfg.config_file.import_subscriptions(filepath)
+        if filepath:
+            cfg.config_file.import_subscriptions(filepath)
 
         #''' # Code for pop-up window
         # if self.toplevel_window is None or not self.toplevel_window.winfo_exists():

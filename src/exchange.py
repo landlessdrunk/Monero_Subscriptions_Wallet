@@ -2,7 +2,7 @@ import csv
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime, timedelta
 from src.clients.goldback import scrape as goldback_scrape
-from src.clients.xe import scrape as xe_scrape
+from src.clients.coingecko import get_price
 from src.clients.rpc import RPCClient
 from monero_usd_price import median_price, calculate_atomic_units_from_monero, calculate_monero_from_atomic_units
 
@@ -45,7 +45,7 @@ class Exchange():
             if to_sym == 'XGB':
                 sym_value = goldback_scrape()
             else:
-                sym_value = xe_scrape(to_sym)
+                sym_value = get_price(to_sym)
             converted = Decimal(cls.convert_usd(Decimal(amount))) * Decimal(sym_value)
         else:
             converted = Decimal(amount)
@@ -104,8 +104,9 @@ class Exchange():
             with open('data/currency_codes.csv') as codes:
                 reader = csv.DictReader(codes)
                 for ticker in reader:
-                    options.append(ticker['AlphabeticCode'])
-                cls._options = options
+                    if ticker['AlphabeticCode'] != '':
+                        options.append(ticker['AlphabeticCode'])
+                cls._options = list(set(options))
         return cls._options
 
     @classmethod

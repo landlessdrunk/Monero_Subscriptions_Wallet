@@ -2,8 +2,10 @@ import customtkinter as ctk
 from src.interfaces.view import View
 from src.rpc_server import RPCServer
 from src.clients.rpc import RPCClient
+from src.monerod import Monerod
 from src.observers.status_label_observer import StatusLabelObserver
 from src.observers.balance_observer import BalanceObserver
+from src.observers.monerod_observer import MonerodObserver
 from config import default_currency, secondary_currency
 import config as cfg
 import styles
@@ -17,6 +19,7 @@ class MainView(View):
         self._wallet = Wallet()
         self._rpc_server = RPCServer.get(self._wallet)
         self._rpc_client = RPCClient.get()
+        self._monerod = Monerod.get()
         self._element_observers = []
         self.toplevel_window = None
 
@@ -37,7 +40,15 @@ class MainView(View):
         rpc_observer = StatusLabelObserver(rpc_status)
         self._element_observers.append(rpc_observer)
         self._rpc_server.attach(rpc_observer)
-        rpc_status.grid(row=0, column=0, columnspan=3, padx=10, pady=5, sticky="ew")
+        rpc_status.grid(row=0, column=0, columnspan=1, padx=10, pady=5, sticky="ew")
+
+        # Monero Daemon Status
+        daemon_status_text = self._monerod.status_message or "( Monero Daemon Status )"
+        daemon_status = self.add(ctk.CTkLabel(self._app, text=f'Daemon Status: {daemon_status_text}'))
+        daemon_observer = MonerodObserver(daemon_status)
+        self._element_observers.append(daemon_observer)
+        self._monerod.attach(daemon_observer)
+        daemon_status.grid(row=0, column=1, columnspan=2, padx=10, pady=5, sticky="ew")
 
         # History Button
         self.history_image = ctk.CTkImage(Image.open(styles.history_icon), size=(22, 22))

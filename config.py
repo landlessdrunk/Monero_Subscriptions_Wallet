@@ -31,6 +31,7 @@ config_options = {
         'wallet_dir': path.abspath(path.join(path.dirname(__file__), './wallets')),
         'stagenet': False,
         'rpc_executable': path.abspath(path.join(path.dirname(__file__), './monero-wallet-rpc')),
+        'daemon_executable': path.abspath(path.join(path.dirname(__file__), './monerod')),
         'wallet_name': 'subscriptions_wallet'
     },
     'subscriptions': {

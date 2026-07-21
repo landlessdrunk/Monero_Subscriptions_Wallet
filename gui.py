@@ -13,7 +13,8 @@ import customtkinter as ctk
 
 import styles
 from src.rpc_server import RPCServer
-from config import rpc, is_first_launch
+from src.monerod import Monerod
+from config import rpc, is_first_launch, daemon_executable
 from src.views import MainView, ReceiveView, PayView, SubscriptionsView, SettingsView, SetCurrencyView,\
                       NodeSelectionView, AmountView, ReviewRequestView, ReviewSendView,\
                       ReviewDeleteRequestView, WelcomeView, CreatePaymentRequestView, CopyPaymentRequestView,\
@@ -44,6 +45,7 @@ class App(ctk.CTk):
         self.last_views = []
         self.spawn_appropriate_initial_window()
         self.start_rpc_server_if_appropriate()
+        self.start_monerod_if_appropriate()
         self.schedule_payments()
         self.scheduler_thread()
         self.process_qt_events()
@@ -111,6 +113,12 @@ class App(ctk.CTk):
             self.rpc_server = RPCServer.get()
             self.rpc_server.start()
             self.rpc_server.check_readiness()
+
+    def start_monerod_if_appropriate(self):
+        if daemon_executable():
+            self.monerod = Monerod.get()
+            self.monerod.start()
+            self.monerod.check_readiness()
 
     def switch_view(self, view_name: str, back=False):
         if self.current_view:
